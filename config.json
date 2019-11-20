@@ -1,0 +1,17 @@
+{
+  "orderedBuildDirectories": [
+    "/openlmis-ui-components",
+    "/openlmis-ui-layout",
+    "/openlmis-auth-ui",
+    "/openlmis-referencedata-ui",
+    "/openlmis-report-ui",
+    "/openlmis-requisition-ui",
+    "/openlmis-fulfillment-ui",
+    "/openlmis-stockmanagement-ui",
+    "/openlmis-cce-ui"
+  ],
+  "REPORTING_SERVICES": "selv-v3",
+  "applicationLoadingMessage": "Iniciando SELV-V3",
+  "applicationTitle": "SELV-V3",
+  "defaultLanguage": "pt"
+}

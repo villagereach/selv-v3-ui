@@ -1,0 +1,11 @@
+{
+  "service": {
+    "Name": "angola-reference-ui",
+    "Port": 80,
+    "Tags": ["openlmis-service"]
+  },
+  "path": [
+    "",
+    "<all>"
+  ]
+}
