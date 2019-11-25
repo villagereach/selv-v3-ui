@@ -14,12 +14,12 @@ fi
 
 if [ $PRODUCTION == true ]; then
   echo "pushing image for production instance"
-  docker tag openlmisselv/selv-v3-ui:latest openlmisselv/selv-v3-production-ui:${version}
-  docker push openlmisselv/selv-v3-production-ui:${version}
+  docker tag openlmismz/selv-v3-ui:latest openlmismz/selv-v3-production-ui:${version}
+  docker push openlmismz/selv-v3-production-ui:${version}
 else
   echo "pushing image for dev/test instance"
-  docker tag openlmisselv/selv-v3-ui:latest openlmisselv/selv-v3-ui:${version}
-  docker push openlmisselv/selv-v3-ui:${version}
+  docker tag openlmismz/selv-v3-ui:latest openlmismz/selv-v3-ui:${version}
+  docker push openlmismz/selv-v3-ui:${version}
 fi
 
 rm -Rf ./credentials

@@ -65,4 +65,4 @@ services:
       - '/openlmis-ui-layout'
   image:
     build: .
-    image: openlmisao/selv-v3-ui:latest
+    image: openlmismz/selv-v3-ui:latest
