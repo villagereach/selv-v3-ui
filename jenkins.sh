@@ -12,6 +12,8 @@ fi
 /usr/local/bin/docker-compose build image
 /usr/local/bin/docker-compose down --volumes
 
+docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
 if [ $PRODUCTION == true ]; then
   echo "pushing image for production instance"
   docker tag openlmismz/selv-v3-ui:latest openlmismz/selv-v3-production-ui:${version}
