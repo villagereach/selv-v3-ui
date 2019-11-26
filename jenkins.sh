@@ -12,11 +12,6 @@ fi
 /usr/local/bin/docker-compose build image
 /usr/local/bin/docker-compose down --volumes
 
-set -o allexport
-ls -al
-source ./.env
-echo $DOCKER_USERNAME
-
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 if [ $PRODUCTION == true ]; then
@@ -28,8 +23,6 @@ else
   docker tag openlmismz/selv-v3-ui:latest openlmismz/selv-v3-ui:${version}
   docker push openlmismz/selv-v3-ui:${version}
 fi
-
-set +o allexport
 
 rm -Rf ./credentials
 rm -f .env
