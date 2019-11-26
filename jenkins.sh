@@ -14,7 +14,7 @@ fi
 
 set -o allexport
 ls -al
-source .env
+source ./.env
 echo $DOCKER_USERNAME
 
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
