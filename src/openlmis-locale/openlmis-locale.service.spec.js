@@ -40,9 +40,9 @@ describe('localeService', function() {
 
         //these must be the same as config.json
         this.defaultLocaleSettings = {
-            currencyCode: 'USD',
-            currencySymbol: '$',
-            currencySymbolSide: 'left',
+            currencyCode: 'MTn',
+            currencySymbol: 'MT',
+            currencySymbolSide: 'right',
             currencyDecimalPlaces: 2,
             groupingSeparator: ',',
             groupingSize: 3,
