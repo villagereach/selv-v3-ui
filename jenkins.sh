@@ -13,6 +13,7 @@ fi
 /usr/local/bin/docker-compose down --volumes
 
 set -o allexport
+ls -al
 source .env
 echo $DOCKER_USERNAME
 
