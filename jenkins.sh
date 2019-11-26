@@ -12,6 +12,8 @@ fi
 /usr/local/bin/docker-compose build image
 /usr/local/bin/docker-compose down --volumes
 
+echo $DOCKER_USERNAME
+
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 if [ $PRODUCTION == true ]; then
