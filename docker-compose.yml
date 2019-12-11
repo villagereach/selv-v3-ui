@@ -18,6 +18,7 @@ services:
       - stockmanagement-ui
       - ui-components
       - ui-layout
+      - cce-ui
     depends_on:
       - auth-ui
       - fulfillment-ui
@@ -27,6 +28,7 @@ services:
       - stockmanagement-ui
       - ui-components
       - ui-layout
+      - cce-ui
   auth-ui:
     image: openlmis/auth-ui:6.2.1
     volumes:
