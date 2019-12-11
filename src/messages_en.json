@@ -3,5 +3,7 @@
     "openlmisLogin.appHeader": "Electronic Vaccine Logistics System",
     "openlmisForgotPassword.appHeader": "Electronic Vaccine Logistics System",
     "openlmisResetPassword.appHeader": "Electronic Vaccine Logistics System",
-    "openlmisHeader.appHeader": "Electronic Vaccine Logistics System"
+    "openlmisHeader.appHeader": "Electronic Vaccine Logistics System",
+    "cceInventoryItemDetails.netVolume": "Net Volume",
+    "cceInventoryItemDetails.liters": "liters"
 }
