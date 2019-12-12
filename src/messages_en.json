@@ -5,5 +5,9 @@
     "openlmisResetPassword.appHeader": "Electronic Vaccine Logistics System",
     "openlmisHeader.appHeader": "Electronic Vaccine Logistics System",
     "cceInventoryItemDetails.netVolume": "Net Volume",
-    "cceInventoryItemDetails.liters": "liters"
+    "cceInventoryItemDetails.liters": "liters",
+    "adminOrderableEdit.extraData.minStorageTemp": "Min Storage Temp (degrees Celsius)",
+    "adminOrderableEdit.extraData.maxStorageTemp": "Max Storage Temp (degrees Celsius)",
+    "adminOrderableEdit.extraData.volume": "Volume of each dispensing unit in millimeters",
+    "adminOrderableEdit.invalidStorageTemp": "Max Storage Temperature should be greater than Min Storage Temperature"
 }
