@@ -55,6 +55,7 @@
             .getDecoratedFunction();
         // SELV3-13: Added net volume and storage temperature properties to Orderables
         vm.storageTempChanged = storageTempChanged;
+        vm.netVolumeChanged = netVolumeChanged;
         // SELV3-13: ends here
 
         /**
@@ -95,7 +96,9 @@
         function saveOrderable() {
             // SELV3-13: Added net volume and storage temperature properties to Orderables
             validateStorageTemp();
-            var noErrors = !(vm.orderable.extraData && vm.orderable.extraData.storageTempInvalid);
+            validateNetVolume();
+            var noErrors = !(vm.orderable.extraData &&
+                (vm.orderable.extraData.storageTempInvalid || vm.orderable.extraData.netVolumeInvalid));
             if (noErrors) {
             // SELV3-13: ends here
                 return new OrderableResource()
@@ -109,8 +112,10 @@
                             goToOrderableList();
                         }
                     });
+            // SELV3-13: Added net volume and storage temperature properties to Orderables
             }
             return $q.reject();
+            // SELV3-13: ends here
         }
 
         // SELV3-13: Added net volume and storage temperature properties to Orderables
@@ -133,6 +138,21 @@
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
+         * @name validateNetVolume
+         *
+         * @description
+         * Checks if net volume exists and if is not 0.
+         */
+        function validateNetVolume() {
+            if (vm.orderable.extraData && vm.orderable.extraData.netVolume !== null &&
+                angular.equals(vm.orderable.extraData.netVolume, 0)) {
+                vm.orderable.extraData.netVolumeInvalid = 'adminOrderableEdit.invalidNetVolume';
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
          * @name storageTempChanged
          *
          * @description
@@ -141,6 +161,20 @@
         function storageTempChanged() {
             if (vm.orderable && vm.orderable.extraData && vm.orderable.extraData.storageTempInvalid) {
                 vm.orderable.extraData.storageTempInvalid = undefined;
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
+         * @name netVolumeChanged
+         *
+         * @description
+         * Deletes message from extraData.netVolumeInvalid after changing net volume value
+         */
+        function netVolumeChanged() {
+            if (vm.orderable && vm.orderable.extraData && vm.orderable.extraData.netVolumeInvalid) {
+                vm.orderable.extraData.netVolumeInvalid = undefined;
             }
         }
         // SELV3-13: ends here

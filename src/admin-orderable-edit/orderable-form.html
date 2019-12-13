@@ -13,6 +13,10 @@
     <input id="maxStorageTemp" type="number" ng-model="vm.orderable.extraData.maxStorageTemp" 
     openlmis-invalid="{{vm.orderable.extraData.storageTempInvalid | message}}"
     ng-change="vm.storageTempChanged()"/>
+    <label for="netVolume">{{'adminOrderableEdit.extraData.netVolume' | message}}</label>
+    <input positive-integer id="netVolume" type="text" ng-model="vm.orderable.extraData.netVolume"
+    openlmis-invalid="{{vm.orderable.extraData.netVolumeInvalid | message}}"
+    ng-change="vm.netVolumeChanged()"/>
     <!-- SELV3-13: ends here -->
     <h3>{{'adminOrderableEdit.packSizeInformation' | message}}</h3>
     <label for="dispensingUnit">{{'adminOrderableEdit.dispensingUnit' | message}}</label>
@@ -20,10 +24,6 @@
     <p class="note">
         {{ 'adminOrderableEdit.dispensingUnit.info' | message}}
     </p>
-    <!-- SELV3-13: Added net volume and storage temperature properties to Orderables -->
-    <label for="netVolume">{{'adminOrderableEdit.extraData.volume' | message}}</label>
-    <input positive-integer id="netVolume" type="text" ng-model="vm.orderable.extraData.netVolume"/>
-    <!-- SELV3-13: ends here -->
     <label for="netContent">{{'adminOrderableEdit.netContent' | message}}</label>
     <input positive-integer id="netContent" type="text" ng-model="vm.orderable.netContent" required />
     <label for="packRoundingThreshold">{{'adminOrderableEdit.packRoundingThreshold' | message}}</label>

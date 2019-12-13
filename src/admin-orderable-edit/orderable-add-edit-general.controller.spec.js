@@ -126,7 +126,8 @@ describe('OrderableAddEditGeneralController', function() {
         it('should not save if max storage temp is lower than min storage temp', function() {
             this.orderable.extraData = {
                 minStorageTemp: 5,
-                maxStorageTemp: 2
+                maxStorageTemp: 2,
+                netVolume: 100
             };
             this.vm.saveOrderable();
 
@@ -136,11 +137,23 @@ describe('OrderableAddEditGeneralController', function() {
         it('should save if max storage temp is greater than min storage temp', function() {
             this.orderable.extraData = {
                 minStorageTemp: -2,
-                maxStorageTemp: 2
+                maxStorageTemp: 2,
+                netVolume: 500
             };
             this.vm.saveOrderable();
 
             expect(this.OrderableResource.prototype.update).toHaveBeenCalled();
+        });
+
+        it('should not save if net volume is 0', function() {
+            this.orderable.extraData = {
+                minStorageTemp: -8,
+                maxStorageTemp: 2,
+                netVolume: 0
+            };
+            this.vm.saveOrderable();
+
+            expect(this.OrderableResource.prototype.update).not.toHaveBeenCalled();
         });
         // SELV3-13: ends here
     });
