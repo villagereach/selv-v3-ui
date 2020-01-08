@@ -19,6 +19,7 @@ services:
       - ui-components
       - ui-layout
       - cce-ui
+      - equipment-ui
     depends_on:
       - auth-ui
       - fulfillment-ui
@@ -29,6 +30,7 @@ services:
       - ui-components
       - ui-layout
       - cce-ui
+      - equipment-ui
   auth-ui:
     image: openlmis/auth-ui:6.2.1
     volumes:
@@ -65,6 +67,10 @@ services:
     image: openlmis/ui-layout:5.1.4
     volumes:
       - '/openlmis-ui-layout'
+  equipment-ui:
+    image: openlmismz/equipment-ui:1.0.0-SNAPSHOT
+    volumes:
+     - '/openlmis-equipment-ui'
   image:
     build: .
     image: openlmismz/selv-v3-ui:latest
