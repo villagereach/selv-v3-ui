@@ -54,8 +54,9 @@
             .withLoading(true)
             .getDecoratedFunction();
         // SELV3-13: Added net volume and storage temperature properties to Orderables
-        vm.storageTempChanged = storageTempChanged;
-        vm.netVolumeChanged = netVolumeChanged;
+        vm.maximumToleranceTemperatureChanged = maximumToleranceTemperatureChanged;
+        vm.minimumToleranceTemperatureChanged = minimumToleranceTemperatureChanged;
+        vm.inBoxCubeDimensionChanged = inBoxCubeDimensionChanged;
         // SELV3-13: ends here
 
         /**
@@ -95,10 +96,7 @@
          */
         function saveOrderable() {
             // SELV3-13: Added net volume and storage temperature properties to Orderables
-            validateStorageTemp();
-            validateNetVolume();
-            var noErrors = !(vm.orderable.extraData &&
-                (vm.orderable.extraData.storageTempInvalid || vm.orderable.extraData.netVolumeInvalid));
+            var noErrors = isMinimumTemperatureValid() && isInBoxCubeDimensionValid();
             if (noErrors) {
             // SELV3-13: ends here
                 return new OrderableResource()
@@ -122,16 +120,71 @@
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
+         * @name maximumToleranceTemperatureChanged
+         *
+         * @description
+         * Deletes/Adds temperatureMeasurementUnitCode to maximumToleranceTemperature after changing value,
+         * validates temperatures
+         */
+        function maximumToleranceTemperatureChanged() {
+            validateStorageTemp();
+            if (vm.orderable.maximumToleranceTemperature.value) {
+                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+            } else {
+                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = null;
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
+         * @name minimumToleranceTemperatureChanged
+         *
+         * @description
+         * Deletes/Adds temperatureMeasurementUnitCode to minimumToleranceTemperature after changing value,
+         * validates temperatures
+         */
+        function minimumToleranceTemperatureChanged() {
+            validateStorageTemp();
+            if (vm.orderable.minimumToleranceTemperature.value) {
+                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+            } else {
+                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = null;
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
+         * @name inBoxCubeDimensionChanged
+         *
+         * @description
+         * Deletes/Adds measurementUnitCode to inBoxCubeDimension after changing value,
+         * validates net volume
+         */
+        function inBoxCubeDimensionChanged() {
+            validateNetVolume();
+            if (vm.orderable.inBoxCubeDimension.value) {
+                vm.orderable.inBoxCubeDimension.measurementUnitCode = 'MLT';
+            } else {
+                vm.orderable.inBoxCubeDimension.measurementUnitCode = null;
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
          * @name validateStorageTemp
          *
          * @description
-         * Checks if max storage temperature is not lower than min storage temperature.
+         * Checks if min storage temperature is not greater than max storage temperature.
          */
         function validateStorageTemp() {
-            if (vm.orderable.extraData
-                && vm.orderable.extraData.maxStorageTemp && vm.orderable.extraData.minStorageTemp
-                && vm.orderable.extraData.maxStorageTemp < vm.orderable.extraData.minStorageTemp) {
-                vm.orderable.extraData.storageTempInvalid = 'adminOrderableEdit.invalidStorageTemp';
+            vm.orderable.minimumToleranceTemperature.invalid = undefined;
+            if (vm.orderable.minimumToleranceTemperature && vm.orderable.maximumToleranceTemperature &&
+                vm.orderable.minimumToleranceTemperature.value > vm.orderable.maximumToleranceTemperature.value) {
+                vm.orderable.minimumToleranceTemperature.invalid =
+                'adminOrderableEdit.minimumToleranceTemperature.invalid';
             }
         }
 
@@ -144,38 +197,37 @@
          * Checks if net volume exists and if is not 0.
          */
         function validateNetVolume() {
-            if (vm.orderable.extraData && vm.orderable.extraData.netVolume !== null &&
-                angular.equals(vm.orderable.extraData.netVolume, 0)) {
-                vm.orderable.extraData.netVolumeInvalid = 'adminOrderableEdit.invalidNetVolume';
+            vm.orderable.inBoxCubeDimension.invalid = undefined;
+            if (vm.orderable.inBoxCubeDimension && vm.orderable.inBoxCubeDimension.value <= 0) {
+                vm.orderable.inBoxCubeDimension.invalid =
+                'adminOrderableEdit.inBoxCubeDimension.invalid';
             }
         }
 
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
-         * @name storageTempChanged
+         * @name isMinimumTemperatureValid
          *
          * @description
-         * Deletes message from extraData.storageTempInvalid after changing max storage temp value
+         * Checks if Minimum Temperature exists and if is valid
          */
-        function storageTempChanged() {
-            if (vm.orderable && vm.orderable.extraData && vm.orderable.extraData.storageTempInvalid) {
-                vm.orderable.extraData.storageTempInvalid = undefined;
-            }
+        function isMinimumTemperatureValid() {
+            return !vm.orderable.minimumToleranceTemperature ||
+            (vm.orderable.minimumToleranceTemperature && !vm.orderable.minimumToleranceTemperature.invalid);
         }
 
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
-         * @name netVolumeChanged
+         * @name isInBoxCubeDimensionValid
          *
          * @description
-         * Deletes message from extraData.netVolumeInvalid after changing net volume value
+         * Checks if net volume exists and if is valid
          */
-        function netVolumeChanged() {
-            if (vm.orderable && vm.orderable.extraData && vm.orderable.extraData.netVolumeInvalid) {
-                vm.orderable.extraData.netVolumeInvalid = undefined;
-            }
+        function isInBoxCubeDimensionValid() {
+            return !vm.orderable.inBoxCubeDimension ||
+            (vm.orderable.inBoxCubeDimension && !vm.orderable.inBoxCubeDimension.invalid);
         }
         // SELV3-13: ends here
     }

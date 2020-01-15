@@ -38,6 +38,20 @@ describe('OrderableAddEditGeneralController', function() {
         this.errorNotificationKey = 'errorMessage.key';
         this.orderableListRelativePath = 'orderable.list.relative.path';
 
+        // SELV3-13: Added net volume and storage temperature properties to Orderables
+        this.orderable.minimumToleranceTemperature = {
+            value: 2,
+            temperatureMeasurementUnitCode: 'CEL'
+        };
+        this.orderable.maximumToleranceTemperature = {
+            value: 8,
+            temperatureMeasurementUnitCode: 'CEL'
+        };
+        this.orderable.inBoxCubeDimension = {
+            value: 200,
+            measurementUnitCode: 'MLT'
+        };
+        // SELV3-13: ends here
         spyOn(this.$state, 'go');
         spyOn(this.OrderableResource.prototype, 'update').andReturn(this.$q.resolve(this.orderable));
         spyOn(this.FunctionDecorator.prototype, 'withSuccessNotification').andCallThrough();
@@ -124,33 +138,24 @@ describe('OrderableAddEditGeneralController', function() {
 
         // SELV3-13: Added net volume and storage temperature properties to Orderables
         it('should not save if max storage temp is lower than min storage temp', function() {
-            this.orderable.extraData = {
-                minStorageTemp: 5,
-                maxStorageTemp: 2,
-                netVolume: 100
-            };
+            this.orderable.minimumToleranceTemperature.value = 12;
+            this.vm.maximumToleranceTemperatureChanged();
+
             this.vm.saveOrderable();
 
             expect(this.OrderableResource.prototype.update).not.toHaveBeenCalled();
         });
 
         it('should save if max storage temp is greater than min storage temp', function() {
-            this.orderable.extraData = {
-                minStorageTemp: -2,
-                maxStorageTemp: 2,
-                netVolume: 500
-            };
             this.vm.saveOrderable();
 
             expect(this.OrderableResource.prototype.update).toHaveBeenCalled();
         });
 
         it('should not save if net volume is 0', function() {
-            this.orderable.extraData = {
-                minStorageTemp: -8,
-                maxStorageTemp: 2,
-                netVolume: 0
-            };
+            this.orderable.inBoxCubeDimension.value = 0;
+            this.vm.inBoxCubeDimensionChanged();
+
             this.vm.saveOrderable();
 
             expect(this.OrderableResource.prototype.update).not.toHaveBeenCalled();

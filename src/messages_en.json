@@ -6,10 +6,10 @@
     "openlmisHeader.appHeader": "Electronic Vaccine Logistics System",
     "cceInventoryItemDetails.netVolume": "Net Volume",
     "cceInventoryItemDetails.liters": "liters",
-    "adminOrderableEdit.extraData.minStorageTemp": "Min Storage Temp (degrees Celsius)",
-    "adminOrderableEdit.extraData.maxStorageTemp": "Max Storage Temp (degrees Celsius)",
-    "adminOrderableEdit.extraData.netVolume": "Net volume (millimeters)",
-    "adminOrderableEdit.invalidStorageTemp": "Max Storage Temperature should be greater than Min Storage Temperature",
-    "adminOrderableEdit.invalidNetVolume": "Net volume should be greater than 0",
+    "adminOrderableEdit.minimumToleranceTemperature": "Min Storage Temp (degrees celsius)",
+    "adminOrderableEdit.maximumToleranceTemperature": "Max Storage Temp (degrees celsius)",
+    "adminOrderableEdit.inBoxCubeDimension": "Net Volume (milliliters)",
+    "adminOrderableEdit.minimumToleranceTemperature.invalid": "Minimum storage temperature should be greater than maximum storage temperature.",
+    "adminOrderableEdit.inBoxCubeDimension.invalid": "Volume should be greater than 0.",
     "adminOrderableEdit.failedToUpdateProduct": "Failed to update the product"
 }
