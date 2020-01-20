@@ -127,11 +127,15 @@
          * validates temperatures
          */
         function maximumToleranceTemperatureChanged() {
-            validateStorageTemp();
-            if (vm.orderable.maximumToleranceTemperature.value) {
-                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+            if (vm.orderable.minimumToleranceTemperature) {
+                vm.orderable.minimumToleranceTemperature.invalid = undefined;
+            }
+
+            if (vm.orderable.maximumToleranceTemperature.value === null) {
+                vm.orderable.maximumToleranceTemperature = undefined;
             } else {
-                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = null;
+                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+                validateStorageTemp();
             }
         }
 
@@ -145,11 +149,12 @@
          * validates temperatures
          */
         function minimumToleranceTemperatureChanged() {
-            validateStorageTemp();
-            if (vm.orderable.minimumToleranceTemperature.value) {
-                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+            vm.orderable.minimumToleranceTemperature.invalid = undefined;
+            if (vm.orderable.minimumToleranceTemperature.value === null) {
+                vm.orderable.minimumToleranceTemperature = undefined;
             } else {
-                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = null;
+                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+                validateStorageTemp();
             }
         }
 
@@ -163,11 +168,11 @@
          * validates net volume
          */
         function inBoxCubeDimensionChanged() {
-            validateNetVolume();
-            if (vm.orderable.inBoxCubeDimension.value) {
-                vm.orderable.inBoxCubeDimension.measurementUnitCode = 'MLT';
+            if (vm.orderable.inBoxCubeDimension.value === null) {
+                vm.orderable.inBoxCubeDimension = undefined;
             } else {
-                vm.orderable.inBoxCubeDimension.measurementUnitCode = null;
+                vm.orderable.inBoxCubeDimension.measurementUnitCode = 'MLT';
+                validateNetVolume();
             }
         }
 
@@ -180,7 +185,6 @@
          * Checks if min storage temperature is not greater than max storage temperature.
          */
         function validateStorageTemp() {
-            vm.orderable.minimumToleranceTemperature.invalid = undefined;
             if (vm.orderable.minimumToleranceTemperature && vm.orderable.maximumToleranceTemperature &&
                 vm.orderable.minimumToleranceTemperature.value > vm.orderable.maximumToleranceTemperature.value) {
                 vm.orderable.minimumToleranceTemperature.invalid =
@@ -198,7 +202,8 @@
          */
         function validateNetVolume() {
             vm.orderable.inBoxCubeDimension.invalid = undefined;
-            if (vm.orderable.inBoxCubeDimension && vm.orderable.inBoxCubeDimension.value <= 0) {
+            if (vm.orderable.inBoxCubeDimension && vm.orderable.inBoxCubeDimension.value !== null &&
+                vm.orderable.inBoxCubeDimension.value <= 0) {
                 vm.orderable.inBoxCubeDimension.invalid =
                 'adminOrderableEdit.inBoxCubeDimension.invalid';
             }
