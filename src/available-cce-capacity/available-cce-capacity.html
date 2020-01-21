@@ -1,0 +1,9 @@
+<div ng-show="indicator.failed">
+    {{'availableCceVolume.errorOccurred' | message}}
+</div>
+<div ng-show="indicator.ready && !indicator.failed">
+    {{'availableCceVolume.litersAvailable' | message: {'availableVolume': indicator.availableVolume} }}
+</div>
+<div ng-show="!indicator.ready && !indicator.failed">
+    {{'availableCceVolume.calculating' | message}}
+</div>

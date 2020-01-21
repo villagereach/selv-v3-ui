@@ -1,0 +1,5 @@
+{
+    "availableCceVolume.litersAvailable": "${availableVolume} liters",
+    "availableCceVolume.calculating": "Calculating...",
+    "availableCceVolume.errorOccurred": "Error occurred"
+}

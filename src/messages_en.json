@@ -11,5 +11,6 @@
     "adminOrderableEdit.inBoxCubeDimension": "Net Volume (milliliters)",
     "adminOrderableEdit.minimumToleranceTemperature.invalid": "Minimum storage temperature should be greater than maximum storage temperature.",
     "adminOrderableEdit.inBoxCubeDimension.invalid": "Volume should be greater than 0.",
-    "adminOrderableEdit.failedToUpdateProduct": "Failed to update the product"
+    "adminOrderableEdit.failedToUpdateProduct": "Failed to update the product",
+    "requisitionView.availableCceCapacity": "Available CCE capacity"
 }
