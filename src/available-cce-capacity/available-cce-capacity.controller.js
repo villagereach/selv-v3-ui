@@ -104,6 +104,7 @@
             var fullVolume = results[0],
                 volumeInUse = results[1];
             indicator.availableVolume = fullVolume - volumeInUse;
+            indicator.requisition.$availableCceCapacity = indicator.availableVolume;
             indicator.ready = true;
         }
     }
