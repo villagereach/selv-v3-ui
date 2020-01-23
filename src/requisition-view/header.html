@@ -8,12 +8,6 @@
             <strong>{{'requisitionView.facility'|message}}</strong>
             {{vm.facility.code}} - {{vm.facility.name}}
         </li>
-        <!-- SELV3-14: added capacity indicator to requisition view header -->
-        <li>
-            <strong>{{'requisitionView.availableCceCapacity'|message}}</strong>
-            <available-cce-capacity requisition="vm.requisition"></available-cce-capacity>
-        </li>
-        <!-- SELV3-14: ends here -->
         <li>
             <strong>{{'requisitionView.operatedBy' | message}}</strong>
             {{vm.facility.operator.name}}
@@ -34,5 +28,21 @@
             <strong>{{'requisitionView.datePhysicalStockCountCompleted' | message}}</strong>
             {{vm.requisition.datePhysicalStockCountCompleted | openlmisDate}}
         </li>
+        <!-- SELV3-14: added capacity indicator to requisition view header -->
+        <li>
+            <strong>{{'requisitionView.availableCceCapacity'|message}}</strong>
+            <available-cce-capacity requisition="vm.requisition"
+                ng-class="{'too-large-order-volume' : vm.requisition.$toLargeOrderVolume == true}">
+            </available-cce-capacity>
+        </li>
+        <!-- SELV3-14: ends here -->
+        <!-- SELV3-43: Added Order Volume to requisition view header -->
+        <li>
+            <strong>{{'requisitionView.orderVolume'|message}}</strong>
+            <requisition-order-volume requisition="vm.requisition" 
+                ng-class="{'too-large-order-volume' : vm.requisition.$toLargeOrderVolume == true}">
+            </requisition-order-volume>
+        </li>
+        <!-- SELV3-43: ends here -->
     </ul>
 </aside>
