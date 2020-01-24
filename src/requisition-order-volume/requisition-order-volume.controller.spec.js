@@ -15,101 +15,62 @@
 
 describe('RequisitionOrderVolumeController', function() {
 
-    var lineItems, vm;
-
     beforeEach(function() {
-
         module('requisition-order-volume');
+        module('requisition');
 
-        lineItems = [
-            createLineItem(false, true, 1),
-            createLineItem(false, true, 2),
-            createLineItem(false, false, 2),
-            createLineItem(false, false, 2)
-        ];
-
-        inject(function(_$filter_, $controller) {
-
-            var requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
-            var templateMock = jasmine.createSpyObj('template', ['getColumn']);
-            templateMock.getColumn.andReturn({
-                name: 'orderQuantity',
-                $display: true
-            });
-            requisitionMock.template = templateMock;
-            requisitionMock.$isAfterAuthorize.andReturn(false);
-            requisitionMock.requisitionLineItems = lineItems;
-            requisitionMock.program = {
-                showNonFullSupplyTab: true
-            };
-
-            vm = $controller('RequisitionOrderVolumeController', {
-                $scope: {
-                    requisition: requisitionMock
-                }
-            });
+        inject(function($injector) {
+            this.$controller = $injector.get('$controller');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.requisitionOrderVolumeService = $injector.get('requisitionOrderVolumeService');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
+
+        this.orderVolume = 6.0;
+        var $scope = this.$rootScope.$new();
+
+        this.indicator = this.$controller('RequisitionOrderVolumeController', {
+            $scope: $scope,
+            requisitionOrderVolumeService: this.requisitionOrderVolumeService
+        });
+
+        this.indicator.requisition = new this.RequisitionDataBuilder().build();
+
+        this.indicator.requisition.$availableCceCapacity = 12.0;
 
     });
 
     describe('initialization', function() {
 
         it('should expose requistion', function() {
-            expect(vm.requisition).not.toBeUndefined();
+            expect(this.indicator.requisition).toBeDefined();
+        });
+
+        it('should call requisitionOrderVolumeService for order volume', function() {
+            spyOn(this.requisitionOrderVolumeService, 'getRequisitionOrderVolume').andReturn(this.orderVolume);
+
+            this.indicator.calculateOrderVolume();
+
+            expect(this.requisitionOrderVolumeService.getRequisitionOrderVolume)
+                .toHaveBeenCalledWith(this.indicator.requisition);
+        });
+
+        it('should not save $toLargeOrderVolume into requisition', function() {
+            spyOn(this.requisitionOrderVolumeService, 'getRequisitionOrderVolume').andReturn(this.orderVolume);
+
+            this.indicator.calculateOrderVolume();
+
+            expect(this.indicator.requisition.$toLargeOrderVolume).toBe(undefined);
+        });
+
+        it('should save $toLargeOrderVolume into requisition', function() {
+            spyOn(this.requisitionOrderVolumeService, 'getRequisitionOrderVolume').andReturn(14.0);
+
+            this.indicator.calculateOrderVolume();
+
+            expect(this.indicator.requisition.$toLargeOrderVolume).toBe(true);
         });
 
     });
-
-    describe('calculateOrderVolume', function() {
-
-        it('should calculate total order volume correctly', function() {
-            expect(vm.calculateOrderVolume().toFixed(1)).toBe('14.0');
-        });
-
-        it('should skip skipped line items', function() {
-            lineItems[0].skipped = true;
-            lineItems[2].skipped = true;
-
-            expect(vm.calculateOrderVolume().toFixed(1)).toBe('8.0');
-        });
-
-        it('should skip line items with maximum Tolerance Temperature greater than 8', function() {
-            lineItems[0].orderable.maximumToleranceTemperature.value = 12;
-
-            expect(vm.calculateOrderVolume().toFixed(1)).toBe('12.0');
-        });
-
-        it('should skip line items when maximumToleranceTemperature and ' +
-            'inBoxCubeDimension are not defined', function() {
-            lineItems[0].orderable.maximumToleranceTemperature = undefined;
-            lineItems[0].orderable.inBoxCubeDimension = undefined;
-
-            expect(vm.calculateOrderVolume().toFixed(1)).toBe('12.0');
-        });
-
-    });
-
-    function createLineItem(skipped, fullSupply, packsToShip) {
-        var lineItem = {
-            skipped: skipped,
-            $program: {
-                fullSupply: fullSupply
-            },
-            packsToShip: packsToShip,
-            orderable: {
-                netContent: 10,
-                inBoxCubeDimension: {
-                    value: 200,
-                    measurementUnitCode: 'MLT'
-                },
-                maximumToleranceTemperature: {
-                    value: 8,
-                    temperatureMeasurementUnitCode: 'CEL'
-                }
-            }
-        };
-
-        return lineItem;
-    }
-
 });

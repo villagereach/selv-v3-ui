@@ -29,9 +29,10 @@
         .service('requisitionOrderVolumeService', requisitionOrderVolumeService);
 
     requisitionOrderVolumeService.$inject = [
+        'calculationFactory'
     ];
 
-    function requisitionOrderVolumeService() {
+    function requisitionOrderVolumeService(calculationFactory) {
 
         this.getRequisitionOrderVolume = getRequisitionOrderVolume;
 
@@ -51,15 +52,14 @@
 
             getLineItems(requisition).forEach(function(lineItem) {
                 if (!lineItem.skipped && isNeedCooling(lineItem.orderable)) {
-                    sum += calculateTotalVolume(lineItem);
+                    sum += calculateTotalVolume(lineItem, requisition);
                 }
             });
-
             return sum / 1000;
         }
 
-        function calculateTotalVolume(lineItem) {
-            var packsToShip = lineItem.packsToShip ? lineItem.packsToShip : 0;
+        function calculateTotalVolume(lineItem, requisition) {
+            var packsToShip = calculationFactory.packsToShip(lineItem, requisition);
             var netContent = lineItem.orderable.netContent ? lineItem.orderable.netContent : 0;
             var volume = lineItem.orderable.inBoxCubeDimension ? lineItem.orderable.inBoxCubeDimension.value : 0;
             return packsToShip * netContent * volume;

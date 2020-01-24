@@ -75,8 +75,8 @@
          *
          */
         function checkOrderVolume() {
-            if (vm.requisition && vm.requisition.$availableCceCapacity &&
-                vm.requisition.$orderVolume &&
+            if (vm.requisition && vm.requisition.$availableCceCapacity !== undefined &&
+                vm.requisition.$orderVolume !== undefined &&
                 vm.requisition.$availableCceCapacity < vm.requisition.$orderVolume) {
                 vm.requisition.$toLargeOrderVolume = true;
             } else {
