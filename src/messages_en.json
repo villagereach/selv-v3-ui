@@ -13,5 +13,8 @@
     "adminOrderableEdit.inBoxCubeDimension.invalid": "Volume should be greater than 0.",
     "adminOrderableEdit.failedToUpdateProduct": "Failed to update the product",
     "requisitionView.availableCceCapacity": "Available CCE capacity",
-    "requisitionView.orderVolume": "Order Volume"
+    "requisitionView.orderVolume": "Order Volume",
+    "requisitionView.submitWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to submit it?",
+    "requisitionView.authorizeWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to authorize it?",
+    "requisitionView.approveWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to approve it?"
 }
