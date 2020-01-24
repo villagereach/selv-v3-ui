@@ -102,8 +102,9 @@
         }
 
         function isCceOrderable(orderable) {
-            return orderable.maximumToleranceTemperature &&
+            return orderable.inBoxCubeDimension &&
                 orderable.minimumToleranceTemperature &&
+                orderable.maximumToleranceTemperature &&
                 orderable.maximumToleranceTemperature.value <= 8;
         }
 

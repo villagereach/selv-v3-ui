@@ -13,20 +13,26 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
+describe('CceVolumeResource', function() {
 
-    'use strict';
+    beforeEach(function() {
+        var test = this;
+        module('cce-volume', function($provide) {
+            test.OpenlmisResourceMock = jasmine.createSpy('OpenlmisResource');
 
-    /**
-     * @module cce-volume
-     *
-     * @description
-     * This module provides service for getting a combined volume value for CCE equipment.
-     */
-    angular.module('cce-volume', [
-        'ngResource',
-        'openlmis-repository',
-        'openlmis-class-extender'
-    ]);
+            $provide.factory('OpenlmisResource', function() {
+                return test.OpenlmisResourceMock;
+            });
+        });
 
-})();
+        inject(function($injector) {
+            this.CceVolumeResource = $injector.get('CceVolumeResource');
+        });
+    });
+
+    it('should extend OpenlmisResource', function() {
+        new this.CceVolumeResource();
+
+        expect(this.OpenlmisResourceMock).toHaveBeenCalledWith(('/api/inventoryItems/volume'));
+    });
+});
