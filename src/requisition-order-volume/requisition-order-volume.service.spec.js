@@ -71,7 +71,7 @@ describe('requisitionOrderVolumeService', function() {
                     value: volume,
                     measurementUnitCode: 'MLT'
                 },
-                maximumToleranceTemperature: {
+                maximumTemperature: {
                     value: maxTemp,
                     temperatureMeasurementUnitCode: 'CEL'
                 }

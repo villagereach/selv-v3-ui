@@ -103,9 +103,9 @@
 
         function isCceOrderable(orderable) {
             return orderable.inBoxCubeDimension &&
-                orderable.minimumToleranceTemperature &&
-                orderable.maximumToleranceTemperature &&
-                orderable.maximumToleranceTemperature.value <= 8;
+                orderable.minimumTemperature &&
+                orderable.maximumTemperature &&
+                orderable.maximumTemperature.value <= 8;
         }
 
         function calculateVolumeInUse(summariesPage, orderablesMap) {

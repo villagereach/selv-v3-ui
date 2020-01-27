@@ -54,8 +54,8 @@
             .withLoading(true)
             .getDecoratedFunction();
         // SELV3-13: Added net volume and storage temperature properties to Orderables
-        vm.maximumToleranceTemperatureChanged = maximumToleranceTemperatureChanged;
-        vm.minimumToleranceTemperatureChanged = minimumToleranceTemperatureChanged;
+        vm.maximumTemperatureChanged = maximumTemperatureChanged;
+        vm.minimumTemperatureChanged = minimumTemperatureChanged;
         vm.inBoxCubeDimensionChanged = inBoxCubeDimensionChanged;
         // SELV3-13: ends here
 
@@ -120,21 +120,21 @@
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
-         * @name maximumToleranceTemperatureChanged
+         * @name maximumTemperatureChanged
          *
          * @description
-         * Deletes/Adds temperatureMeasurementUnitCode to maximumToleranceTemperature after changing value,
+         * Deletes/Adds temperatureMeasurementUnitCode to maximumTemperature after changing value,
          * validates temperatures
          */
-        function maximumToleranceTemperatureChanged() {
-            if (vm.orderable.minimumToleranceTemperature) {
-                vm.orderable.minimumToleranceTemperature.invalid = undefined;
+        function maximumTemperatureChanged() {
+            if (vm.orderable.minimumTemperature) {
+                vm.orderable.minimumTemperature.invalid = undefined;
             }
 
-            if (vm.orderable.maximumToleranceTemperature.value === null) {
-                vm.orderable.maximumToleranceTemperature = undefined;
+            if (vm.orderable.maximumTemperature.value === null) {
+                vm.orderable.maximumTemperature = undefined;
             } else {
-                vm.orderable.maximumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+                vm.orderable.maximumTemperature.temperatureMeasurementUnitCode = 'CEL';
                 validateStorageTemp();
             }
         }
@@ -142,18 +142,18 @@
         /**
          * @ngdoc method
          * @methodOf admin-orderable-edit.controller:OrderableAddEditGeneralController
-         * @name minimumToleranceTemperatureChanged
+         * @name minimumTemperatureChanged
          *
          * @description
-         * Deletes/Adds temperatureMeasurementUnitCode to minimumToleranceTemperature after changing value,
+         * Deletes/Adds temperatureMeasurementUnitCode to minimumTemperature after changing value,
          * validates temperatures
          */
-        function minimumToleranceTemperatureChanged() {
-            vm.orderable.minimumToleranceTemperature.invalid = undefined;
-            if (vm.orderable.minimumToleranceTemperature.value === null) {
-                vm.orderable.minimumToleranceTemperature = undefined;
+        function minimumTemperatureChanged() {
+            vm.orderable.minimumTemperature.invalid = undefined;
+            if (vm.orderable.minimumTemperature.value === null) {
+                vm.orderable.minimumTemperature = undefined;
             } else {
-                vm.orderable.minimumToleranceTemperature.temperatureMeasurementUnitCode = 'CEL';
+                vm.orderable.minimumTemperature.temperatureMeasurementUnitCode = 'CEL';
                 validateStorageTemp();
             }
         }
@@ -185,10 +185,10 @@
          * Checks if min storage temperature is not greater than max storage temperature.
          */
         function validateStorageTemp() {
-            if (vm.orderable.minimumToleranceTemperature && vm.orderable.maximumToleranceTemperature &&
-                vm.orderable.minimumToleranceTemperature.value > vm.orderable.maximumToleranceTemperature.value) {
-                vm.orderable.minimumToleranceTemperature.invalid =
-                'adminOrderableEdit.minimumToleranceTemperature.invalid';
+            if (vm.orderable.minimumTemperature && vm.orderable.maximumTemperature &&
+                vm.orderable.minimumTemperature.value > vm.orderable.maximumTemperature.value) {
+                vm.orderable.minimumTemperature.invalid =
+                'adminOrderableEdit.minimumTemperature.invalid';
             }
         }
 
@@ -218,8 +218,8 @@
          * Checks if Minimum Temperature exists and if is valid
          */
         function isMinimumTemperatureValid() {
-            return !vm.orderable.minimumToleranceTemperature ||
-            (vm.orderable.minimumToleranceTemperature && !vm.orderable.minimumToleranceTemperature.invalid);
+            return !vm.orderable.minimumTemperature ||
+            (vm.orderable.minimumTemperature && !vm.orderable.minimumTemperature.invalid);
         }
 
         /**

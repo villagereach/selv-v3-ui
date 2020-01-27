@@ -81,8 +81,8 @@
          */
         function isNeedCooling(orderable) {
             return orderable.inBoxCubeDimension &&
-            orderable.maximumToleranceTemperature &&
-            orderable.maximumToleranceTemperature.value <= 8;
+            orderable.maximumTemperature &&
+            orderable.maximumTemperature.value <= 8;
         }
     }
 })();

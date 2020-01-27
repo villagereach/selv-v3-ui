@@ -6,13 +6,13 @@
     <label for="description">{{'adminOrderableEdit.description' | message}}</label>
     <input id="description" type="text" ng-model="vm.orderable.description" />
     <!-- SELV3-13: Added net volume and storage temperature properties to Orderables -->
-    <label for="minimumToleranceTemperature">{{'adminOrderableEdit.minimumToleranceTemperature' | message}}</label>
-    <input id="minimumToleranceTemperature" type="number" ng-model="vm.orderable.minimumToleranceTemperature.value" 
-    ng-change="vm.minimumToleranceTemperatureChanged()"
-    openlmis-invalid="{{vm.orderable.minimumToleranceTemperature.invalid | message}}"/>
-    <label for="maximumToleranceTemperature">{{'adminOrderableEdit.maximumToleranceTemperature' | message}}</label>
-    <input id="maximumToleranceTemperature" type="number" ng-model="vm.orderable.maximumToleranceTemperature.value" 
-    ng-change="vm.maximumToleranceTemperatureChanged()"/>
+    <label for="minimumTemperature">{{'adminOrderableEdit.minimumTemperature' | message}}</label>
+    <input id="minimumTemperature" type="number" ng-model="vm.orderable.minimumTemperature.value" 
+    ng-change="vm.minimumTemperatureChanged()"
+    openlmis-invalid="{{vm.orderable.minimumTemperature.invalid | message}}"/>
+    <label for="maximumTemperature">{{'adminOrderableEdit.maximumTemperature' | message}}</label>
+    <input id="maximumTemperature" type="number" ng-model="vm.orderable.maximumTemperature.value" 
+    ng-change="vm.maximumTemperatureChanged()"/>
     <label for="netVolume">{{'adminOrderableEdit.inBoxCubeDimension' | message}}</label>
     <input positive-decimal id="netVolume" type="text" ng-model="vm.orderable.inBoxCubeDimension.value"
     ng-change="vm.inBoxCubeDimensionChanged()"

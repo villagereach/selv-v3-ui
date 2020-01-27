@@ -39,8 +39,8 @@
         OrderableDataBuilder.prototype.withoutProductCode = withoutProductCode;
         // SELV3-14: expanded orderable data builder by new volume and temperature fields
         OrderableDataBuilder.prototype.withInBoxCubeDimension = withInBoxCubeDimension;
-        OrderableDataBuilder.prototype.withMinimumToleranceTemperature = withMinimumToleranceTemperature;
-        OrderableDataBuilder.prototype.withMaximumToleranceTemperature = withMaximumToleranceTemperature;
+        OrderableDataBuilder.prototype.withMinimumTemperature = withMinimumTemperature;
+        OrderableDataBuilder.prototype.withMaximumTemperature = withMaximumTemperature;
         OrderableDataBuilder.prototype.buildForCce = buildForCce;
         // SELV3-14: ends here
 
@@ -138,28 +138,28 @@
             return this;
         }
 
-        function withMinimumToleranceTemperature(minimumToleranceTemperature) {
-            if (minimumToleranceTemperature) {
-                this.minimumToleranceTemperature = {
-                    value: minimumToleranceTemperature
+        function withMinimumTemperature(minimumTemperature) {
+            if (minimumTemperature) {
+                this.minimumTemperature = {
+                    value: minimumTemperature
                 };
             }
             return this;
         }
 
-        function withMaximumToleranceTemperature(maximumToleranceTemperature) {
-            if (maximumToleranceTemperature) {
-                this.maximumToleranceTemperature = {
-                    value: maximumToleranceTemperature
+        function withMaximumTemperature(maximumTemperature) {
+            if (maximumTemperature) {
+                this.maximumTemperature = {
+                    value: maximumTemperature
                 };
             }
             return this;
         }
 
-        function buildForCce(inBoxCubeDimension, minimumToleranceTemperature, maximumToleranceTemperature) {
+        function buildForCce(inBoxCubeDimension, minimumTemperature, maximumTemperature) {
             return this.withInBoxCubeDimension(inBoxCubeDimension)
-                .withMinimumToleranceTemperature(minimumToleranceTemperature)
-                .withMaximumToleranceTemperature(maximumToleranceTemperature)
+                .withMinimumTemperature(minimumTemperature)
+                .withMaximumTemperature(maximumTemperature)
                 .buildJson();
         }
         // SELV3-14: ends here
@@ -185,8 +185,8 @@
                 meta: this.meta,
                 // SELV3-14: expanded orderable data builder by new volume and temperature fields
                 inBoxCubeDimension: this.inBoxCubeDimension,
-                minimumToleranceTemperature: this.minimumToleranceTemperature,
-                maximumToleranceTemperature: this.maximumToleranceTemperature
+                minimumTemperature: this.minimumTemperature,
+                maximumTemperature: this.maximumTemperature
                 // SELV3-14: ends here
             };
         }

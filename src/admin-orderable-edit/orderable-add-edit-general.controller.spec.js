@@ -39,11 +39,11 @@ describe('OrderableAddEditGeneralController', function() {
         this.orderableListRelativePath = 'orderable.list.relative.path';
 
         // SELV3-13: Added net volume and storage temperature properties to Orderables
-        this.orderable.minimumToleranceTemperature = {
+        this.orderable.minimumTemperature = {
             value: 2,
             temperatureMeasurementUnitCode: 'CEL'
         };
-        this.orderable.maximumToleranceTemperature = {
+        this.orderable.maximumTemperature = {
             value: 8,
             temperatureMeasurementUnitCode: 'CEL'
         };
@@ -138,8 +138,8 @@ describe('OrderableAddEditGeneralController', function() {
 
         // SELV3-13: Added net volume and storage temperature properties to Orderables
         it('should not save if max storage temp is lower than min storage temp', function() {
-            this.orderable.minimumToleranceTemperature.value = 12;
-            this.vm.maximumToleranceTemperatureChanged();
+            this.orderable.minimumTemperature.value = 12;
+            this.vm.maximumTemperatureChanged();
 
             this.vm.saveOrderable();
 
