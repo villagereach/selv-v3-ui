@@ -347,6 +347,11 @@
         }
 
         function saveRnr() {
+            if (!vm.requisition.extraData) {
+                vm.requisition.extraData = {};
+            }
+            vm.requisition.extraData.availableCceCapacity = vm.requisition.$availableCceCapacity;
+            vm.requisition.extraData.orderVolume = vm.requisition.$orderVolume;
             vm.requisition.$modified = false;
             return vm.requisition.$save();
         }
