@@ -1,0 +1,21 @@
+{
+  "report.superset.aggregateConsumption": "Aggregate Consumption",
+  "report.superset.reportedAndOrderedProducts": "Reported and Ordered Products",
+  "report.superset.occurrenceOfAdjustments": "Occurrence of Adjustments",
+  "report.superset.submissionOfMonthlyReports": "Submission of Monthly Reports",
+  "report.superset.stocksSummary": "Stocks Summary",
+  "report.superset.orders": "Orders",
+  "report.superset.stockOnHandPerInstitution": "Stock on Hand per Institution",
+  "report.superset.comparisonOfConsumptionByRegion": "Comparison of Consumption by Region",
+  "report.superset.oAuthLogin.header": "Allow Superset to get access to OpenLMIS",
+  "report.superset.oAuthLogin.authorize": "Authorize",
+  "report.superset.oAuthLogin.cancel": "Cancel",
+  "report.superset.oAuthLogin.username": "Username",
+  "report.superset.oAuthLogin.password": "Password",
+  "report.superset.oAuthLogin.invalidCredentialsOrOAuthRequest": "Invalid credentials or unsuccessful OAuth request",
+  "report.superset.oAuthLogin.unsuccessfulApprovingPermissions": "Unsuccessful approving permissions for Superset",
+  "report.superset.stockoutsInUS": "Stockouts in US",
+  "report.superset.expiryDates": "Expiry Dates",
+  "report.superset.rupturasDeStockPorProduto": "Rupturas de Stock por Produto",
+  "report.superset.stockOnHand": "Stock on Hand"
+}

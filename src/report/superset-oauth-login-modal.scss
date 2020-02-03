@@ -1,0 +1,16 @@
+.superset-oauth-login-modal {
+    background-color: transparent !important;
+
+    .modal-content {
+        background-image: linear-gradient(to bottom, $white 0%, $white 75%, $light-gray 100%) !important;
+    }
+    .modal-body {
+        background-image: url("report/green-lock.png") !important;
+        background-size: 30% auto !important;
+        background-position: 1.5em 35% !important;
+        background-repeat: no-repeat !important;
+        padding: 1.5em 4em 1em 35% !important;
+
+        min-height: 0 !important;
+    }
+}
