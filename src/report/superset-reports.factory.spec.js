@@ -117,6 +117,14 @@ describe('reportService', function() {
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.rupturasDeStockPorProduto', jasmine.any(Object)
             );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.stockOnHand', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.productsExpirationDate', jasmine.any(Object)
+            );
         });
 
     });

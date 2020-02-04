@@ -17,5 +17,6 @@
   "report.superset.stockoutsInUS": "Stockouts in US",
   "report.superset.expiryDates": "Expiry Dates",
   "report.superset.rupturasDeStockPorProduto": "Rupturas de Stock por Produto",
-  "report.superset.stockOnHand": "Stock on Hand"
+  "report.superset.stockOnHand": "Stock on Hand",
+  "report.superset.productsExpirationDate": "Expiration Date"
 }

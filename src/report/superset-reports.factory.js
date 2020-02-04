@@ -88,7 +88,10 @@
                     'RAPTURAS_DE_STOCK_POR_PRODUTO_REPORT_VIEW'),
                 STOCK_ON_HAND: createReport('stockOnHand',
                     SUPERSET_URL + '/superset/dashboard/stock-on-hand/',
-                    'STOCK_ON_HAND')
+                    'STOCK_ON_HAND'),
+                PRODUCTS_EXPIRATION_DATE: createReport('productsExpirationDate',
+                    SUPERSET_URL + '/superset/dashboard/products-expiration-date/',
+                    'PRODUCTS_EXPIRATION_DATE')
             };
         }
 
