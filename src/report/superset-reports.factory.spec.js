@@ -119,7 +119,11 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockOnHand', jasmine.any(Object)
+                'openlmis.reports.list.superset.stockOnHandWarehouse', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.stockOnHandNonWarehouse', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
