@@ -59,15 +59,7 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockStatus', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.stockouts', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.consumption', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
@@ -75,15 +67,7 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.adjustments', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.administrative', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.aggregateConsumption', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
@@ -91,23 +75,7 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.occurrenceOfAdjustments', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.submissionOfMonthlyReports', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stocksSummary', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.stockOnHandPerInstitution', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.comparisonOfConsumptionByRegion', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
