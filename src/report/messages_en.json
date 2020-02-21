@@ -10,7 +10,6 @@
   "report.superset.oAuthLogin.invalidCredentialsOrOAuthRequest": "Invalid credentials or unsuccessful OAuth request",
   "report.superset.oAuthLogin.unsuccessfulApprovingPermissions": "Unsuccessful approving permissions for Superset",
   "report.superset.stockoutsInUS": "Stockouts in US",
-  "report.superset.expiryDates": "Expiry Dates",
   "report.superset.rupturasDeStockPorProduto": "Rupturas de Stock por Produto",
   "report.superset.stockOnHandWarehouse": "Stock on Hand for warehouses",
   "report.superset.stockOnHandNonWarehouse": "Stock on Hand for non-warehouses",
