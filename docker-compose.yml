@@ -74,7 +74,7 @@ services:
   requisition-batch-ui:
     image: openlmismz/requisition-batch-ui:1.0.0-SNAPSHOT
     volumes:
-     - '/openlmis-equipment-ui'
+     - '/openlmis-requisition-batch-ui'
   image:
     build: .
     image: openlmismz/selv-v3-ui:latest
