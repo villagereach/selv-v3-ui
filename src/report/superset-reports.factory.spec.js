@@ -97,6 +97,10 @@ describe('reportService', function() {
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.productsExpirationDate', jasmine.any(Object)
             );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.stockoutForNonWarehouses', jasmine.any(Object)
+            );
         });
 
     });

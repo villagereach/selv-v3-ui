@@ -67,7 +67,10 @@
                     'STOCK_ON_HAND_WAREHOUSE'),
                 PRODUCTS_EXPIRATION_DATE: createReport('productsExpirationDate',
                     SUPERSET_URL + '/superset/dashboard/products-expiration-date/',
-                    'PRODUCTS_EXPIRATION_DATE')
+                    'PRODUCTS_EXPIRATION_DATE'),
+                STOCKOUT_FOR_NON_WAREHOUSES: createReport('stockoutForNonWarehouses',
+                    SUPERSET_URL + '/superset/dashboard/stockout-for-non-warehouses/',
+                    'STOCKOUT_FOR_NON_WAREHOUSES')
             };
         }
 

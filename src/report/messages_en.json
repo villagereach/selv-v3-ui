@@ -14,5 +14,6 @@
   "report.superset.stockOnHandWarehouse": "Stock on Hand for warehouses",
   "report.superset.stockOnHandNonWarehouse": "Stock on Hand for non-warehouses",
   "report.superset.productsExpirationDate": "Expiration Date",
-  "report.superset.reportingRateAndTimeliness": "Requisition Status"
+  "report.superset.reportingRateAndTimeliness": "Requisition Status",
+  "report.superset.stockoutForNonWarehouses": "Stockout For Non-Warehouses"
 }
