@@ -70,7 +70,10 @@
                     'PRODUCTS_EXPIRATION_DATE'),
                 STOCKOUT_FOR_NON_WAREHOUSES: createReport('stockoutForNonWarehouses',
                     SUPERSET_URL + '/superset/dashboard/stockout-for-non-warehouses/',
-                    'STOCKOUT_FOR_NON_WAREHOUSES')
+                    'STOCKOUT_FOR_NON_WAREHOUSES'),
+                QUARTERLY_REQUISITION_STATUS: createReport('quarterlyRequisitionStatus',
+                    SUPERSET_URL + '/superset/dashboard/quarterly-requisition-status/',
+                    'QUARTERLY_REQUISITION_STATUS')
             };
         }
 

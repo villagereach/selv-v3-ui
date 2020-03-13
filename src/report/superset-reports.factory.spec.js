@@ -101,6 +101,10 @@ describe('reportService', function() {
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.stockoutForNonWarehouses', jasmine.any(Object)
             );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.quarterlyRequisitionStatus', jasmine.any(Object)
+            );
         });
 
     });
