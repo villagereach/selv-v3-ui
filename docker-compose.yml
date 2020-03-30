@@ -20,6 +20,7 @@ services:
       - ui-layout
       - cce-ui
       - equipment-ui
+      - requisition-batch-ui
     depends_on:
       - auth-ui
       - fulfillment-ui
@@ -31,6 +32,7 @@ services:
       - ui-layout
       - cce-ui
       - equipment-ui
+      - requisition-batch-ui
   auth-ui:
     image: openlmis/auth-ui:6.2.2
     volumes:

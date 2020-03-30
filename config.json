@@ -9,7 +9,8 @@
     "/openlmis-fulfillment-ui",
     "/openlmis-stockmanagement-ui",
     "/openlmis-cce-ui",
-    "/openlmis-equipment-ui"
+    "/openlmis-equipment-ui",
+    "/openlmis-requisition-batch-ui"
   ],
   "REPORTING_SERVICES": "common",
   "applicationLoadingMessage": "Iniciando SELV-V3",
