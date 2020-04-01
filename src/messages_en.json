@@ -16,5 +16,25 @@
     "requisitionView.orderVolume": "Order Volume",
     "requisitionView.submitWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to submit it?",
     "requisitionView.authorizeWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to authorize it?",
-    "requisitionView.approveWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to approve it?"
+    "requisitionView.approveWithVolumeWarn.confirm": "The vaccines in this requisition require ${volumeExcess} liters more than the available cold chain volume at your facility. Are you sure you wish to approve it?",
+    "stockAddProductsModal.newNotExpirationDate": "Expiration Date",
+    "stockAddProductsModal.newLotCode": "Lot Code",
+    "orderableGroupService.addMissingLot": "Add lot",
+    "stockAdjustmentCreation.newNotExpirationDate": "Expiration Date",
+    "stockPhysicalInventoryDraft.addLotFailed": "Failed to add lot.",
+    "stockPhysicalInventoryDraft.deleteItem": "Are you sure you want to delete this row?",
+    "stockPhysicalInventoryDraft.yes": "Yes",
+    "stockEditLotModal.cancel": "Cancel",
+    "stockEditLotModal.save": "Save",
+    "stockEditLotModal.title": "Edit lot",
+    "stockEditLotModal.lotCode": "Lot code",
+    "stockEditLotModal.expirationDate": "Expiration date",
+    "stockEditLotModal.expirationDateInvalid": "Lot expiration date should be a future date.",
+    "stockEditLotModal.expirationDateInvalidForLotCode": "There exists another expiration date for this code.",
+    "stockEditLotModal.lotCodeInvalid": "This lot code already exists.",
+    "stockPhysicalInventoryDraft.saveDraft": "Warning: Saving will make all newly added lots unmodifiable, but removing physical inventory row will still be possible.",
+    "stockPhysicalInventoryDraft.alreadyExistingProducts": " The following lot codes are already assigned to existing products. Would you like to continue? ${lots}",
+    "stockPhysicalInventoryDraft.save": "Save",
+    "stockPhysicalInventoryDraft.lotCodeMustBeUnique": "The lot code has to be unique, please change the one(s) listed below:"
+
 }
