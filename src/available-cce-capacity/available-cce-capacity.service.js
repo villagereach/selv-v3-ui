@@ -29,10 +29,12 @@
         .service('availableCceCapacityService', availableCceCapacityService);
 
     availableCceCapacityService.$inject = [
-        '$q', 'CceVolumeResource', 'StockCardSummaryResource'
+        '$q', 'CceVolumeResource', 'StockCardSummaryResource', 'programService', 'OrderableResource'
     ];
 
-    function availableCceCapacityService($q, CceVolumeResource, StockCardSummaryResource) {
+    function availableCceCapacityService(
+        $q, CceVolumeResource, StockCardSummaryResource, programService, OrderableResource
+    ) {
 
         this.getFullCceVolume = getFullCceVolume;
         this.getCceVolumeInUse = getCceVolumeInUse;
@@ -63,42 +65,44 @@
          * @methodOf available-cce-capacity.availableCceCapacityService
          *
          * @description
-         * 
+         * Gets used volume based on stock cards and orderables that require refrigeration.
+         * Stock cards are retrieved for all programs.
          *
          * @param  {Object}  facilityId id of the facility requisition is created for
          * @return {Promise}            promise containing full CCE volume
          */
-        function getCceVolumeInUse(requisition) {
-            var cceOrderables = filterCceOrderablesFromRequisition(requisition),
-                cceOrderablesIds = cceOrderables
-                    .map(function(orderable) {
-                        return orderable.id;
+        function getCceVolumeInUse(facilityId) {
+            return programService.getAll().then(function(programs) {
+                return new OrderableResource().query()
+                    .then(function(orderablePage) {
+                        var cceOrderables = orderablePage.content.filter(function(orderable) {
+                                return isCceOrderable(orderable);
+                            }),
+                            cceOrderableIds = cceOrderables.map(function(orderable) {
+                                return orderable.id;
+                            }),
+                            stockCardsPromises = programs.map(function(program) {
+                                return new StockCardSummaryResource().query({
+                                    orderableId: cceOrderableIds,
+                                    facilityId: facilityId,
+                                    programId: program.id,
+                                    nonEmptyOnly: true
+                                });
+                            });
+
+                        return $q.all(stockCardsPromises).then(function(stockCardSummaryPages) {
+                            return calculateVolumeInUse(
+                                stockCardSummaryPages.flatMap(function(stockCardSummaryPage) {
+                                    return stockCardSummaryPage.content;
+                                }),
+                                cceOrderables.reduce(function(map, orderable) {
+                                    map[orderable.id] = orderable;
+                                    return map;
+                                }, {})
+                            );
+                        });
                     });
-
-            if (!cceOrderablesIds || !cceOrderablesIds.length) {
-                return $q.resolve(0);
-            }
-            return new StockCardSummaryResource().query({
-                orderableId: cceOrderablesIds,
-                facilityId: requisition.facility.id,
-                programId: requisition.program.id,
-                nonEmptyOnly: true
-            })
-                .then(function(response) {
-                    return calculateVolumeInUse(response, getIdentityMap(cceOrderables));
-                });
-        }
-
-        function filterCceOrderablesFromRequisition(requisition) {
-            return requisition.requisitionLineItems
-                .map(function(lineItem) {
-                    return lineItem.orderable;
-                })
-                .concat(requisition.availableFullSupplyProducts)
-                .concat(requisition.availableNonFullSupplyProducts)
-                .filter(function(orderable) {
-                    return isCceOrderable(orderable);
-                });
+            });
         }
 
         function isCceOrderable(orderable) {
@@ -108,23 +112,15 @@
                 orderable.maximumTemperature.value <= 8;
         }
 
-        function calculateVolumeInUse(summariesPage, orderablesMap) {
+        function calculateVolumeInUse(stockCardSummaries, orderablesMap) {
             var sum = 0;
-            summariesPage.content.forEach(function(summary) {
+            stockCardSummaries.forEach(function(summary) {
                 var orderable = orderablesMap[summary.orderable.id];
                 sum += orderable ?
-                    orderable.inBoxCubeDimension.value * summary.stockOnHand :
+                    orderable.inBoxCubeDimension.value * summary.stockOnHand / 1000 :
                     0;
             });
-            return sum / 1000;
-        }
-
-        function getIdentityMap(orderables) {
-            var map = {};
-            orderables.forEach(function(orderable) {
-                map[orderable.id] = orderable;
-            });
-            return map;
+            return sum;
         }
     }
 })();

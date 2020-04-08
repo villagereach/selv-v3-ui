@@ -92,7 +92,7 @@
 
             $q.all([
                 availableCceCapacityService.getFullCceVolume(indicator.requisition.facility.id),
-                availableCceCapacityService.getCceVolumeInUse(indicator.requisition)
+                availableCceCapacityService.getCceVolumeInUse(indicator.requisition.facility.id)
             ])
                 .then(calculateAndShowAvailableCceVolume)
                 .catch(function() {

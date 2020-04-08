@@ -73,7 +73,7 @@ describe('AvailableCceCapacityController', function() {
             this.indicator.$onInit();
 
             expect(this.availableCceCapacityService.getCceVolumeInUse)
-                .toHaveBeenCalledWith(this.indicator.requisition);
+                .toHaveBeenCalledWith(this.indicator.requisition.facility.id);
         });
 
         it('should calculate availableVolume', function() {
