@@ -103,7 +103,7 @@
         function calculateAndShowAvailableCceVolume(results) {
             var fullVolume = results[0],
                 volumeInUse = results[1];
-            indicator.availableVolume = fullVolume - volumeInUse;
+            indicator.availableVolume = Math.round(fullVolume - volumeInUse);
             indicator.requisition.$availableCceCapacity = indicator.availableVolume;
             indicator.ready = true;
         }
