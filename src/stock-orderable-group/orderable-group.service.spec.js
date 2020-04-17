@@ -146,6 +146,8 @@ describe('orderableGroupService', function() {
             });
 
             expect(lots[1]).toEqual(that.lot1);
+            expect(lots[1].expirationDate.toString())
+                .toEqual('Sun May 08 2022 00:00:00 GMT+0000 (Coordinated Universal Time)');
         });
 
         it('should add option to add missing lot if is allowed', function() {
@@ -161,6 +163,8 @@ describe('orderableGroupService', function() {
             });
 
             expect(lots[2]).toEqual(that.lot1);
+            expect(lots[2].expirationDate.toString())
+                .toEqual('Sun May 08 2022 00:00:00 GMT+0000 (Coordinated Universal Time)');
         });
 
         it('should not add option to add missing lot if is not allowed', function() {
@@ -172,6 +176,8 @@ describe('orderableGroupService', function() {
             });
 
             expect(lots[1]).toEqual(that.lot1);
+            expect(lots[1].expirationDate.toString())
+                .toEqual('Sun May 08 2022 00:00:00 GMT+0000 (Coordinated Universal Time)');
         });
 
         it('should add option to add missing lot if all items has lots', function() {
@@ -183,6 +189,8 @@ describe('orderableGroupService', function() {
             });
 
             expect(lots[1]).toEqual(that.lot1);
+            expect(lots[1].expirationDate.toString())
+                .toEqual('Sun May 08 2022 00:00:00 GMT+0000 (Coordinated Universal Time)');
         });
 
         it('should sort lots by filed expirationDate', function() {
