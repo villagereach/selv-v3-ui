@@ -283,12 +283,15 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name saveDraft
+         * @name saveDraftOrSubmit
          *
          * @description
-         * Save physical inventory draft.
+         * Inform about already existing lots and redirect to save physical inventory draft or submit it,
+         * depending on the parameter.
+         * 
+         * @param {boolean} submitDraft if true, redirect to submit method
          */
-        vm.saveDraft = function() {
+        vm.saveDraftOrSubmit = function(submitDraft) {
             var lotPromises = [];
             var existingLots = [];
 
@@ -318,10 +321,16 @@
                             confirmMessage,
                             'stockPhysicalInventoryDraft.yes'
                         ).then(function() {
-                            return confirmedSaveDraft();
+                            if (submitDraft) {
+                                return vm.submit();
+                            }
+                            return saveDraft();
                         });
                     } else {
-                        confirmedSaveDraft();
+                        if (submitDraft) {
+                            return vm.submit();
+                        }
+                        saveDraft();
                     }
                 });
         };
@@ -334,7 +343,7 @@
          * @description
          * Save physical inventory draft.
          */
-        function confirmedSaveDraft() {
+        function saveDraft() {
             confirmService.confirmDestroy(
                 'stockPhysicalInventoryDraft.saveDraft',
                 'stockPhysicalInventoryDraft.save'
@@ -408,31 +417,37 @@
                 $scope.$broadcast('openlmis-form-submit');
                 alertService.error('stockPhysicalInventoryDraft.submitInvalid');
             } else {
-                chooseDateModalService.show().then(function(resolvedData) {
-                    loadingModalService.open();
+                return confirmService.confirmDestroy(
+                    'stockPhysicalInventoryDraft.saveDraft',
+                    'stockPhysicalInventoryDraft.save'
+                ).then(function() {
+                    chooseDateModalService.show().then(function(resolvedData) {
+                        loadingModalService.open();
 
-                    draft.occurredDate = resolvedData.occurredDate;
-                    draft.signature = resolvedData.signature;
+                        draft.occurredDate = resolvedData.occurredDate;
+                        draft.signature = resolvedData.signature;
 
-                    // SELV3-142: Added lot-management feature
-                    return saveLots(draft, function() {
-                        physicalInventoryService.submitPhysicalInventory(draft).then(function() {
-                            notificationService.success('stockPhysicalInventoryDraft.submitted');
-                            confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
-                                'stockPhysicalInventoryDraft.printModal.yes',
-                                'stockPhysicalInventoryDraft.printModal.no')
-                                .then(function() {
-                                    $window.open(accessTokenFactory.addAccessToken(getPrintUrl(draft.id)), '_blank');
-                                })
-                                .finally(function() {
-                                    $state.go('openlmis.stockmanagement.stockCardSummaries', {
-                                        program: program.id,
-                                        facility: facility.id
+                        // SELV3-142: Added lot-management feature
+                        return saveLots(draft, function() {
+                            physicalInventoryService.submitPhysicalInventory(draft).then(function() {
+                                notificationService.success('stockPhysicalInventoryDraft.submitted');
+                                confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
+                                    'stockPhysicalInventoryDraft.printModal.yes',
+                                    'stockPhysicalInventoryDraft.printModal.no')
+                                    .then(function() {
+                                        $window.open(accessTokenFactory
+                                            .addAccessToken(getPrintUrl(draft.id)), '_blank');
+                                    })
+                                    .finally(function() {
+                                        $state.go('openlmis.stockmanagement.stockCardSummaries', {
+                                            program: program.id,
+                                            facility: facility.id
+                                        });
                                     });
-                                });
-                        }, function() {
-                            loadingModalService.close();
-                            alertService.error('stockPhysicalInventoryDraft.submitFailed');
+                            }, function() {
+                                loadingModalService.close();
+                                alertService.error('stockPhysicalInventoryDraft.submitFailed');
+                            });
                         });
                     });
                     // SELV3-142: ends here
@@ -500,7 +515,8 @@
                     }
                     responses.forEach(function(lot) {
                         draft.lineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
+                                && lineItem.lot.tradeItemId === lot.tradeItemId) {
                                 lineItem.lot = lot;
                             }
                         });

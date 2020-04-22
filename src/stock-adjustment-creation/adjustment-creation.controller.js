@@ -543,7 +543,8 @@
                     }
                     responses.forEach(function(lot) {
                         addedLineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
+                                && lineItem.lot.tradeItemId === lot.tradeItemId) {
                                 lineItem.lot = lot;
                             }
                         });

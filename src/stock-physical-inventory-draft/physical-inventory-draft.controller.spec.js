@@ -248,7 +248,7 @@ describe('PhysicalInventoryDraftController', function() {
 
             draftFactory.saveDraft.andReturn($q.resolve());
 
-            vm.saveDraft();
+            vm.saveDraftOrSubmit(false);
             $rootScope.$apply();
 
             expect(confirmService.confirmDestroy).toHaveBeenCalledWith(
@@ -264,7 +264,7 @@ describe('PhysicalInventoryDraftController', function() {
 
             draftFactory.saveDraft.andReturn($q.resolve());
 
-            vm.saveDraft();
+            vm.saveDraftOrSubmit(false);
             $rootScope.$apply();
 
             expect(this.LotResource.prototype.create).not.toHaveBeenCalled();
@@ -288,7 +288,7 @@ describe('PhysicalInventoryDraftController', function() {
             });
             draftFactory.saveDraft.andReturn($q.resolve());
 
-            vm.saveDraft();
+            vm.saveDraftOrSubmit(false);
             $rootScope.$apply();
 
             expect(this.LotResource.prototype.create.calls.length).toBe(2);
@@ -311,7 +311,7 @@ describe('PhysicalInventoryDraftController', function() {
 
             draftFactory.saveDraft.andReturn($q.resolve());
 
-            vm.saveDraft();
+            vm.saveDraftOrSubmit(false);
             $rootScope.$apply();
 
             expect(this.LotResource.prototype.query.calls.length).toBe(2);
@@ -324,13 +324,12 @@ describe('PhysicalInventoryDraftController', function() {
 
             draftFactory.saveDraft.andReturn($q.resolve());
 
-            vm.saveDraft();
+            vm.saveDraftOrSubmit(false);
             $rootScope.$apply();
 
             expect(draftFactory.saveDraft).toHaveBeenCalledWith(draft);
         });
     });
-    // SELV3-142: ends here
 
     it('should highlight empty quantities before submit', function() {
         vm.submit();
@@ -355,9 +354,11 @@ describe('PhysicalInventoryDraftController', function() {
         }];
         var deferred = $q.defer();
         deferred.resolve();
+        confirmService.confirmDestroy.andReturn($q.resolve());
         chooseDateModalService.show.andReturn(deferred.promise);
 
-        vm.submit();
+        vm.saveDraftOrSubmit(true);
+        $rootScope.$apply();
 
         expect(chooseDateModalService.show).toHaveBeenCalled();
     });
@@ -372,6 +373,7 @@ describe('PhysicalInventoryDraftController', function() {
                 }
             }];
             spyOn($window, 'open').andCallThrough();
+            confirmService.confirmDestroy.andReturn($q.resolve());
             chooseDateModalService.show.andReturn($q.when({}));
         });
 
@@ -382,7 +384,7 @@ describe('PhysicalInventoryDraftController', function() {
             accessTokenFactory.addAccessToken.andReturn('url');
 
             draft.id = 1;
-            vm.submit();
+            vm.saveDraftOrSubmit(true);
             $rootScope.$apply();
 
             expect($window.open).toHaveBeenCalledWith('url', '_blank');
@@ -403,7 +405,7 @@ describe('PhysicalInventoryDraftController', function() {
             accessTokenFactory.addAccessToken.andReturn('url');
 
             draft.id = 1;
-            vm.submit();
+            vm.saveDraftOrSubmit(true);
             $rootScope.$apply();
 
             expect($window.open).not.toHaveBeenCalled();
@@ -418,7 +420,7 @@ describe('PhysicalInventoryDraftController', function() {
         it('and service call failed should not open report and not change state', function() {
             physicalInventoryService.submitPhysicalInventory.andReturn($q.reject());
 
-            vm.submit();
+            vm.saveDraftOrSubmit(true);
             $rootScope.$apply();
 
             expect($window.open).not.toHaveBeenCalled();
@@ -426,7 +428,6 @@ describe('PhysicalInventoryDraftController', function() {
             expect(state.go).not.toHaveBeenCalled();
         });
 
-        // SELV3-142: Added lot-management feature
         it('should save lots if any missing lots were added', function() {
             physicalInventoryService.submitPhysicalInventory
                 .andReturn($q.when());
@@ -445,7 +446,7 @@ describe('PhysicalInventoryDraftController', function() {
                 return $q.resolve(response);
             });
 
-            vm.submit();
+            vm.saveDraftOrSubmit(true);
             $rootScope.$apply();
 
             expect(this.LotResource.prototype.create.calls.length).toBe(2);
@@ -459,7 +460,7 @@ describe('PhysicalInventoryDraftController', function() {
             accessTokenFactory.addAccessToken.andReturn('url');
             spyOn(this.LotResource.prototype, 'create');
 
-            vm.submit();
+            vm.saveDraftOrSubmit(true);
             $rootScope.$apply();
 
             expect(this.LotResource.prototype.create).not.toHaveBeenCalled();
