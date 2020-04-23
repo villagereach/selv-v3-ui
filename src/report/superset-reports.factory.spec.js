@@ -59,19 +59,7 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockouts', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.orders', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.administrative', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.reportedAndOrderedProducts', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(

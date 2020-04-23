@@ -1,5 +1,4 @@
 {
-  "report.superset.reportedAndOrderedProducts": "Reported and Ordered Products",
   "report.superset.orders": "Orders",
   "report.superset.stockOnHandPerInstitution": "Stock on Hand per Institution",
   "report.superset.oAuthLogin.header": "Allow Superset to get access to OpenLMIS",
