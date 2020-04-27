@@ -35,6 +35,6 @@
     "stockPhysicalInventoryDraft.saveDraft": "Warning: Saving will make all newly added lots unmodifiable, but removing physical inventory row will still be possible.",
     "stockPhysicalInventoryDraft.alreadyExistingProducts": " The following lot codes are already assigned to existing products. Would you like to continue? ${lots}",
     "stockPhysicalInventoryDraft.save": "Save",
-    "stockPhysicalInventoryDraft.lotCodeMustBeUnique": "The lot code has to be unique, please change the one(s) listed below:"
-
+    "stockPhysicalInventoryDraft.lotCodeMustBeUnique": "The lot code has to be unique, please change the one(s) listed below:",
+    "stockPhysicalInventoryDraft.remove": "Remove"
 }

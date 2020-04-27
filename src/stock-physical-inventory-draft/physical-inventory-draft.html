@@ -100,7 +100,7 @@
                 <!-- SELV3-142: Added lot-management feature -->
                 <td>
                     <button type="button" class="danger" ng-if="!lineItem.stockOnHand || lineItem.stockOnHand === 0"
-                    ng-click="vm.removeLineItem(lineItem)">Remove</button>
+                    ng-click="vm.removeLineItem(lineItem)">{{'stockPhysicalInventoryDraft.remove' | message}}</button>
                 </td>
                 <!-- SELV3-142: ends here -->
             </tr>
