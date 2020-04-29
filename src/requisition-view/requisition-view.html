@@ -10,20 +10,22 @@
 <status-messages requisition="vm.requisition"></status-messages>
 <nav>
     <ul>
+        <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
         <li ui-sref-active="active" role="presentation"
             ng-class="{'is-invalid': !vm.isFullSupplyTabValid()}"
             popover="{{vm.invalidFullSupply}}">
-            <a ui-sref="openlmis.requisitions.requisition.fullSupply">
+            <a ui-sref="openlmis.requisitions.requisition.fullSupply({fullSupplyListSize: 25})">
                 {{'requisitionView.fullSupplyProducts' | message}}
             </a>
         </li>
         <li ui-sref-active="active" ng-if="vm.program.showNonFullSupplyTab"
             role="presentation" ng-class="{'is-invalid': !vm.isNonFullSupplyTabValid()}"
             popover="{{vm.invalidNonFullSupply}}">
-            <a ui-sref="openlmis.requisitions.requisition.nonFullSupply">
+            <a ui-sref="openlmis.requisitions.requisition.nonFullSupply({nonFullSupplyListSize: 25})">
                 {{'requisitionView.nonFullSupplyProducts' | message}}
             </a>
         </li>
+        <!-- SELV3-126: ends here -->
     </ul>
 </nav>
 <div ui-view=""></div>

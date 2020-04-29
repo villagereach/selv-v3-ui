@@ -228,11 +228,14 @@
          *
          * @param {String} requisitionId Requisition UUID
          */
+        <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
         function openRnr(requisitionId) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisitionId
+                rnr: requisitionId,
+                fullSupplyListSize: 25
             });
         }
+        <!-- SELV3-126: ends here -->
 
         /**
          * @ngdoc method
