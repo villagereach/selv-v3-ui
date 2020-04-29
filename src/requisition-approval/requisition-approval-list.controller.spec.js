@@ -185,9 +185,12 @@ describe('RequisitionApprovalListController', function() {
         it('should go to fullSupply state', function() {
             vm.openRnr(requisitions[0].id);
 
+            <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisitions[0].id
+                rnr: requisitions[0].id,
+                fullSupplyListSize: 25
             });
+            <!-- SELV3-126: ends here -->
         });
     });
 

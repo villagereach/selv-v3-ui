@@ -84,9 +84,12 @@ describe('RequisitionInitiateController', function() {
 
         this.vm.goToRequisition(1);
 
+        <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
         expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-            rnr: 1
+            rnr: 1,
+            fullSupplyListSize: 25
         });
+        <!-- SELV3-126: ends here -->
     });
 
     it('should change page to requisition full supply for newly initialized requisition in selected period',
@@ -100,10 +103,13 @@ describe('RequisitionInitiateController', function() {
             this.vm.initRnr(this.periods[0]);
             this.$rootScope.$apply();
 
+            <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
                 rnr: this.requisition.id,
-                requisition: this.requisition
+                requisition: this.requisition,
+                fullSupplyListSize: 25
             });
+            <!-- SELV3-126: ends here -->
 
             expect(this.permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
                 right: this.REQUISITION_RIGHTS.REQUISITION_CREATE,
