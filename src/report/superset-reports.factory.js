@@ -64,6 +64,10 @@
                     'STOCKOUT_FOR_NON_WAREHOUSES'),
                 QUARTERLY_REQUISITION_STATUS: createReport('quarterlyRequisitionStatus',
                     SUPERSET_URL + '/superset/dashboard/quarterly-requisition-status/',
+                    'QUARTERLY_REQUISITION_STATUS'),
+                PROOF_OF_CONCEPT: createReport('proofOfConcept',
+                    'https://app.powerbi.com/view?r=eyJrIjoiNzE3YjQxY2MtOTg0My00MGJjLTk1' +
+                    'ODEtYWFmZTgzOTg5Y2M5IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                     'QUARTERLY_REQUISITION_STATUS')
             };
         }

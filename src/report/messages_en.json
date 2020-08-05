@@ -15,5 +15,6 @@
   "report.superset.productsExpirationDate": "Expiration Date",
   "report.superset.reportingRateAndTimeliness": "Requisition Status",
   "report.superset.stockoutForNonWarehouses": "Stockout For Non-Warehouses",
-  "report.superset.quarterlyRequisitionStatus": "Quarterly Requisition Status"
+  "report.superset.quarterlyRequisitionStatus": "Quarterly Requisition Status",
+  "report.superset.proofOfConcept": "Proof of Concept"
 }
