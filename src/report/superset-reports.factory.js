@@ -123,9 +123,10 @@
         }
 
         function createReport(code, url, right) {
+
             return {
                 code: code,
-                url: url + '?standalone=true',
+                url: url + (code === 'proofOfConcept' ? '' : '?standalone=true'),
                 right: right
             };
         }
