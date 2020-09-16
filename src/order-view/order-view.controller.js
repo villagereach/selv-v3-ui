@@ -240,15 +240,9 @@
          */
         function printOrder(order) {
             loadingModalService.open();
-            proofOfDeliveryManageService.getByOrderId(order.id)
-                .then(function(pod) {
-                    var popup = $window.open('', '_blank');
-                    popup.location.href = accessTokenFactory.addAccessToken(getPrintUrl(pod.id));
-                })
-                .catch(function() {
-                    notificationService.error('proofOfDeliveryManage.noOrderFound');
-                })
-                .finally(loadingModalService.close);
+            var popup = $window.open('', '_blank');
+            popup.location.href = accessTokenFactory.addAccessToken(getPrintUrl(order.id));
+            loadingModalService.close();
         }
 
         function getPrintUrl(orderId) {
