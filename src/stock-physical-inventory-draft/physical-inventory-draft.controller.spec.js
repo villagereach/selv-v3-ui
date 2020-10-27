@@ -389,7 +389,8 @@ describe('PhysicalInventoryDraftController', function() {
 
             expect($window.open).toHaveBeenCalledWith('url', '_blank');
             expect(accessTokenFactory.addAccessToken)
-                .toHaveBeenCalledWith('http://some.url/api/physicalInventories/1?format=pdf');
+                .toHaveBeenCalledWith('http://some.url/api/reports/templates/common/' +
+                'a32c5b59-a102-46c4-9ecc-2b56d985a12c/pdf?orderId=1');
 
             expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',
                 {

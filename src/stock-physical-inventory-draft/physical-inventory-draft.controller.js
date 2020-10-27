@@ -630,7 +630,8 @@
          * @return {String} the prepared URL
          */
         function getPrintUrl(id) {
-            return stockmanagementUrlFactory('/api/physicalInventories/' + id + '?format=pdf');
+            return stockmanagementUrlFactory('/api/reports/templates/common/' +
+                '968b4abc-ea64-4285-9f46-64544d8af37e/pdf?physInventoryId=' + id);
         }
 
         // SELV3-142: Added lot-management feature
