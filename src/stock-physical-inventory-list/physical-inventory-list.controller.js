@@ -99,7 +99,7 @@
 
         // SELV3-247 - Added posibility to view and print history Physical inventory
         // START
-        
+
         /**
      * @ngdoc method
      * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController

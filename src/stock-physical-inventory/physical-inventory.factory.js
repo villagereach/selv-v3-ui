@@ -128,7 +128,7 @@
 
         // SELV3-247 - Added posibility to view and print history Physical inventory
         // END
-        
+
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory.physicalInventoryFactory
