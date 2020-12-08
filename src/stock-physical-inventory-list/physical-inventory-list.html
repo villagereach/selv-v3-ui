@@ -1,0 +1,42 @@
+<h2 ng-show="vm.facility">{{'stockPhysicalInventory.title' | message: {'facility': vm.facility.name} }}</h2>
+
+<!-- SELV3-247 - Added posibility to view and print history Physical inventory -->
+<!-- START -->
+<section class="openlmis-table-container">
+  <div class="openlmis-table-container" ng-repeat="draft in vm.drafts">
+    <table>
+      <caption ng-if="!vm.drafts.length">{{'stockPhysicalInventory.noPhysicalInventoryFound' |
+        message}}
+      </caption>
+      <thead>
+        <tr>
+          <th>{{'stockPhysicalInventory.status' | message}}</th>
+          <th>{{'stockPhysicalInventory.occuredDate' | message}}</th>
+          <th>{{'stockPhysicalInventory.signature' | message}}</th>
+          <th>{{'stockPhysicalInventory.program' | message}}</th>
+          <th class="col-sticky sticky-right">{{'stockPhysicalInventory.actions' | message}}</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key,value) in draft | orderBy: '-occurredDate'">
+            <td>{{vm.getDraftStatus(value.isStarter, value.isDraft)}}</td>
+            <td>{{value.occurredDate}}</td>
+            <td>{{value.signature}}</td>
+            <td>{{vm.getProgramName(value.programId)}}</td>
+            <td>
+              <input ng-if="value.occurredDate"
+                    id="proceedButton" type="button" ng-click="vm.printHistoryPhysicalInventory(value)"
+                    value="{{('stockPhysicalInventory.print') | message}}"
+                    class="primary"/>
+              <input ng-if="!value.occurredDate"
+                    id="proceedButton" type="button" ng-click="vm.editDraft(value)"
+                    value="{{(value.isStarter ? 'stockPhysicalInventory.start' : 'stockPhysicalInventory.continue') | message}}"
+                    class="primary"/>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+<!-- SELV3-247 - Added posibility to view and print history Physical inventory -->
+<!-- END -->
+  </div>
+</section>
