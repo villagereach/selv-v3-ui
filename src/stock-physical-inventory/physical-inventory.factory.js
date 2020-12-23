@@ -110,14 +110,13 @@
                             }
                         );
                     });
-                    // no saved draft
-                    if (draft.length >= 1 && draft[draft.length - 1].signature && offlineService.isOffline()) {
+                    if (draft.length >= 1 && draft[draft.length - 1].occurredDate && offlineService.isOffline()) {
                         return;
                     }
                     if (draft.length >= 1 && ifOfflineDraft(draft[draft.length - 1])) {
                         tempDraft.id = draft.pop().id;
                     }
-                    if (draft.length === 0 || draft[draft.length - 1].signature) {
+                    if (draft.length === 0 || draft[draft.length - 1].occurredDate) {
                         tempDraft.isStarter = true;
                         listDrafts.push(tempDraft);
                     }
