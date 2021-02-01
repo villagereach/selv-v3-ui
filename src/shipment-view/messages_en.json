@@ -3,5 +3,7 @@
     "shipmentView.orderQuantity": "Order Quantity",
     "shipmentView.fillQuantityInPack": "Fill Quantity (in Packs)",
     "shipmentView.availableSoh": "Available SOH",
-    "shipmentView.remainingSoh": "Remaining SOH"
+    "shipmentView.remainingSoh": "Remaining SOH",
+    "shipmentView.packs": "Packs",
+    "shipmentView.doses": "Doses"
 }
