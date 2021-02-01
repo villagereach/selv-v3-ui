@@ -2,6 +2,7 @@
     "shipmentView.vvmStatus": "VVM Status",
     "shipmentView.orderQuantity": "Order Quantity",
     "shipmentView.fillQuantityInPack": "Fill Quantity (in Packs)",
+    "shipmentView.fillQuantityInDoses": "Fill Quantity (in Doses)",
     "shipmentView.availableSoh": "Available SOH",
     "shipmentView.remainingSoh": "Remaining SOH",
     "shipmentView.packs": "Packs",
