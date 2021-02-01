@@ -1,4 +1,5 @@
 {
     "shipmentView.vvmStatus": "VVM Status",
-    "shipmentView.orderQuantity": "Order Quantity"
+    "shipmentView.orderQuantity": "Order Quantity",
+    "shipmentView.fillQuantityInPack": "Fill Quantity (in Packs)"
 }
