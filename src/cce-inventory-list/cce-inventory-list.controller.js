@@ -251,9 +251,9 @@
 
         function deleteInventory(inventoryItem) {
             confirmService.confirm(
-                'cceEditInventoryItem.closeAddInventoryItemModal',
-                'cceEditInventoryItem.yes',
-                'cceEditInventoryItem.no'
+                'cceInventoryList.deleteInventoryConfirmation',
+                'cceInventoryList.yes',
+                'cceInventoryList.no'
             )
                 .then(function() {
                     loadingModalService.open();
