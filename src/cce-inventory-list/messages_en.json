@@ -1,0 +1,7 @@
+{
+    "cceInventoryList.delete":"Delete",
+    "cceInventoryList.deleteInventoryConfirmation": "Are you sure you want to delete the inventory?",
+    "cceInventoryList.deleteInventory": "Delete Inventory",
+    "cceInventoryList.inventoryHasBeenDeleted": "Inventory has been deleted",
+    "cceInventoryList.failedToDeleteInventory": "Failed to delete inventory"
+}
