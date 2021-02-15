@@ -26,7 +26,7 @@
         </li>
     </ul>
 </aside>
-<form class="openlmis-table-container" id="shipmentForm" ng-submit="vm.shipment.confirm()">
+<form class="openlmis-table-container" id="shipmentForm" ng-submit="vm.confirmShipment()">
     <quantity-unit-toggle class="is-primary" quantity-unit="vm.quantityUnit"></quantity-unit-toggle>
     <table>
         <thead>
@@ -48,13 +48,13 @@
                 <td>{{tableLineItem.productName}}</td>
                 <td ng-if="!tableLineItem.isLot"></td>
                 <td ng-if="tableLineItem.isLot">{{tableLineItem.lot | lotCode}}</td>
-                <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>
+                <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>F
                 <td>{{tableLineItem.lot.expirationDate | openlmisDate}}</td>
                 <td>{{tableLineItem.getOrderQuantity(vm.showInDoses())}}</td>
                 <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity()}}</td>
                 <td ng-if="tableLineItem.shipmentLineItem">
                     <input ng-show="vm.shipment.isEditable()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
-                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped"
+                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
                         openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"/>
                     <div ng-show="!vm.shipment.isEditable()">{{tableLineItem.shipmentLineItem.quantityShipped}}</div>
                 </td>

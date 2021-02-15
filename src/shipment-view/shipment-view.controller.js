@@ -31,12 +31,13 @@
     ShipmentViewController.$inject = [
         'shipment', 'loadingModalService', '$state', '$window', 'fulfillmentUrlFactory',
         'messageService', 'accessTokenFactory', 'updatedOrder', 'QUANTITY_UNIT', 'tableLineItems',
-        'VVM_STATUS'
+        'VVM_STATUS', 'confirmService'
     ];
 
     function ShipmentViewController(shipment, loadingModalService, $state, $window,
                                     fulfillmentUrlFactory, messageService, accessTokenFactory,
-                                    updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS) {
+                                    updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS,
+                                    confirmService) {
 
         var vm = this;
 
@@ -46,6 +47,7 @@
         vm.getMessageInQuantityUnitKey = getMessageInQuantityUnitKey;
         vm.getVvmStatusLabel = VVM_STATUS.$getDisplayName;
         vm.printShipment = printShipment;
+        vm.confirmShipment = confirmShipment;
 
         /**
          * @ngdoc property
@@ -169,5 +171,45 @@
                 '/api/reports/templates/common/583ccc35-88b7-48a8-9193-6c4857d3ff60/pdf?shipmentDraftId=' + shipmentId
             );
         }
+
+        /**
+         * @ngdoc method
+         * @methodOf shipment-view.controller:ShipmentViewController
+         * @name printShipment
+         * 
+         * @description
+         * Confirm the shipment.
+         * 
+         * @return {Promise} the promise resolved when confirmation is successful, rejected otherwise
+         */
+        function confirmShipment() {
+            var sum = checkIfQuantityShipedIsFilled();
+
+            if (sum === 0) {
+
+                confirmService.confirm(
+                    'shipmentView.saveShipmentConfirmation',
+                    'shipmentView.yes',
+                    'shipmentView.no'
+                )
+                    .then(function() {
+                        shipment.confirm();
+                    });
+            } else {
+                shipment.confirm();
+            }
+        }
+
+        function checkIfQuantityShipedIsFilled() {
+            var array = shipment.lineItems;
+            var sum = 0;
+
+            for (var i = 0;i < array.length;i++) {
+                sum += array[i].quantityShipped;
+            }
+
+            return sum;
+        }
+
     }
 })();
