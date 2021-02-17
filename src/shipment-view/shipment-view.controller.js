@@ -187,7 +187,7 @@
 
             if (sum === 0) {
 
-                confirmService.confirm(
+                confirmService.confirmDestroy(
                     'shipmentView.saveShipmentConfirmation',
                     'shipmentView.yes',
                     'shipmentView.no'
