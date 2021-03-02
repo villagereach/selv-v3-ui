@@ -28,49 +28,14 @@
         .module('report')
         .factory('supersetReports', supersetReports);
 
-    supersetReports.$inject = ['SUPERSET_URL'];
-
-    function supersetReports(SUPERSET_URL) {
+    function supersetReports() {
         var reports = {};
-
-        if (SUPERSET_URL.substr(0, 2) !== '${') {
-            reports = {
-                REPORTING_RATE_AND_TIMELINESS: createReport('reportingRateAndTimeliness',
-                    SUPERSET_URL + '/superset/dashboard/taxa-de-submissao-de-relatorios/',
-                    'REPORTING_RATE_AND_TIMELINESS_REPORT_VIEW'),
-                ORDERS: createReport('orders',
-                    SUPERSET_URL + '/superset/dashboard/encomendas/',
-                    'ORDERS_REPORT_VIEW'),
-                STOCK_ON_HAND_PER_INSTITUTION: createReport('stockOnHandPerInstitution',
-                    SUPERSET_URL + '/superset/dashboard/stock-disponível-por-instituicao/',
-                    'STOCK_ON_HAND_PER_INSTITUTION_REPORT_VIEW'),
-                STOCKOUTS_IN_US: createReport('stockoutsInUS',
-                    SUPERSET_URL + '/superset/dashboard/rupturas-de-stock-nas-us/',
-                    'STOCKOUTS_IN_US_REPORT_VIEW'),
-                RAPTURAS_DE_STOCK_POR_PRODUTO_REPORT_VIEW: createReport('rupturasDeStockPorProduto',
-                    SUPERSET_URL + '/superset/dashboard/rupturas-de-stock-por-produto/',
-                    'RAPTURAS_DE_STOCK_POR_PRODUTO_REPORT_VIEW'),
-                STOCK_ON_HAND_NON_WAREHOUSE: createReport('stockOnHandNonWarehouse',
-                    SUPERSET_URL + '/superset/dashboard/stock-on-hand-non-warehouse/',
-                    'STOCK_ON_HAND_NON_WAREHOUSE'),
-                STOCK_ON_HAND_WAREHOUSE: createReport('stockOnHandWarehouse',
-                    SUPERSET_URL + '/superset/dashboard/stock-on-hand-warehouse/',
-                    'STOCK_ON_HAND_WAREHOUSE'),
-                PRODUCTS_EXPIRATION_DATE: createReport('productsExpirationDate',
-                    SUPERSET_URL + '/superset/dashboard/products-expiration-date/',
-                    'PRODUCTS_EXPIRATION_DATE'),
-                STOCKOUT_FOR_NON_WAREHOUSES: createReport('stockoutForNonWarehouses',
-                    SUPERSET_URL + '/superset/dashboard/stockout-for-non-warehouses/',
-                    'STOCKOUT_FOR_NON_WAREHOUSES'),
-                QUARTERLY_REQUISITION_STATUS: createReport('quarterlyRequisitionStatus',
-                    SUPERSET_URL + '/superset/dashboard/quarterly-requisition-status/',
-                    'QUARTERLY_REQUISITION_STATUS'),
-                PROOF_OF_CONCEPT: createReport('proofOfConcept',
-                    'https://app.powerbi.com/view?r=eyJrIjoiZjY1MWI0ZmYtODg4Yi00YTRkLTllYjItMzZ' +
-                    'lZTAxMGNmM2UyIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                    'QUARTERLY_REQUISITION_STATUS')
-            };
-        }
+        reports = {
+            COVID: createReport('covid',
+                'https://app.powerbi.com/view?r=eyJrIjoiZTEyZmRlZjEtMWExNi00MzM1LTgwZjYtOWRiY' +
+                'WMxMjBmNzlkIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                'QUARTERLY_REQUISITION_STATUS')
+        };
 
         return {
             getReports: getReports,
@@ -112,8 +77,7 @@
                     },
                     reportCode: function() {
                         return report.code;
-                    },
-                    authorizationInSuperset: authorizeInSuperset
+                    }
                 }
             });
         }
@@ -126,30 +90,11 @@
 
             return {
                 code: code,
-                url: url + (code === 'proofOfConcept' ? '' : '?standalone=true'),
+                url: url,
                 right: right
             };
         }
 
-        function authorizeInSuperset(loadingModalService, openlmisModalService, $q, $state, MODAL_CANCELLED) {
-            loadingModalService.close();
-            var dialog = openlmisModalService.createDialog({
-                backdrop: 'static',
-                keyboard: false,
-                controller: 'SupersetOAuthLoginController',
-                controllerAs: 'vm',
-                templateUrl: 'report/superset-oauth-login.html',
-                show: true
-            });
-            return dialog.promise
-                .catch(function(reason) {
-                    if (reason === MODAL_CANCELLED) {
-                        $state.go('openlmis.reports.list');
-                        return $q.resolve();
-                    }
-                    return $q.reject();
-                });
-        }
     }
 
 })();

@@ -55,85 +55,11 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.reportingRateAndTimeliness', jasmine.any(Object)
+                'openlmis.reports.list.superset.covid', jasmine.any(Object)
             );
 
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.orders', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockOnHandPerInstitution', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockoutsInUS', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.rupturasDeStockPorProduto', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockOnHandWarehouse', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockOnHandNonWarehouse', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.productsExpirationDate', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockoutForNonWarehouses', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.quarterlyRequisitionStatus', jasmine.any(Object)
-            );
         });
 
     });
 
-    describe('authorizeInSuperset', function() {
-        var testingSupersetReportState = 'openlmis.reports.list.superset.reportingRateAndTimeliness';
-        beforeEach(function() {
-            this.modalDefer = this.$q.defer();
-            var modal = {
-                promise: this.modalDefer.promise
-            };
-            spyOn(this.openlmisModalService, 'createDialog').andReturn(modal);
-
-            this.supersetReports.addReporingPages(this.$stateProvider);
-        });
-
-        it('should create the Superset OAuth Login modal', function() {
-            this.openlmisModalService.createDialog.andCallFake(function(options) {
-                expect(options.controller).toEqual('SupersetOAuthLoginController');
-            });
-
-            this.goToState(testingSupersetReportState);
-
-            expect(this.openlmisModalService.createDialog).toHaveBeenCalled();
-        });
-
-        it('should not go to a Superset report if an error occurs', function() {
-            var previousState = this.$state.current.name;
-
-            this.modalDefer.reject();
-            this.goToState(testingSupersetReportState);
-
-            expect(this.$state.current.name).toEqual(previousState);
-            expect(this.$state.current.name).not.toEqual(testingSupersetReportState);
-        });
-
-        it('should reject the state change if modal is canceled', function() {
-            this.modalDefer.reject(this.MODAL_CANCELLED);
-            this.goToState(testingSupersetReportState);
-
-            expect(this.$state.go).toHaveBeenCalledWith('openlmis.reports.list');
-        });
-    });
 });
