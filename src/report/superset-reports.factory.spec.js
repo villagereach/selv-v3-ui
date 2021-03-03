@@ -58,6 +58,10 @@ describe('reportService', function() {
                 'openlmis.reports.list.superset.covid', jasmine.any(Object)
             );
 
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.aviamentos', jasmine.any(Object)
+            );
+
         });
 
     });

@@ -31,10 +31,15 @@
     function supersetReports() {
         var reports = {};
         reports = {
+
+            AVIAMENTOS: createReport('aviamentos',
+                'https://app.powerbi.com/view?r=eyJrIjoiYmQ0NDYwNDQtODBlYy00ZTAzLTg4ZTgtNDU2M' +
+                'TM4NTVkYjlmIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                ''),
             COVID: createReport('covid',
                 'https://app.powerbi.com/view?r=eyJrIjoiZTEyZmRlZjEtMWExNi00MzM1LTgwZjYtOWRiY' +
                 'WMxMjBmNzlkIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                'QUARTERLY_REQUISITION_STATUS')
+                '')
         };
 
         return {
