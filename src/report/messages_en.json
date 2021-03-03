@@ -18,7 +18,6 @@
   "report.superset.quarterlyRequisitionStatus": "Quarterly Requisition Status",
   "report.superset.covid": "COVID - Dashboard",
   "report.superset.aviamentos": "Aviamentos (4PL)",
-  "report.superset.stock": "Stock: Disponibilidade, Movimentos, Perdas e Ajustes"
-
-  
+  "report.superset.stock": "Stock: Disponibilidade, Movimentos, Perdas e Ajustes",
+  "report.superset.visaoGeral": "Visao Geral: Reporte, Desempenho e Qualidade de Dados"
 }
