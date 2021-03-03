@@ -47,6 +47,10 @@
             VISAO_GERAL: createReport('visaoGeral',
                 'https://app.powerbi.com/view?r=eyJrIjoiYjY0MzA5ZjUtMDllZC00MTBmLTk5NTUtYTAxMjE0N' +
                 'GRlZmFiIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                ''),
+            QUALIDADE_DADOS: createReport('qualidadeDados',
+                'https://app.powerbi.com/view?r=eyJrIjoiNTIwOTAxNWMtYjI0NS00YjhkLTk2NDktZDY5ZDljM' +
+                'DNmM2U0IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 '')
         };
 
