@@ -36,6 +36,10 @@
                 'https://app.powerbi.com/view?r=eyJrIjoiYmQ0NDYwNDQtODBlYy00ZTAzLTg4ZTgtNDU2M' +
                 'TM4NTVkYjlmIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 ''),
+            STOCK: createReport('stock',
+                'https://app.powerbi.com/view?r=eyJrIjoiYWFjNDNmZmQtZjhmZi00Nzg0LThmMTEtNWRmMjM' +
+                '5MjNiMGFkIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                ''),
             COVID: createReport('covid',
                 'https://app.powerbi.com/view?r=eyJrIjoiZTEyZmRlZjEtMWExNi00MzM1LTgwZjYtOWRiY' +
                 'WMxMjBmNzlkIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',

@@ -17,5 +17,8 @@
   "report.superset.stockoutForNonWarehouses": "Stockout For Non-Warehouses",
   "report.superset.quarterlyRequisitionStatus": "Quarterly Requisition Status",
   "report.superset.covid": "COVID - Dashboard",
-  "report.superset.aviamentos": "Aviamentos (4PL)"
+  "report.superset.aviamentos": "Aviamentos (4PL)",
+  "report.superset.stock": "Stock: Disponibilidade, Movimentos, Perdas e Ajustes"
+
+  
 }
