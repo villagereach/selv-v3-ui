@@ -68,7 +68,6 @@
                         ui-sref=".item.details({inventoryItemId: item.id, inventoryItem: item})"/>
                     <input type="button" class="danger inventory-item-details"
                         ng-show="vm.userHasRightToEdit"
-                        ng-if="item.functionalStatus === 'UNSERVICEABLE' && item.reasonNotWorkingOrNotInUse === 'DECOMMISSIONED'"
                         value="{{'cceInventoryList.delete' | message}}"
                         ng-click="vm.deleteInventory(item)"/>
                 </td>
