@@ -11,7 +11,7 @@ echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 /usr/local/bin/docker-compose pull
 /usr/local/bin/docker-compose down --volumes
 /usr/local/bin/docker-compose run --entrypoint ./build.sh selv-v3-ui
-/usr/local/bin/docker-compose build image
+/usr/local/bin/docker-compose build image --no-cache
 /usr/local/bin/docker-compose down --volumes
 
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
