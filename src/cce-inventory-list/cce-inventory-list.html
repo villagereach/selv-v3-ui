@@ -1,0 +1,78 @@
+<h2>{{'cceInventoryList.cceInventory' | message}}</h2>
+<form class="sidebar" ng-submit="vm.search()">
+    <openlmis-facility-program-select
+        is-supervised="vm.isSupervised"
+        program="vm.program"
+        facility="vm.facility"
+        module="'cce-inventory-list'">
+    </openlmis-facility-program-select>
+    <input type="submit" value="{{'cceInventoryList.search' | message}}"/>
+</form>
+<section class="openlmis-table-container">
+    <button id="add-inventory-item" class="add" ui-sref="openlmis.cce.inventory.add"
+        ng-show="vm.userHasRightToEdit">
+        {{'cceInventoryList.addEquipment' | message}}
+    </button>
+    <form ng-submit="vm.search()" openlmis-table-filter>
+        <fieldset class="form-group">
+            <label for="functionalStatus">{{'cceInventoryList.functionalStatus' | message}}</label>
+            <select id="functionalStatus" ng-model="vm.functionalStatus"
+                    ng-options="vm.getStatusLabel(status) for status in vm.functionalStatuses">
+            </select>
+        </fieldset>
+        <input type="submit" value="{{'cceInventoryList.search' | message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.inventoryItems || vm.inventoryItems.length === 0">
+            {{'cceInventoryList.noInventoryItems' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'cceInventoryList.facility' | message}}</th>
+                <th>{{'cceInventoryList.serialNo' | message}}</th>
+                <th>{{'cceInventoryList.referenceName' | message}}</th>
+                <th>{{'cceInventoryList.makeModel' | message}}</th>
+                <th>{{'cceInventoryList.type' | message}}</th>
+                <th>{{'cceInventoryList.functionalStatus' | message}}</th>
+                <th>{{'cceInventoryList.lastUpdated' | message}}</th>
+                <th>{{'cceInventoryList.yearInstalled' | message}}</th>
+                <th>{{'cceInventoryList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in vm.inventoryItems">
+                <td>{{item.facility.name}}</td>
+                <td>{{item.equipmentTrackingId}}</td>
+                <td>{{item.referenceName}}</td>
+                <td>{{item.catalogItem | makeModel}}</td>
+                <td>{{item.catalogItem.type}}</td>
+                <td>
+                    <div class="cce-inventory-item-status-box">
+                        <span class="cce-inventory-item-status {{vm.getFunctionalStatusClass(item.functionalStatus)}}"
+                            popover="{{vm.getReasonLabel(item.reasonNotWorkingOrNotInUse)}}">{{vm.getStatusLabel(item.functionalStatus)}}</span>
+
+                        <span ng-if="vm.cceAlerts[item.id] && vm.cceAlerts[item.id].activeAlerts.length" class="rtm-alert-status-active" popover
+                            popover-title="{{'cceInventoryList.rtmAlerts.title' | message}}"
+                            popover-template="cce-inventory-list/rtm-alerts-popover.html"></span>
+                        <span ng-if="vm.cceAlerts[item.id] && !vm.cceAlerts[item.id].activeAlerts.length" class="rtm-alert-status-inactive"></span>
+                        <span ng-if="!vm.cceAlerts[item.id]" class="rtm-alert-status-unavailable"></span>
+
+                        <a id="functional-status" class="cce-inventory-item-update-status" ng-click="vm.goToStatusUpdate(item)"></a>
+                    </div>
+                </td>
+                <td>{{item.lastModifier.firstName}} {{item.lastModifier.lastName}} {{item.modifiedDate | openlmisDatetime}}</td>
+                <td>{{item.yearOfInstallation}}</td>
+                <td>
+                    <input type="button" class="inventory-item-details"
+                        value="{{'cceInventoryList.view' | message}}"
+                        ui-sref=".item.details({inventoryItemId: item.id, inventoryItem: item})"/>
+                    <input type="button" class="danger inventory-item-details"
+                        ng-show="vm.userHasRightToEdit"
+                        value="{{'cceInventoryList.delete' | message}}"
+                        ng-click="vm.deleteInventory(item)"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination/>
+</section>
