@@ -43,7 +43,7 @@
             COVID: createReport('covid',
                 'https://app.powerbi.com/view?r=eyJrIjoiZDUwNDk5OGUtODQwYy00N2NhLTk0M2QtOTgxMzV' +
                 'lZDY0YzFjIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9&' +
-                'pageName=ReportSectiond6a5b92e4f3af6752354', 
+                'pageName=ReportSectiond6a5b92e4f3af6752354',
                 ''),
             VISAO_GERAL: createReport('visaoGeral',
                 'https://app.powerbi.com/view?r=eyJrIjoiYjY0MzA5ZjUtMDllZC00MTBmLTk5NTUtYTAxMjE0N' +
