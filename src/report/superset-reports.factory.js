@@ -50,8 +50,8 @@
                 'GRlZmFiIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 ''),
             QUALIDADE_DADOS: createReport('qualidadeDados',
-                'https://app.powerbi.com/view?r=eyJrIjoiNTIwOTAxNWMtYjI0NS00YjhkLTk2NDktZDY5ZDljM' +
-                'DNmM2U0IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                'https://app.powerbi.com/view?r=eyJrIjoiMDg4MjllYzUtMzUzNi00ODFiLTgyNWUtMWQzODU5N' +
+                'TIzNjQ4IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 '')
         };
 
