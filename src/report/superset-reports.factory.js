@@ -33,8 +33,8 @@
         reports = {
 
             AVIAMENTOS: createReport('aviamentos',
-                'https://app.powerbi.com/view?r=eyJrIjoiYmQ0NDYwNDQtODBlYy00ZTAzLTg4ZTgtNDU2M' +
-                'TM4NTVkYjlmIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                'https://app.powerbi.com/view?r=eyJrIjoiNWQyZWVmNTgtMTRlNy00ZWJkLWE3ZWQtNmY3NmR' +
+                'hNjBmY2ZlIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 ''),
             STOCK: createReport('stock',
                 'https://app.powerbi.com/view?r=eyJrIjoiYWFjNDNmZmQtZjhmZi00Nzg0LThmMTEtNWRmMjM' +
