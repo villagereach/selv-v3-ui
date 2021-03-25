@@ -46,8 +46,8 @@
                 'pageName=ReportSectiond6a5b92e4f3af6752354',
                 ''),
             VISAO_GERAL: createReport('visaoGeral',
-                'https://app.powerbi.com/view?r=eyJrIjoiYjY0MzA5ZjUtMDllZC00MTBmLTk5NTUtYTAxMjE0N' +
-                'GRlZmFiIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                'https://app.powerbi.com/view?r=eyJrIjoiYzMzZjQ1ZjctM2NkYy00NTdjLTk2NjktZWZlZDU' +
+                '0OTQ4NDg5IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 ''),
             QUALIDADE_DADOS: createReport('qualidadeDados',
                 'https://app.powerbi.com/view?r=eyJrIjoiMDg4MjllYzUtMzUzNi00ODFiLTgyNWUtMWQzODU5N' +
