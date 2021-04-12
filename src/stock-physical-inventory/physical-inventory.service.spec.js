@@ -15,165 +15,232 @@
 
 describe('physicalInventoryService', function() {
 
-    var $rootScope, $httpBackend, physicalInventoryService, stockmanagementUrlFactory, messageService,
-        PhysicalInventoryDataBuilder, PhysicalInventoryLineItemDataBuilder,
-        PhysicalInventoryLineItemAdjustmentDataBuilder, OrderableDataBuilder, LotDataBuilder,
-        physicalInventoryLineItems, draft;
-
     beforeEach(function() {
         module('stock-physical-inventory');
 
         inject(function($injector) {
-            $httpBackend = $injector.get('$httpBackend');
-            $rootScope = $injector.get('$rootScope');
-            stockmanagementUrlFactory = $injector.get('stockmanagementUrlFactory');
-            physicalInventoryService = $injector.get('physicalInventoryService');
-            messageService = $injector.get('messageService');
+            this.$q = $injector.get('$q');
+            this.$httpBackend = $injector.get('$httpBackend');
+            this.$rootScope = $injector.get('$rootScope');
+            this.stockmanagementUrlFactory = $injector.get('stockmanagementUrlFactory');
+            this.physicalInventoryService = $injector.get('physicalInventoryService');
+            this.messageService = $injector.get('messageService');
 
-            PhysicalInventoryDataBuilder = $injector.get('PhysicalInventoryDataBuilder');
-            PhysicalInventoryLineItemDataBuilder = $injector.get('PhysicalInventoryLineItemDataBuilder');
-            PhysicalInventoryLineItemAdjustmentDataBuilder = $injector
+            this.PhysicalInventoryDataBuilder = $injector.get('PhysicalInventoryDataBuilder');
+            this.PhysicalInventoryLineItemDataBuilder = $injector.get('PhysicalInventoryLineItemDataBuilder');
+            this.PhysicalInventoryLineItemAdjustmentDataBuilder = $injector
                 .get('PhysicalInventoryLineItemAdjustmentDataBuilder');
 
-            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
-            LotDataBuilder = $injector.get('LotDataBuilder');
+            this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
+            this.LotDataBuilder = $injector.get('LotDataBuilder');
+            this.physicalInventoryDraftCacheService = $injector.get('physicalInventoryDraftCacheService');
+            this.offlineService = $injector.get('offlineService');
         });
 
-        var orderable1 = new OrderableDataBuilder().withFullProductName('Streptococcus Pneumoniae Vaccine II')
+        var orderable1 = new this.OrderableDataBuilder().withFullProductName('Streptococcus Pneumoniae Vaccine II')
                 .build(),
-            orderable2 = new OrderableDataBuilder().build(),
-            lot = new LotDataBuilder().build(),
-            stockAdjustments = [new PhysicalInventoryLineItemAdjustmentDataBuilder().build()];
+            orderable2 = new this.OrderableDataBuilder().build(),
+            lot = new this.LotDataBuilder().build(),
+            stockAdjustments = [new this.PhysicalInventoryLineItemAdjustmentDataBuilder().build()];
 
-        physicalInventoryLineItems = [
-            new PhysicalInventoryLineItemDataBuilder().withOrderable(orderable1)
+        this.physicalInventoryLineItems = [
+            new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable1)
                 .withStockAdjustments(stockAdjustments)
                 .buildAsAdded(),
-            new PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
+            new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
                 .withStockOnHand(null)
                 .withQuantity(4)
                 .buildAsAdded(),
-            new PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
+            new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
                 .withLot(lot)
                 .withStockOnHand(null)
                 .withQuantity(null)
                 .buildAsAdded()
         ];
 
-        draft = new PhysicalInventoryDataBuilder().withLineItems(physicalInventoryLineItems)
+        this.draft = new this.PhysicalInventoryDataBuilder().withLineItems(this.physicalInventoryLineItems)
             .build();
+
+        spyOn(this.physicalInventoryDraftCacheService, 'searchDraft').andReturn(this.$q.resolve([this.draft]));
+        spyOn(this.physicalInventoryDraftCacheService, 'getDraft').andReturn(this.$q.resolve(this.draft));
+        spyOn(this.offlineService, 'isOffline').andReturn(false);
     });
 
-    it('should get drafts', function() {
-        var result;
+    describe('getDraft', function() {
 
-        $httpBackend.when('GET', stockmanagementUrlFactory('/api/physicalInventories?program=' + draft.programId +
-            '&facility=' + draft.facilityId)).respond(200, [draft]);
+        it('should get draft', function() {
+            var result;
 
-        physicalInventoryService.getDrafts(draft.programId, draft.facilityId).then(function(response) {
-            result = response;
+            this.$httpBackend.when('GET', this.stockmanagementUrlFactory('/api/physicalInventories?program='
+                + this.draft.programId +
+                '&facility=' + this.draft.facilityId + '&isDraft=true')).respond(200, [this.draft]);
+
+            this.physicalInventoryService.getDraft(this.draft.programId, this.draft.facilityId)
+                .then(function(response) {
+                    result = response;
+                });
+
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
+
+            expect(result[0].programId).toBe(this.draft.programId);
         });
 
-        $httpBackend.flush();
-        $rootScope.$apply();
+        it('should get draft by program and facility while offline', function() {
+            var result;
 
-        expect(result[0].programId).toBe(draft.programId);
+            this.offlineService.isOffline.andReturn(true);
+
+            this.physicalInventoryService.getDraft(this.draft.programId, this.draft.facilityId).then(function(draft) {
+                result = draft;
+            });
+            this.$rootScope.$apply();
+
+            expect(result[0]).toBe(this.draft);
+        });
     });
 
-    it('should get physical inventory', function() {
-        var result;
+    describe('getDrafts', function() {
 
-        $httpBackend.when('GET', stockmanagementUrlFactory('/api/physicalInventories/' + draft.id))
-            .respond(200, draft);
+        it('should get drafts', function() {
+            var result;
 
-        physicalInventoryService.getPhysicalInventory(draft.id).then(function(response) {
-            result = response;
+            this.$httpBackend.when('GET', this.stockmanagementUrlFactory('/api/physicalInventories?program=' +
+                this.draft.programId + '&facility=' + this.draft.facilityId)).respond(200, [this.draft]);
+
+            this.physicalInventoryService.getDrafts(this.draft.programId, this.draft.facilityId)
+                .then(function(response) {
+                    result = response;
+                });
+
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
+
+            expect(result[0].programId).toBe(this.draft.programId);
+        });
+    });
+
+    describe('getPhysicalInventory', function() {
+
+        it('should get physical inventory by id  while offline', function() {
+            var result;
+
+            this.offlineService.isOffline.andReturn(true);
+
+            this.physicalInventoryService.getPhysicalInventory(this.draft.id).then(function(response) {
+                result = response;
+            });
+            this.$rootScope.$apply();
+
+            expect(result.id).toBe(this.draft.id);
         });
 
-        $httpBackend.flush();
-        $rootScope.$apply();
+        it('should get physical inventory from local storage if it was modified', function() {
+            var result;
 
-        expect(result.id).toBe(draft.id);
+            this.draft.$modified = true;
+            this.physicalInventoryDraftCacheService.getDraft.andReturn(this.$q.resolve(this.draft));
+
+            this.physicalInventoryService.getPhysicalInventory(this.draft.id).then(function(response) {
+                result = response;
+            });
+            this.$rootScope.$apply();
+
+            expect(result.id).toBe(this.draft.id);
+        });
+
+        it('should get physical inventory by id', function() {
+            var result;
+
+            this.physicalInventoryService.getPhysicalInventory(this.draft).then(function(response) {
+                result = response;
+            });
+
+            this.$rootScope.$apply();
+
+            expect(result.id).toBe(this.draft.id);
+        });
     });
 
     it('should create new draft', function() {
         var result;
 
-        $httpBackend.when('POST', stockmanagementUrlFactory('/api/physicalInventories'))
+        this.$httpBackend.when('POST', this.stockmanagementUrlFactory('/api/physicalInventories'))
             .respond(function(method, url, data) {
                 //return whatever was passed to http backend.
                 return [201, data];
             });
 
-        physicalInventoryService.createDraft(draft.programId, draft.facilityId).then(function(response) {
+        this.physicalInventoryService.createDraft(this.draft.programId, this.draft.facilityId).then(function(response) {
             result = response;
         });
 
-        $httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
-        expect(result.programId).toBe(draft.programId);
-        expect(result.facilityId).toBe(draft.facilityId);
+        expect(result.programId).toBe(this.draft.programId);
+        expect(result.facilityId).toBe(this.draft.facilityId);
     });
 
     describe('search', function() {
         it('should get all line items when keyword is empty', function() {
-            expect(physicalInventoryService.search('', physicalInventoryLineItems)).toEqual(physicalInventoryLineItems);
+            expect(this.physicalInventoryService.search('', this.physicalInventoryLineItems))
+                .toEqual(this.physicalInventoryLineItems);
         });
 
         it('should search by productCode', function() {
-            expect(physicalInventoryService.search('c2', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[1], physicalInventoryLineItems[2]]);
+            expect(this.physicalInventoryService.search('c2', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[1], this.physicalInventoryLineItems[2]]);
         });
 
         it('should search by productFullName', function() {
-            expect(physicalInventoryService.search('Streptococcus', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[0]]);
+            expect(this.physicalInventoryService.search('Streptococcus', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[0]]);
         });
 
         it('should search by stockOnHand', function() {
-            expect(physicalInventoryService.search('233', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[0]]);
+            expect(this.physicalInventoryService.search('233', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[0]]);
         });
 
         it('should search by quantity', function() {
-            expect(physicalInventoryService.search('4', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[1]]);
+            expect(this.physicalInventoryService.search('4', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[1]]);
         });
 
         it('should search by lotCode', function() {
-            expect(physicalInventoryService.search('L1', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[2]]);
+            expect(this.physicalInventoryService.search('L1', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[2]]);
         });
 
         it('should get all line items without lot info', function() {
-            spyOn(messageService, 'get');
-            messageService.get.andReturn('No lot defined');
+            spyOn(this.messageService, 'get');
+            this.messageService.get.andReturn('No lot defined');
 
-            expect(physicalInventoryService.search('No lot defined', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[0], physicalInventoryLineItems[1]]);
+            expect(this.physicalInventoryService.search('No lot defined', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[0], this.physicalInventoryLineItems[1]]);
         });
 
         it('should search by expirationDate', function() {
-            expect(physicalInventoryService.search('02/05/2017', physicalInventoryLineItems))
-                .toEqual([physicalInventoryLineItems[2]]);
+            expect(this.physicalInventoryService.search('02/05/2017', this.physicalInventoryLineItems))
+                .toEqual([this.physicalInventoryLineItems[2]]);
         });
     });
 
     it('should save physical inventory draft', function() {
-        $httpBackend.when('PUT', stockmanagementUrlFactory('/api/physicalInventories/' + draft.id))
+        this.$httpBackend.when('PUT', this.stockmanagementUrlFactory('/api/physicalInventories/' + this.draft.id))
             .respond(function(method, url, data) {
                 //return whatever was passed to http backend.
                 return [200, data];
             });
 
         var result = [];
-        physicalInventoryService.saveDraft(draft).then(function(response) {
+        this.physicalInventoryService.saveDraft(this.draft).then(function(response) {
             result = response;
         });
 
-        $httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(result.lineItems.length).toBe(3);
         expect(result.lineItems[0].quantity).toBe(3);
@@ -181,17 +248,18 @@ describe('physicalInventoryService', function() {
         expect(result.lineItems[2].quantity).toBe(null);
     });
 
+    //eslint-disable-next-line jasmine/missing-expect
     it('should delete physical inventory draft', function() {
-        $httpBackend
-            .expectDELETE(stockmanagementUrlFactory('/api/physicalInventories/' + draft.id))
+        this.$httpBackend
+            .expectDELETE(this.stockmanagementUrlFactory('/api/physicalInventories/' + this.draft.id))
             .respond(200);
 
-        physicalInventoryService.deleteDraft(draft.id);
-        $httpBackend.flush();
+        this.physicalInventoryService.deleteDraft(this.draft.id);
+        this.$httpBackend.flush();
     });
 
     afterEach(function() {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
+        this.$httpBackend.verifyNoOutstandingExpectation();
+        this.$httpBackend.verifyNoOutstandingRequest();
     });
 });

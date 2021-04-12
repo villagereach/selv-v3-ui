@@ -18,56 +18,64 @@
     'use strict';
 
     /**
-   * @ngdoc controller
-   * @name stock-physical-inventory-list.controller:PhysicalInventoryListController
-   *
-   * @description
-   * Controller for managing physical inventory.
-   */
+     * @ngdoc controller
+     * @name stock-physical-inventory-list.controller:PhysicalInventoryListController
+     *
+     * @description
+     * Controller for managing physical inventory.
+     */
     angular
         .module('stock-physical-inventory-list')
         .controller('PhysicalInventoryListController', controller);
 
     controller.$inject = ['facility', 'programs', 'drafts', 'messageService', '$state', 'physicalInventoryService',
-        'stockmanagementUrlFactory', 'accessTokenFactory', '$window', 'physicalInventoryFactory'];
+        'FunctionDecorator', 'offlineService', '$q', '$scope', '$stateParams',
+        'stockmanagementUrlFactory', 'accessTokenFactory', '$window'];
 
     function controller(facility, programs, drafts, messageService, $state, physicalInventoryService,
-                        stockmanagementUrlFactory, accessTokenFactory, $window, physicalInventoryFactory) {
+                        FunctionDecorator, offlineService, $q, $scope, $stateParams,
+                        stockmanagementUrlFactory, accessTokenFactory, $window) {
         var vm = this;
+        vm.$onInit = onInit;
 
         /**
-     * @ngdoc property
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name facility
-     * @type {Object}
-     *
-     * @description
-     * Holds user's home facility.
-     */
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name facility
+         * @type {Object}
+         *
+         * @description
+         * Holds user's home facility.
+         */
         vm.facility = facility;
 
         /**
-     * @ngdoc property
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name programs
-     * @type {Array}
-     *
-     * @description
-     * Holds available programs for home facility.
-     */
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name programs
+         * @type {Array}
+         *
+         * @description
+         * Holds available programs for home facility.
+         */
         vm.programs = programs;
 
         vm.drafts = drafts;
+        vm.editDraft = new FunctionDecorator()
+            .decorateFunction(editDraft)
+            .withLoading(true)
+            .getDecoratedFunction();
+
         /**
-     * @ngdoc method
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name getProgramName
-     *
-     * @description
-     * Responsible for getting program name based on id.
-     *
-     * @param {String} id Program UUID
-     */
+         * @ngdoc method
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name getProgramName
+         *
+         * @description
+         * Responsible for getting program name based on id.
+         *
+         * @param {String} id Program UUID
+         */
         vm.getProgramName = function(id) {
             return _.find(vm.programs, function(program) {
                 return program.id === id;
@@ -134,40 +142,71 @@
         // END
 
         /**
-     * @ngdoc method
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name editDraft
-     *
-     * @description
-     * Navigating to draft physical inventory.
-     *
-     * @param {Object} draft Physical inventory draft
-     */
-        vm.editDraft = function(draft) {
+         * @ngdoc method
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name editDraft
+         *
+         * @description
+         * Navigating to draft physical inventory.
+         *
+         * @param {Object} draft Physical inventory draft
+         */
+        function editDraft(draft) {
+            $stateParams.stateOffline = setOfflineState();
+
             var program = _.find(vm.programs, function(program) {
                 return program.id === draft.programId;
             });
-
-            return physicalInventoryFactory.getDraft(draft.programId, draft.facilityId).then(function(draft) {
-                if (draft.id) {
-                    $state.go('openlmis.stockmanagement.physicalInventory.draft', {
-                        id: draft.id,
-                        draft: draft,
-                        program: program,
-                        facility: facility
-                    });
-                } else {
-                    physicalInventoryService.createDraft(program.id, facility.id).then(function(data) {
-                        draft.id = data.id;
-                        $state.go('openlmis.stockmanagement.physicalInventory.draft', {
-                            id: draft.id,
-                            draft: draft,
-                            program: program,
-                            facility: facility
-                        });
-                    });
+            vm.drafts.forEach(function(item) {
+                if (item.programId === draft.programId && draft.isStarter === true) {
+                    item.isStarter = false;
                 }
             });
-        };
+            if (offlineService.isOffline() || draft.id) {
+                $state.go('openlmis.stockmanagement.physicalInventory.draft', {
+                    id: draft.id,
+                    program: program,
+                    facility: facility
+                });
+                return $q.resolve();
+            }
+            return physicalInventoryService.createDraft(program.id, facility.id).then(function(data) {
+                draft.id = data.id;
+                $state.go('openlmis.stockmanagement.physicalInventory.draft', {
+                    id: draft.id,
+                    program: program,
+                    facility: facility
+                });
+            });
+        }
+
+        function onInit() {
+            if (networkStateHasBeenChanged()) {
+                reloadPage();
+            }
+
+            $scope.$watch(function() {
+                return offlineService.isOffline();
+            }, function(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    reloadPage();
+                }
+            }, true);
+        }
+
+        function reloadPage() {
+            $state.go('openlmis.stockmanagement.physicalInventory', {}, {
+                reload: true
+            });
+        }
+
+        function networkStateHasBeenChanged() {
+            return $stateParams.stateOffline !== undefined &&
+                $stateParams.stateOffline !== offlineService.isOffline();
+        }
+
+        function setOfflineState() {
+            return offlineService.isOffline();
+        }
     }
 })();

@@ -30,11 +30,11 @@
 
     service.$inject = [
         '$resource', 'stockmanagementUrlFactory', '$filter', 'messageService', 'openlmisDateFilter',
-        'productNameFilter', 'stockEventFactory'
+        'productNameFilter', 'stockEventFactory', 'physicalInventoryDraftCacheService', 'offlineService'
     ];
 
     function service($resource, stockmanagementUrlFactory, $filter, messageService, openlmisDateFilter,
-                     productNameFilter, stockEventFactory) {
+                     productNameFilter, stockEventFactory, physicalInventoryDraftCacheService, offlineService) {
 
         var resource = $resource(stockmanagementUrlFactory('/api/physicalInventories'), {}, {
             get: {
@@ -77,11 +77,16 @@
          * @return {Promise}          physical inventory promise
          */
         function getDraft(program, facility) {
-            return resource.query({
-                program: program,
-                facility: facility,
-                isDraft: true
-            }).$promise;
+            return physicalInventoryDraftCacheService.searchDraft(program, facility).then(function(offlineDrafts) {
+                if (offlineService.isOffline()) {
+                    return offlineDrafts;
+                }
+                return resource.query({
+                    program: program,
+                    facility: facility,
+                    isDraft: true
+                }).$promise;
+            });
         }
 
         // SELV3-247 - Added posibility to view and print history Physical inventory
@@ -105,7 +110,6 @@
                 facility: facility
             }).$promise;
         }
-
         // SELV3-247 - Added posibility to view and print history Physical inventory
         // END
 
@@ -120,10 +124,13 @@
          * @param  {String}  id  physical inventory UUID
          * @return {Promise}     physical inventory promise
          */
-        function getPhysicalInventory(id) {
-            return resource.get({
-                id: id
-            }).$promise;
+        function getPhysicalInventory(draft) {
+            return physicalInventoryDraftCacheService.getDraft(draft.id).then(function(offlineDraft) {
+                if (offlineService.isOffline() || offlineDraft && offlineDraft.$modified) {
+                    return offlineDraft;
+                }
+                return draft;
+            });
         }
 
         /**
@@ -217,7 +224,10 @@
         function deleteDraft(id) {
             return resource.delete({
                 id: id
-            }).$promise;
+            }).$promise
+                .then(function() {
+                    removeDraftFromCache(id);
+                });
         }
 
         /**
@@ -233,7 +243,10 @@
          */
         function submit(physicalInventory) {
             var event = stockEventFactory.createFromPhysicalInventory(physicalInventory);
-            return resource.submitPhysicalInventory(event).$promise;
+            return resource.submitPhysicalInventory(event).$promise
+                .then(function() {
+                    removeDraftFromCache(physicalInventory.id);
+                });
         }
 
         function getLot(item, hasLot) {
@@ -242,5 +255,8 @@
                 (hasLot ? messageService.get('orderableGroupService.noLotDefined') : '');
         }
 
+        function removeDraftFromCache(id) {
+            physicalInventoryDraftCacheService.removeById(id);
+        }
     }
 })();
