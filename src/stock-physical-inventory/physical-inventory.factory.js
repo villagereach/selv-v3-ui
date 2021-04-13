@@ -118,6 +118,7 @@
                     }
                     if (draft.length === 0 || draft[draft.length - 1].occurredDate) {
                         tempDraft.isStarter = true;
+                        tempDraft.isDraft = false;
                         listDrafts.push(tempDraft);
                     }
 
@@ -141,6 +142,7 @@
          * @return {Promise}          Physical inventory promise
          */
         function getDraft(programId, facilityId) {
+
             return $q.all([
                 getStockProducts(programId, facilityId),
                 physicalInventoryService.getDraft(programId, facilityId)
@@ -299,7 +301,6 @@
 
         function getStockProducts(programId, facilityId) {
             var repository = new StockCardSummaryRepository(new FullStockCardSummaryRepositoryImpl());
-
             return repository.query({
                 programId: programId,
                 facilityId: facilityId

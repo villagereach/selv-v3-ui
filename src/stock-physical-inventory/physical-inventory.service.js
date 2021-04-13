@@ -129,7 +129,9 @@
                 if (offlineService.isOffline() || offlineDraft && offlineDraft.$modified) {
                     return offlineDraft;
                 }
-                return draft;
+                return resource.get({
+                    id: draft
+                }).$promise;
             });
         }
 

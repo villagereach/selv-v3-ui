@@ -343,6 +343,7 @@
                         .then(function(queryResponse) {
                             if (queryResponse.numberOfElements > 0 &&
                                 containsLotCode(queryResponse.content, lineItem.lot.lotCode)) {
+
                                 existingLots.push(lineItem.lot.lotCode);
                                 return queryResponse;
                             }
