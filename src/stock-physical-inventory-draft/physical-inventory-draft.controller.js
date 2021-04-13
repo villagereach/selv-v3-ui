@@ -30,27 +30,30 @@
 
     controller.$inject = ['$scope', '$state', '$stateParams', 'addProductsModalService',
         'messageService', 'physicalInventoryFactory', 'notificationService', 'alertService',
-        'confirmDiscardService', 'chooseDateModalService', 'program', 'facility', 'draft',
+        'chooseDateModalService', 'program', 'facility', 'draft',
         'displayLineItemsGroup', 'confirmService', 'physicalInventoryService', 'MAX_INTEGER_VALUE',
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
-        'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter',
+        'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
+        'offlineService', 'localStorageFactory', 'physicalInventoryDraftCacheService',
         // SELV3-142: Added lot-management feature
-        'LotResource', '$q', 'editLotModalService'];
+        'LotResource', 'editLotModalService'];
     // SELV3-142: ends here
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
-                        physicalInventoryFactory, notificationService, alertService, confirmDiscardService,
+                        physicalInventoryFactory, notificationService, alertService,
                         chooseDateModalService, program, facility, draft, displayLineItemsGroup,
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
-                        stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter,
+                        stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
+                        offlineService, localStorageFactory,
+                        physicalInventoryDraftCacheService,
                         // SELV3-142: Added lot-management feature
-                        LotResource, $q, editLotModalService) {
+                        LotResource, editLotModalService) {
         // SELV3-142: ends here      
         var vm = this;
 
         vm.$onInit = onInit;
-
+        vm.cacheDraft = cacheDraft;
         vm.quantityChanged = quantityChanged;
         vm.checkUnaccountedStockAdjustments = checkUnaccountedStockAdjustments;
 
@@ -140,6 +143,39 @@
         vm.showVVMStatusColumn = false;
 
         /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name offline
+         * @type {boolean}
+         *
+         * @description
+         * Holds information about internet connection
+         */
+        vm.offline = offlineService.isOffline;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name draft
+         * @type {Object}
+         *
+         * @description
+         * Holds physical inventory draft.
+         */
+        vm.draft = draft;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name dataChanged
+         * @type {boolean}
+         *
+         * @description
+         * A flag that changes its value when the data in the form is changed. Used by saving-indicator
+         */
+        vm.dataChanged = false;
+
+        /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name getStatusDisplay
@@ -199,8 +235,11 @@
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
                 $stateParams.draft = draft;
+                $stateParams.noReload = true;
 
                 $stateParams.isAddProduct = true;
+                draft.$modified = true;
+                vm.cacheDraft();
 
                 //Only reload current state and avoid reloading parent state
                 $state.go($state.current.name, $stateParams, {
@@ -271,7 +310,7 @@
             $stateParams.keyword = vm.keyword;
             $stateParams.program = vm.program;
             $stateParams.facility = vm.facility;
-            $stateParams.draft = draft;
+            $stateParams.noReload = true;
 
             //Only reload current state and avoid reloading parent state
             $state.go($state.current.name, $stateParams, {
@@ -280,6 +319,7 @@
         };
 
         // SELV3-142: Added lot-management feature
+
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -303,6 +343,7 @@
                         .then(function(queryResponse) {
                             if (queryResponse.numberOfElements > 0 &&
                                 containsLotCode(queryResponse.content, lineItem.lot.lotCode)) {
+
                                 existingLots.push(lineItem.lot.lotCode);
                                 return queryResponse;
                             }
@@ -324,13 +365,13 @@
                             if (submitDraft) {
                                 return vm.submit();
                             }
-                            return saveDraft();
+                            return vm.saveDraft();
                         });
                     } else {
                         if (submitDraft) {
                             return vm.submit();
                         }
-                        saveDraft();
+                        vm.saveDraft();
                     }
                 });
         };
@@ -343,39 +384,51 @@
          * @description
          * Save physical inventory draft.
          */
-        function saveDraft() {
-            confirmService.confirmDestroy(
-                'stockPhysicalInventoryDraft.saveDraft',
-                'stockPhysicalInventoryDraft.save'
-            ).then(function() {
-                loadingModalService.open();
+        vm.saveDraft = function() {
+            loadingModalService.open();
+            return saveLots(draft, function() {
+                return physicalInventoryFactory.saveDraft(draft).then(function() {
+                    notificationService.success('stockPhysicalInventoryDraft.saved');
 
-                return saveLots(draft, function() {
-                    return physicalInventoryFactory.saveDraft(draft).then(function() {
-                        notificationService.success('stockPhysicalInventoryDraft.saved');
-                        resetWatchItems();
+                    draft.$modified = undefined;
+                    vm.cacheDraft();
 
-                        $stateParams.isAddProduct = false;
+                    $stateParams.isAddProduct = false;
 
-                        $stateParams.program = vm.program;
-                        $stateParams.facility = vm.facility;
-                        draft.lineItems.forEach(function(lineItem) {
-                            if (lineItem.$isNewItem) {
-                                lineItem.$isNewItem = false;
-                            }
-                        });
-                        $stateParams.draft = draft;
-                        //Reload parent state and current state to keep data consistency.
-                        $state.go($state.current.name, $stateParams, {
-                            reload: true
-                        });
-                    }, function() {
-                        loadingModalService.close();
-                        alertService.error('stockPhysicalInventoryDraft.saveFailed');
+                    $stateParams.program = vm.program;
+                    $stateParams.facility = vm.facility;
+                    $stateParams.noReload = true;
+                    draft.lineItems.forEach(function(lineItem) {
+                        if (lineItem.$isNewItem) {
+                            lineItem.$isNewItem = false;
+                        }
                     });
+                    $stateParams.draft = draft;
+
+                    $state.go($state.current.name, $stateParams, {
+                        reload: $state.current.name
+                    });
+                    $stateParams.isAddProduct = false;
+                }, function(errorResponse) {
+                    loadingModalService.close();
+                    alertService.error(errorResponse.data.message);
                 });
             });
-        }
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name saveOnPageChange
+         *
+         * @description
+         * Save physical inventory draft on page change.
+         */
+        vm.saveOnPageChange = function() {
+            var params = {};
+            params.noReload = true;
+            return $q.resolve(params);
+        };
         // SELV3-142: ends here
 
         /**
@@ -417,41 +470,37 @@
                 $scope.$broadcast('openlmis-form-submit');
                 alertService.error('stockPhysicalInventoryDraft.submitInvalid');
             } else {
-                return confirmService.confirmDestroy(
-                    'stockPhysicalInventoryDraft.saveDraft',
-                    'stockPhysicalInventoryDraft.save'
-                ).then(function() {
-                    chooseDateModalService.show().then(function(resolvedData) {
-                        loadingModalService.open();
+                chooseDateModalService.show().then(function(resolvedData) {
+                    loadingModalService.open();
 
-                        draft.occurredDate = resolvedData.occurredDate;
-                        draft.signature = resolvedData.signature;
+                    draft.occurredDate = resolvedData.occurredDate;
+                    draft.signature = resolvedData.signature;
 
-                        // SELV3-142: Added lot-management feature
-                        return saveLots(draft, function() {
-                            physicalInventoryService.submitPhysicalInventory(draft).then(function() {
-                                notificationService.success('stockPhysicalInventoryDraft.submitted');
-                                confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
-                                    'stockPhysicalInventoryDraft.printModal.yes',
-                                    'stockPhysicalInventoryDraft.printModal.no')
-                                    .then(function() {
-                                        $window.open(accessTokenFactory
-                                            .addAccessToken(getPrintUrl(draft.id)), '_blank');
-                                    })
-                                    .finally(function() {
-                                        $state.go('openlmis.stockmanagement.stockCardSummaries', {
-                                            program: program.id,
-                                            facility: facility.id
-                                        });
+                    // SELV3-142: Added lot-management feature
+                    return saveLots(draft, function() {
+                        physicalInventoryService.submitPhysicalInventory(draft).then(function() {
+                            notificationService.success('stockPhysicalInventoryDraft.submitted');
+                            confirmService.confirm('stockPhysicalInventoryDraft.printModal.label',
+                                'stockPhysicalInventoryDraft.printModal.yes',
+                                'stockPhysicalInventoryDraft.printModal.no')
+                                .then(function() {
+                                    $window.open(accessTokenFactory
+                                        .addAccessToken(getPrintUrl(draft.id)), '_blank');
+                                })
+                                .finally(function() {
+                                    $state.go('openlmis.stockmanagement.stockCardSummaries', {
+                                        program: program.id,
+                                        facility: facility.id
                                     });
-                            }, function() {
-                                loadingModalService.close();
-                                alertService.error('stockPhysicalInventoryDraft.submitFailed');
-                            });
+                                });
+                        }, function(errorResponse) {
+                            loadingModalService.close();
+                            alertService.error(errorResponse.data.message);
+                            physicalInventoryDraftCacheService.removeById(draft.id);
                         });
                     });
-                    // SELV3-142: ends here
                 });
+                // SELV3-142: ends here
             }
         };
 
@@ -549,13 +598,6 @@
             return anyError;
         }
 
-        var watchItems = [];
-
-        function resetWatchItems() {
-            $scope.needToConfirm = false;
-            watchItems = angular.copy(vm.displayLineItemsGroup);
-        }
-
         function onInit() {
             $state.current.label = messageService.get('stockPhysicalInventoryDraft.title', {
                 facilityCode: facility.code,
@@ -570,13 +612,6 @@
             $stateParams.draft = undefined;
 
             vm.updateProgress();
-            resetWatchItems();
-            $scope.$watch(function() {
-                return vm.displayLineItemsGroup;
-            }, function(newValue) {
-                $scope.needToConfirm = ($stateParams.isAddProduct || !angular.equals(newValue, watchItems));
-            }, true);
-            confirmDiscardService.register($scope, 'openlmis.stockmanagement.stockCardSummaries');
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(orderableGroups);
@@ -586,6 +621,10 @@
             }, function(newList) {
                 vm.groupedCategories = $filter('groupByProgramProductCategory')(newList, vm.program.id);
             }, true);
+
+            if (!$stateParams.noReload) {
+                vm.cacheDraft();
+            }
         }
 
         /**
@@ -601,6 +640,8 @@
         function checkUnaccountedStockAdjustments(lineItem) {
             lineItem.unaccountedQuantity =
               stockReasonsCalculations.calculateUnaccounted(lineItem, lineItem.stockAdjustments);
+            draft.$modified = true;
+            vm.cacheDraft();
         }
 
         /**
@@ -617,6 +658,7 @@
             vm.updateProgress();
             vm.validateQuantity(lineItem);
             vm.checkUnaccountedStockAdjustments(lineItem);
+            vm.dataChanged = !vm.dataChanged;
         }
 
         /**
@@ -701,5 +743,17 @@
             return $q.resolve(params);
         };
         // SELV3-142: ends here
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name cacheDraft
+         *
+         * @description
+         * Cache draft of physical inventory.
+         */
+        function cacheDraft() {
+            physicalInventoryDraftCacheService.cacheDraft(draft);
+        }
     }
 })();

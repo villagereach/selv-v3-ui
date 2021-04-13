@@ -18,30 +18,38 @@ describe('PhysicalInventoryListController', function() {
     beforeEach(function() {
         module('stock-physical-inventory-list');
 
-        inject(function($injector, _messageService_) {
+        inject(function($injector) {
             this.$controller = $injector.get('$controller');
             this.$q = $injector.get('$q');
             this.$rootScope =  $injector.get('$rootScope');
+            this.scope = this.$rootScope.$new();
             this.$state = $injector.get('$state');
             this.physicalInventoryService = $injector.get('physicalInventoryService');
             this.physicalInventoryFactory = $injector.get('physicalInventoryFactory');
             this.FunctionDecorator = $injector.get('FunctionDecorator');
-            this.messageService = _messageService_;
+            this.messageService = $injector.get('messageService');
             this.offlineService = $injector.get('offlineService');
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.$stateParams = $injector.get('$stateParams');
         });
 
-        this.programs = [{
-            name: 'HIV',
-            id: '1'
-        }, {
-            name: 'TB',
-            id: '2'
-        }];
-        this.facility = {
-            id: '10134',
-            name: 'National Warehouse',
-            supportedPrograms: this.programs
-        };
+        this.programs = [
+            new this.ProgramDataBuilder()
+                .withId('1')
+                .withName('HIV')
+                .build(),
+            new this.ProgramDataBuilder()
+                .withId('2')
+                .withName('TB')
+                .build()
+        ];
+
+        this.facility = new this.FacilityDataBuilder()
+            .withId('10134')
+            .withName('National Warehouse')
+            .withSupportedPrograms(this.programs)
+            .buildJson();
 
         var context = this;
         spyOn(this.$state, 'go');
@@ -60,10 +68,11 @@ describe('PhysicalInventoryListController', function() {
             physicalInventoryService: this.physicalInventoryService,
             physicalInventoryFactory: this.physicalInventoryFactory,
             drafts: [{
-                programId: '1'
+                programId: this.programs[0].id
             }, {
-                programId: '2'
-            }]
+                programId: this.programs[1].id
+            }],
+            $scope: this.scope
         });
     });
 
@@ -72,15 +81,15 @@ describe('PhysicalInventoryListController', function() {
         it('should init programs and physical inventory drafts properly', function() {
             expect(this.vm.programs).toEqual(this.programs);
             expect(this.vm.drafts).toEqual([{
-                programId: '1'
+                programId: this.programs[0].id
             }, {
-                programId: '2'
+                programId: this.programs[1].id
             }]);
         });
 
         it('should get program name by id', function() {
-            expect(this.vm.getProgramName('1')).toEqual('HIV');
-            expect(this.vm.getProgramName('2')).toEqual('TB');
+            expect(this.vm.getProgramName(this.programs[0].id)).toEqual(this.programs[0].name);
+            expect(this.vm.getProgramName(this.programs[1].id)).toEqual(this.programs[1].name);
         });
 
         // SELV3-247 - Added posibility to view and print history Physical inventory
@@ -94,6 +103,40 @@ describe('PhysicalInventoryListController', function() {
         // SELV3-247 - Added posibility to view and print history Physical inventory
         // END
 
+        it('should call watch', function() {
+            spyOn(this.scope, '$watch').andCallThrough();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
+
+            expect(this.scope.$watch).toHaveBeenCalled();
+        });
+
+        it('should call watch when isOffline is changed', function() {
+            spyOn(this.scope, '$watch').andCallThrough();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
+
+            spyOn(this.offlineService, 'isOffline').andReturn(true);
+            this.$rootScope.$apply();
+
+            expect(this.scope.$watch).toHaveBeenCalled();
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.physicalInventory', {}, {
+                reload: true
+            });
+        });
+
+        it('should reload page if stateOffline has been changed', function() {
+            this.$stateParams.stateOffline = false;
+            this.vm.$onInit();
+            this.$rootScope.$apply();
+
+            spyOn(this.offlineService, 'isOffline').andReturn(true);
+            this.$rootScope.$apply();
+
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.physicalInventory', {}, {
+                reload: true
+            });
+        });
     });
 
     describe('editDraft', function() {
@@ -101,7 +144,7 @@ describe('PhysicalInventoryListController', function() {
         it('should go to physical inventory page when proceed', function() {
             var draft = {
                 id: 123,
-                programId: '1',
+                programId: this.programs[0].id,
                 starter: false
             };
 
@@ -112,18 +155,27 @@ describe('PhysicalInventoryListController', function() {
 
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.physicalInventory.draft', {
                 id: draft.id,
-                draft: draft,
-                program: {
-                    name: 'HIV',
-                    id: '1'
-                },
+                program: this.programs[0],
                 facility: this.facility
             });
         });
 
+        it('should change isStarter property if was true', function() {
+            var draft = {
+                id: 123,
+                programId: this.programs[0].id,
+                isStarter: true
+            };
+
+            this.vm.editDraft(draft);
+            this.$rootScope.$apply();
+
+            expect(this.vm.drafts[0].isStarter).toEqual(false);
+        });
+
         it('should create draft to get id and go to physical inventory when proceed', function() {
             var draft = {
-                programId: '1',
+                programId: this.programs[0].id,
                 starter: false
             };
             var id = '456';
@@ -139,11 +191,26 @@ describe('PhysicalInventoryListController', function() {
             expect(this.physicalInventoryService.createDraft).toHaveBeenCalledWith(draft.programId, this.facility.id);
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.physicalInventory.draft', {
                 id: id,
-                draft: draft,
-                program: {
-                    name: 'HIV',
-                    id: '1'
-                },
+                program: this.programs[0],
+                facility: this.facility
+            });
+        });
+
+        it('should go to physical inventory page when proceed offline', function() {
+            var draft = {
+                id: 123,
+                programId: this.programs[0].id,
+                facilityId: this.facility.id,
+                starter: false
+            };
+            spyOn(this.offlineService, 'isOffline').andReturn(true);
+
+            this.vm.editDraft(draft);
+            this.$rootScope.$apply();
+
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.physicalInventory.draft', {
+                id: draft.id,
+                program: this.programs[0],
                 facility: this.facility
             });
         });

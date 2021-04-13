@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr ng-repeat="(key,value) in draft | orderBy: '-occurredDate'">
-            <td>{{vm.getDraftStatus(value.isStarter, value.isDraft)}}</td>
+            <td>{{vm.getDraftStatus(value.isStarter)}}</td>
             <td>{{value.occurredDate}}</td>
             <td>{{value.signature}}</td>
             <td>{{vm.getProgramName(value.programId)}}</td>

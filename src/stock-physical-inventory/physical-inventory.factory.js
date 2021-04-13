@@ -29,12 +29,12 @@
         .factory('physicalInventoryFactory', factory);
 
     factory.$inject = [
-        '$q', 'physicalInventoryService', 'offlineService', '$filter', 'StockCardSummaryRepository',
-        'FullStockCardSummaryRepositoryImpl'
+        '$q', 'physicalInventoryService', 'SEARCH_OPTIONS', '$filter', 'StockCardSummaryRepository',
+        'FullStockCardSummaryRepositoryImpl', 'offlineService'
     ];
 
-    function factory($q, physicalInventoryService, offlineService, $filter, StockCardSummaryRepository,
-                     FullStockCardSummaryRepositoryImpl) {
+    function factory($q, physicalInventoryService, SEARCH_OPTIONS, $filter, StockCardSummaryRepository,
+                     FullStockCardSummaryRepositoryImpl, offlineService) {
 
         return {
             getDrafts: getDrafts,
@@ -118,6 +118,7 @@
                     }
                     if (draft.length === 0 || draft[draft.length - 1].occurredDate) {
                         tempDraft.isStarter = true;
+                        tempDraft.isDraft = false;
                         listDrafts.push(tempDraft);
                     }
 
@@ -141,6 +142,7 @@
          * @return {Promise}          Physical inventory promise
          */
         function getDraft(programId, facilityId) {
+
             return $q.all([
                 getStockProducts(programId, facilityId),
                 physicalInventoryService.getDraft(programId, facilityId)
@@ -187,8 +189,8 @@
          * @param  {String}  id       Draft UUID
          * @return {Promise}          Physical inventory promise
          */
-        function getPhysicalInventory(id) {
-            return physicalInventoryService.getPhysicalInventory(id)
+        function getPhysicalInventory(draft) {
+            return physicalInventoryService.getPhysicalInventory(draft)
                 .then(function(physicalInventory) {
                     return getStockProducts(physicalInventory.programId, physicalInventory.facilityId)
                         .then(function(summaries) {
@@ -242,7 +244,7 @@
 
             angular.forEach(physicalInventory.lineItems, function(lineItem) {
                 quantities[identityOf(lineItem)] = lineItem.quantity;
-                extraData[identityOf(lineItem)] = lineItem.extraData;
+                extraData[identityOf(lineItem)] = getExtraData(lineItem);
             });
 
             angular.forEach(summaries, function(summary) {
@@ -252,7 +254,9 @@
                     orderable: summary.orderable,
                     quantity: quantities[identityOf(summary)],
                     vvmStatus: extraData[identityOf(summary)] ? extraData[identityOf(summary)].vvmStatus : null,
-                    stockAdjustments: getStockAdjustments(physicalInventory.lineItems, summary)
+                    stockAdjustments: getStockAdjustments(physicalInventory.lineItems, summary,
+                        physicalInventory.$modified)
+
                 });
             });
         }
@@ -264,10 +268,20 @@
             return identifiable.orderable.id + (identifiable.lot ? identifiable.lot.id : '');
         }
 
-        function getStockAdjustments(lineItems, summary) {
+        function getStockAdjustments(lineItems, summary, isDraftModified) {
             var filtered;
-
-            if (summary.lot) {
+            if (isDraftModified) {
+                if (summary.lot) {
+                    filtered = $filter('filter')(lineItems, function(lineItem) {
+                        return lineItem.orderable.id === summary.orderable.id && lineItem.lot
+                            && lineItem.lot.id === summary.lot.id;
+                    });
+                } else {
+                    filtered = $filter('filter')(lineItems, function(lineItem) {
+                        return lineItem.orderable.id === summary.orderable.id && !lineItem.lot;
+                    });
+                }
+            } else if (summary.lot) {
                 filtered = $filter('filter')(lineItems, {
                     orderableId: summary.orderable.id,
                     lotId: summary.lot.id
@@ -287,7 +301,6 @@
 
         function getStockProducts(programId, facilityId) {
             var repository = new StockCardSummaryRepository(new FullStockCardSummaryRepositoryImpl());
-
             return repository.query({
                 programId: programId,
                 facilityId: facilityId
@@ -303,6 +316,15 @@
 
         function getQuantity(item) {
             return (_.isNull(item.quantity) || _.isUndefined(item.quantity)) && item.isAdded ? -1 : item.quantity;
+        }
+
+        function getExtraData(lineItem) {
+            if (lineItem.vvmStatus) {
+                return {
+                    vvmStatus: lineItem.vvmStatus
+                };
+            }
+            return lineItem.extraData;
         }
 
         function ifOfflineDraft(draft) {
