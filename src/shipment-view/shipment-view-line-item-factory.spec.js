@@ -63,6 +63,8 @@ describe('ShipmentViewLineItemFactory', function() {
 
         it('should build a ShipmentViewLineItem for generic orderable', function() {
 
+            // SELV3-302 - Removed lots with stock 0 show up on order fulfillment screen
+
             summaries = [
                 new StockCardSummaryDataBuilder()
                     .withOrderable(commodityTypeOne)
@@ -79,6 +81,8 @@ describe('ShipmentViewLineItemFactory', function() {
                     ])
                     .buildJson()
             ];
+
+            // SELV3-302 - END
 
             commodityTypeOne = new OrderableDataBuilder()
                 .withProductCode('PC101')

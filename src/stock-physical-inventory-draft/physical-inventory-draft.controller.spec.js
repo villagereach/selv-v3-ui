@@ -403,7 +403,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.vm.saveDraftOrSubmit(true);
             this.$rootScope.$apply();
 
-            expect(this.$window.open).toHaveBeenCalledWith('/openlmisServer/api/reports/templates/common/' +
+            expect(this.$window.open).toHaveBeenCalledWith('/api/reports/templates/common/' +
             '968b4abc-ea64-4285-9f46-64544d8af37e/pdf?physInventoryId=1', '_blank');
 
             expect(this.accessTokenFactory.addAccessToken).toHaveBeenCalled();
