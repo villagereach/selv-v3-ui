@@ -149,13 +149,17 @@ describe('physicalInventoryService', function() {
             expect(result.id).toBe(this.draft.id);
         });
 
-        it('should get physical inventory by id', function() {
+        it('should get physical inventory', function() {
             var result;
 
-            this.physicalInventoryService.getPhysicalInventory(this.draft).then(function(response) {
+            this.$httpBackend.when('GET', this.stockmanagementUrlFactory('/api/physicalInventories/' + this.draft.id))
+                .respond(200, this.draft);
+
+            this.physicalInventoryService.getPhysicalInventory(this.draft.id).then(function(response) {
                 result = response;
             });
 
+            this.$httpBackend.flush();
             this.$rootScope.$apply();
 
             expect(result.id).toBe(this.draft.id);
