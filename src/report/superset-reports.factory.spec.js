@@ -74,6 +74,10 @@ describe('reportService', function() {
                 'openlmis.reports.list.superset.qualidadeDados', jasmine.any(Object)
             );
 
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.niveisDeStock', jasmine.any(Object)
+            );
+
         });
 
     });

@@ -52,6 +52,10 @@
             QUALIDADE_DADOS: createReport('qualidadeDados',
                 'https://app.powerbi.com/view?r=eyJrIjoiMDg4MjllYzUtMzUzNi00ODFiLTgyNWUtMWQzODU5N' +
                 'TIzNjQ4IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                ''),
+            NIVEIS_DE_STOCK: createReport('niveisDeStock',
+                'https://app.powerbi.com/view?r=eyJrIjoiYmRhNjRhOTgtN2E4Yi00NmE0LWFjMzgtMDk2N2FmO' +
+                'TAwZWFmIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
                 '')
         };
 
