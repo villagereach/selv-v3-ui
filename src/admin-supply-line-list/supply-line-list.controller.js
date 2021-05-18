@@ -29,15 +29,21 @@
         .controller('SupplyLineListController', controller);
 
     controller.$inject = [
-        '$state', '$stateParams', 'supplyLines', 'supplyingFacilities', 'programs'
+        '$state', '$stateParams', '$q', 'SupplyLineResource', 'supplyLines', 'supplyingFacilities', 'programs',
+        'confirmService', 'loadingModalService', 'notificationService'
     ];
 
-    function controller($state, $stateParams, supplyLines, supplyingFacilities, programs) {
+    function controller($state, $stateParams, $q, SupplyLineResource,
+                        supplyLines, supplyingFacilities, programs, confirmService,
+                        loadingModalService, notificationService) {
         var vm = this;
 
         vm.$onInit = onInit;
         vm.search = search;
         vm.showFacilityPopover = showFacilityPopover;
+        //SELV3-340: refreshState and deleteSupplyLine added
+        vm.refreshState = refreshState;
+        vm.deleteSupplyLine = deleteSupplyLine;
 
         /**
          * @ngdoc property
@@ -144,6 +150,57 @@
             return supplyLine.supervisoryNode.requisitionGroup &&
                 supplyLine.supervisoryNode.requisitionGroup.memberFacilities &&
                 supplyLine.supervisoryNode.requisitionGroup.memberFacilities.length;
+        }
+
+        //SELV3-340: Delete Supply Line - zmienic opis funkcji
+        /**
+         * @ngdoc method
+         * @methodOf admin-supply-line-list.controller:SupplyLineListController
+         * @name deleteSupplyLine
+         *
+         * @description
+         * Checks if supply line should be deleted.
+         * 
+         * @param   {Object}  supplyLine given supply line
+         * @returns {boolean}            true if supply line should be deleted
+         */
+        function deleteSupplyLine(supplyLine) {
+            return confirmService
+                .confirmDestroy('adminSupplyLineList.delete.confirm', 'adminSupplyLineList.delete')
+                .then(function() {
+                    loadingModalService.open();
+                    return new SupplyLineResource()
+                        .delete(supplyLine);
+                })
+                .then(function() {
+                    refreshState($stateParams);
+                })
+                .then(function() {
+                    notificationService.success('adminSupplyLineList.supplyLineDeletedSuccessfully');
+                })
+                .catch(function(error) {
+                    return $q.reject(error);
+                })
+                .finally(function() {
+                    loadingModalService.close();
+                });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-supply-line-list.controller:SupplyLineListController
+         * @name refreshState
+         *
+         * @description
+         * Checks if page should be refreshed after deletion of the supply line.
+         * 
+         * @param   {Parameters}  stateParams given state parameter
+         */
+        function refreshState(stateParams) {
+            $state.go('openlmis.administration.supplyLines', stateParams, {
+                reload: true
+            });
+            notificationService.success('adminSupplyLineList.pageHasBeenRefreshed');
         }
     }
 })();

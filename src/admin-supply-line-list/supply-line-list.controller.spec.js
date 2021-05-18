@@ -22,8 +22,12 @@ describe('SupplyLineListController', function() {
             this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
             this.SupplyLineDataBuilder = $injector.get('SupplyLineDataBuilder');
             this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.loadingModalService = $injector.get('loadingModalService');
+            this.confirmService = $injector.get('confirmService');
+            this.notificationService = $injector.get('notificationService');
             this.$controller = $injector.get('$controller');
             this.$state = $injector.get('$state');
+            this.$rootScope = $injector.get('$rootScope');
         });
 
         this.supplyingFacilities = [
@@ -57,6 +61,11 @@ describe('SupplyLineListController', function() {
         this.vm.$onInit();
 
         spyOn(this.$state, 'go').andReturn();
+        //SELV3-304:
+        spyOn(this.confirmService, 'confirmDestroy').andReturn(this.$q.resolve());
+        spyOn(this.loadingModalService, 'open').andReturn(this.$q.resolve());
+        spyOn(this.SupplyLineResource.prototype, 'delete').andReturn(this.$q.resolve());
+        spyOn(this.notificationService, 'success').andReturn();
     });
 
     describe('onInit', function() {
@@ -157,6 +166,38 @@ describe('SupplyLineListController', function() {
             ];
 
             expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeTruthy();
+        });
+    });
+
+    //SELV3-340: Delete supply line test
+    describe('deleteSupplyLine', function() {
+
+        it('should call deleteSupplyLine method', function() {
+            this.vm.deleteSupplyLine(this.supplyLines);
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirmDestroy).toHaveBeenCalledWith(
+                'adminSupplyLineList.delete.confirm',
+                'adminSupplyLineList.delete'
+            );
+
+            expect(this.loadingModalService.open).toHaveBeenCalled();
+            expect(this.SupplyLineResource.prototype.delete).toHaveBeenCalledWith(this.supplyLines);
+            expect(this.$state.go).toHaveBeenCalled();
+            expect(this.notificationService.success)
+                .toHaveBeenCalledWith('adminSupplyLineList.supplyLineDeletedSuccessfully');
+        });
+    });
+
+    //SELV3-340: Refresh state test
+    describe('refreshState', function() {
+
+        it('should call state go method', function() {
+            this.vm.refreshState();
+
+            expect(this.$state.go).toHaveBeenCalled();
+            expect(this.notificationService.success)
+                .toHaveBeenCalledWith('adminSupplyLineList.pageHasBeenRefreshed');
         });
     });
 });
