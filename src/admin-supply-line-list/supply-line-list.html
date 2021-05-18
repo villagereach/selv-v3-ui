@@ -1,0 +1,49 @@
+<h2>{{'adminSupplyLineList.supplyLines' | message}}</h2>
+<section class="openlmis-table-container">
+    <form ng-submit="vm.search()">
+        <fieldset class="form-group">
+            <label for="supplyingFacility">{{'adminSupplyLineList.supplyingFacility' | message}}</label>
+            <select id="supplyingFacility"
+                    ng-options="supplyingFacility.id as supplyingFacility.name for supplyingFacility in vm.supplyingFacilities"
+                    ng-model="vm.supplyingFacilityId">
+            </select>
+            <label for="program">{{'adminSupplyLineList.program' | message}}</label>
+            <select id="program"
+                    ng-options="program.id as program.name for program in vm.programs"
+                    ng-model="vm.programId">
+            </select>
+        </fieldset>
+        <input type="submit" value="{{'adminSupplyLineList.search' | message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.supplyLines || vm.supplyLines.length === 0">
+            {{'adminSupplyLineList.noSupplyLinesFound' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'adminSupplyLineList.supplyingFacility' | message}}</th>
+                <th>{{'adminSupplyLineList.supervisoryNode' | message}}</th>
+                <th>{{'adminSupplyLineList.program' | message}}</th>
+                <th>{{'adminSupplyLineList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="supplyLine in vm.supplyLines">
+                <td>{{supplyLine.supplyingFacility.name}}</td>
+                <td ng-if="!vm.showFacilityPopover(supplyLine)">
+                    {{supplyLine.supervisoryNode.code}}
+                </td>
+                <td ng-if="vm.showFacilityPopover(supplyLine)"
+                    popover-template="admin-supply-line-list/facilities-popover.html"
+                    popover-title="{{'adminSupplyLineList.servedFacilities' | message}}">
+                    {{supplyLine.supervisoryNode.code}}
+                </td>
+                <td>{{supplyLine.program.name}}</td>
+                <td>
+                    <button ui-sref="openlmis.administration.supplyLines.view({id: supplyLine.id})">{{'adminSupplyLineList.view' | message}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination/>
+</section>
