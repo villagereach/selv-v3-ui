@@ -10,6 +10,5 @@
     "adminSupplyLineList.servedFacilities": "Served Facilities",
     "adminSupplyLineList.delete": "Delete",
     "adminSupplyLineList.supplyLineDeletedSuccessfully": "The supply line has been deleted successfully!",
-    "adminSupplyLineList.pageHasBeenRefreshed": "The page has been refreshed.",
     "adminSupplyLineList.delete.confirm": "Do you really want to remove the supply line?"
 }

@@ -158,7 +158,7 @@
          * @name deleteSupplyLine
          *
          * @description
-         * Checks if supply line should be deleted and deletes it.
+         * Deletes the supply line.
          * 
          * @param   {Object}  supplyLine given supply line
          * @returns {boolean}            true if supply line should be deleted
@@ -191,7 +191,7 @@
          * @name refreshState
          *
          * @description
-         * Checks if page should be refreshed after deletion of the supply line and then refreshes it.
+         * Refreshes the page after deletion of the supply line.
          * 
          * @param   {Parameters}  stateParams given state parameter
          */
@@ -199,7 +199,6 @@
             $state.go('openlmis.administration.supplyLines', stateParams, {
                 reload: true
             });
-            notificationService.success('adminSupplyLineList.pageHasBeenRefreshed');
         }
     }
 })();
