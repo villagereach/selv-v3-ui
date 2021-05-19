@@ -41,8 +41,7 @@
         vm.$onInit = onInit;
         vm.search = search;
         vm.showFacilityPopover = showFacilityPopover;
-        //SELV3-340: refreshState and deleteSupplyLine added
-        vm.refreshState = refreshState;
+        //SELV3-340: deleteSupplyLine added
         vm.deleteSupplyLine = deleteSupplyLine;
 
         /**
@@ -152,14 +151,14 @@
                 supplyLine.supervisoryNode.requisitionGroup.memberFacilities.length;
         }
 
-        //SELV3-340: Delete Supply Line - zmienic opis funkcji
+        //SELV3-340: Delete Supply Line
         /**
          * @ngdoc method
          * @methodOf admin-supply-line-list.controller:SupplyLineListController
          * @name deleteSupplyLine
          *
          * @description
-         * Checks if supply line should be deleted.
+         * Checks if supply line should be deleted and deletes it.
          * 
          * @param   {Object}  supplyLine given supply line
          * @returns {boolean}            true if supply line should be deleted
@@ -192,7 +191,7 @@
          * @name refreshState
          *
          * @description
-         * Checks if page should be refreshed after deletion of the supply line.
+         * Checks if page should be refreshed after deletion of the supply line and then refreshes it.
          * 
          * @param   {Parameters}  stateParams given state parameter
          */

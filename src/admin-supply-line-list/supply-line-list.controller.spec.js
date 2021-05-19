@@ -32,6 +32,8 @@ describe('SupplyLineListController', function() {
             this.$q = $injector.get('$q');
         });
 
+        this.confirmDeferred = this.$q.defer();
+
         this.supplyingFacilities = [
             new this.FacilityDataBuilder().build(),
             new this.FacilityDataBuilder().build()
@@ -64,7 +66,7 @@ describe('SupplyLineListController', function() {
 
         spyOn(this.$state, 'go').andReturn();
         //SELV3-304:
-        spyOn(this.confirmService, 'confirmDestroy').andReturn(this.$q.resolve());
+        spyOn(this.confirmService, 'confirmDestroy').andReturn(this.confirmDeferred.promise);
         spyOn(this.loadingModalService, 'open').andReturn(this.$q.resolve());
         spyOn(this.SupplyLineResource.prototype, 'delete').andReturn(this.$q.resolve());
         spyOn(this.notificationService, 'success').andReturn();
@@ -176,6 +178,8 @@ describe('SupplyLineListController', function() {
 
         it('should call deleteSupplyLine method', function() {
             this.vm.deleteSupplyLine(this.supplyLines);
+
+            this.confirmDeferred.resolve();
             this.$rootScope.$apply();
 
             expect(this.confirmService.confirmDestroy).toHaveBeenCalledWith(
@@ -189,17 +193,16 @@ describe('SupplyLineListController', function() {
             expect(this.notificationService.success)
                 .toHaveBeenCalledWith('adminSupplyLineList.supplyLineDeletedSuccessfully');
         });
-    });
 
-    //SELV3-340: Refresh state test
-    describe('refreshState', function() {
+        it('should not delete the supply line if user clicked cancel button', function() {
+            this.vm.deleteSupplyLine(this.supplyLines);
 
-        it('should call state go method', function() {
-            this.vm.refreshState();
+            this.confirmDeferred.reject();
+            this.$rootScope.$apply();
 
-            expect(this.$state.go).toHaveBeenCalled();
-            expect(this.notificationService.success)
-                .toHaveBeenCalledWith('adminSupplyLineList.pageHasBeenRefreshed');
+            expect(this.SupplyLineResource.prototype.delete).not.toHaveBeenCalled();
+            expect(this.$state.go).not.toHaveBeenCalled();
+            expect(this.notificationService.success).not.toHaveBeenCalled();
         });
     });
 });
