@@ -8,7 +8,7 @@
     "adminRequisitionGroupList.supervisoryNode": "Supervisory Node",
     "adminRequisitionGroupList.numberOfFacilities": "Number of Facilities",
     "adminRequisitionGroupList.actions": "Actions",
-    "adminRequisitionGroupList.view": "View",
+    "adminRequisitionGroupList.edit": "Edit",
     "adminRequisitionGroupList.noRequisitionGroups": "No requisition groups found.",
     "adminRequisitionGroupList.programs": "${number} Programs"
 }

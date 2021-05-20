@@ -15,5 +15,13 @@
     "adminRequisitionGroupView.facilityEnabled": "Facility Enabled",
     "adminRequisitionGroupView.cancel": "Cancel",
     "adminRequisitionGroupView.facilities": "Facilities",
-    "adminRequisitionGroupList.facilityName": "Facility Name"
+    "adminRequisitionGroupList.facilityName": "Facility Name",
+    "adminRequisitionGroupView.add": "Add",
+    "adminRequisitionGroupView.facility": "Facility",
+    "adminRequisitionGroupView.facilityAlreadyAdded": "Facility already added.",
+    "adminRequisitionGroupView.save": "Save",
+    "adminRequisitionGroupView.save.question": "Do you want to save changes to the Requisition Group?",
+    "adminRequisitionGroupView.save.success": "Requisition Group has been saved",
+    "adminRequisitionGroupView.save.fail": "Failed to save Requisition Group",
+    "adminRequisitionGroupView.delete": "Delete"
 }

@@ -1,4 +1,6 @@
-<section class="openlmis-table-container">
+<!-- SELV3-337: Added the ability to add facility to the requisition group -->
+<section class="openlmis-table-container member-facilities">
+    <!-- SELV3-337: ends here -->
     <form ng-submit="vm.searchForFacilities()">
         <fieldset class="form-group">
             <label for="facilityName">{{'adminRequisitionGroupList.facilityName' | message}}</label>
@@ -6,6 +8,20 @@
         </fieldset>
         <button class="primary" type="submit">{{'adminRequisitionGroupList.search' | message}}</button>
     </form>
+    <!-- SELV3-337: Added the ability to add facility to the requisition group -->
+    <section class="member-facilities-add">
+            <form class="form-inline" ng-submit="vm.addFacility()" reload-form>
+                <div class="form-group">
+                    <label for="facility-select">{{'adminRequisitionGroupView.facility' | message}}</label>
+                    <select id="facility" class="form-control"
+                        ng-model="vm.selectedFacility" 
+                        ng-options="facility as facility.name for (facilityId, facility) in vm.facilities track by facility.id">
+                    </select>
+                </div>
+                <button type="submit" class="add">{{'adminRequisitionGroupView.add' | message}}</button>
+            </form>
+    </section>
+    <!-- SELV3-337: ends here -->
     <table>
         <caption ng-if="!vm.memberFacilitiesPage ||
                 vm.memberFacilitiesPage.length === 0">

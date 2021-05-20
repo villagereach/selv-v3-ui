@@ -5,12 +5,12 @@
  * This program is free software: you can redistribute it and/or modify it under the terms
  * of the GNU Affero General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- *  
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
  * See the GNU Affero General Public License for more details. You should have received a copy of
  * the GNU Affero General Public License along with this program. If not, see
- * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
+ * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
 describe('requisitionGroupService', function() {
@@ -109,6 +109,24 @@ describe('requisitionGroupService', function() {
             expect(angular.toJson(result.content)).toEqual(angular.toJson(this.requisitionGroups));
         });
     });
+
+    // SELV3-337: Added the ability to add facility to the requisition group
+    it('should update requisition group', function() {
+
+        this.$httpBackend
+            .expectPUT(this.referencedataUrlFactory('/api/requisitionGroups/' + this.requisitionGroups[0].id))
+            .respond(200, this.requisitionGroups[0]);
+
+        var result;
+        this.requisitionGroupService.update(this.requisitionGroups[0]).then(function(response) {
+            result = response;
+        });
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
+
+        expect(angular.toJson(result)).toEqual(angular.toJson(this.requisitionGroups[0]));
+    });
+    // SELV3-337: ends here
 
     afterEach(function() {
         this.$httpBackend.verifyNoOutstandingRequest();

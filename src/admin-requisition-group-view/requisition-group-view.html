@@ -1,5 +1,7 @@
 <h2>{{vm.requisitionGroup.name}}</h2>
-<form id="editSupervisoryNode">
+<!-- SELV3-337: Added the ability to add facility to the requisition group -->
+<form id="editSupervisoryNode" ng-submit="vm.save()">
+    <!-- SELV3-337: ends here -->
     <label for="code">{{'adminRequisitionGroupView.requisitionGroupCode' | message}}</label>
     <input id="code" class="form-control" ng-model="vm.requisitionGroup.code" required disabled/>
     <label for="name">{{'adminRequisitionGroupView.requisitionGroupName' | message}}</label>
@@ -19,4 +21,7 @@
 </nav>
 <div class="openlmis-toolbar">
     <button ui-sref="openlmis.administration.requisitionGroupList" ui-sref-opts="{reload: true}">{{'adminRequisitionGroupView.cancel' | message}}</button>
+    <!-- SELV3-337: Added the ability to add facility to the requisition group -->
+    <button class="primary" form="editSupervisoryNode">{{'adminRequisitionGroupView.save' | message}}</button>
+    <!-- SELV3-337: ends here -->
 </div>
