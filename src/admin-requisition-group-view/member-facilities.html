@@ -42,7 +42,11 @@
                 <td>{{facility.geographicZone.name}}</td>
                 <td>{{facility.type.name}}</td>
                 <td><i ng-class="{'icon-ok': facility.enabled, 'icon-remove': !facility.enabled}"></i></td>
-                <td></td>
+                <td>
+                    <!-- SELV3-338: Added the ability to remove facility from the requisition group -->
+                    <button class="danger" ng-click="vm.removeFacility(facility)">{{'adminRequisitionGroupView.delete' | message}}</button>
+                    <!-- SELV3-338: ends here -->
+                </td>
             </tr>
         </tbody>
     </table>

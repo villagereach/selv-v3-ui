@@ -209,6 +209,22 @@ describe('RequisitionGroupViewController', function() {
     });
     // SELV3-337: ends here
 
+    // SELV3-338: Added the ability to remove facility from the requisition group
+    describe('removeFacility', function() {
+        it('should remove facility from memeberFacilities', function() {
+            var facilityToRemove = new this.FacilityDataBuilder()
+                .withId('id_3')
+                .build();
+
+            this.vm.removeFacility(facilityToRemove);
+            this.$rootScope.$apply();
+
+            expect(this.vm.allMemeberFacilities.length).toEqual(1);
+            expect(this.$state.go).toHaveBeenCalled();
+        });
+    });
+    // SELV3-338: ends here
+
     describe('searchForFacilities', function() {
 
         it('should set facility name param', function() {

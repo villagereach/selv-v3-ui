@@ -43,6 +43,7 @@
         vm.selectedFacility = undefined;
         vm.addFacility = addFacility;
         vm.save = save;
+        vm.removeFacility = removeFacility;
 
         /**
          * @ngdoc property
@@ -163,6 +164,21 @@
                     });
             }
         }
+
+        // SELV3-338: Added the ability to remove facility from the requisition group
+        /**
+         * @ngdoc method
+         * @methodOf admin-requisition-group-view.controller:RequisitionGroupViewController
+         * @name removeFacility
+         *
+         * @description
+         * Removes facility from the list.
+         */
+        function removeFacility(facility) {
+            vm.allMemeberFacilities.splice(vm.allMemeberFacilities.indexOf(facility), 1);
+            refreshStateParams();
+        }
+        // SELV3-338: ends here
 
         function validateFacility() {
             var facility = _.findWhere(vm.allMemeberFacilities, {
