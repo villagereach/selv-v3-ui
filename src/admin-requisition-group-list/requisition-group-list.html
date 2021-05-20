@@ -1,0 +1,58 @@
+<h2>{{'adminRequisitionGroupList.requisitionGroups' | message}}</h2>
+<section class="openlmis-table-container">
+    <form ng-submit="vm.search()">
+        <fieldset class="form-group">
+            <label for="name">{{'adminRequisitionGroupList.requisitionGroupName' | message}}</label>
+            <input type="text" id="name" ng-model="vm.name"/>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="program">{{'adminRequisitionGroupList.program' | message}}</label>
+            <select id="program"
+                    ng-options="program.code as program.name for program in vm.programs"
+                    ng-model="vm.program">
+            </select>
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="geographicZone">{{'adminRequisitionGroupList.geographicZone' | message}}</label>
+            <select id="geographicZone"
+                    ng-options="geographicZone.code as geographicZone.name for geographicZone in vm.geographicZones"
+                    ng-model="vm.geographicZone">
+            </select>
+        </fieldset>
+        <input type="submit" value="{{'adminRequisitionGroupList.search' | message}}"/>
+    </form>
+    <table>
+        <caption ng-if="!vm.requisitionGroups || vm.requisitionGroups.length === 0">
+            {{'adminRequisitionGroupList.noRequisitionGroups' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'adminRequisitionGroupList.requisitionGroupName' | message}}</th>
+                <th>{{'adminRequisitionGroupList.program' | message}}</th>
+                <th>{{'adminRequisitionGroupList.code' | message}}</th>
+                <th>{{'adminRequisitionGroupList.supervisoryNode' | message}}</th>
+                <th>{{'adminRequisitionGroupList.geographicZone' | message}}</th>
+                <th>{{'adminRequisitionGroupList.numberOfFacilities' | message}}</th>
+                <th>{{'adminRequisitionGroupList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="requisitionGroup in vm.requisitionGroups">
+                <td>{{requisitionGroup.name}}</td>
+                <td ng-if="requisitionGroup.requisitionGroupProgramSchedules.length > 1"
+                    popover-template="admin-requisition-group-list/requisition-group-programs-popover.html">
+                    {{'adminRequisitionGroupList.programs' | message: {'number': requisitionGroup.requisitionGroupProgramSchedules.length } }}</td>
+                <td ng-if="!(requisitionGroup.requisitionGroupProgramSchedules.length > 1)">{{requisitionGroup.requisitionGroupProgramSchedules[0].program.name}}</td>
+                <td>{{requisitionGroup.code}}</td>
+                <td>{{requisitionGroup.supervisoryNode.name}}</td>
+                <td ng-if="requisitionGroup.supervisoryNode.facility">{{vm.facilitiesMap[requisitionGroup.supervisoryNode.facility.id].geographicZone.name}}</td>
+                <td ng-if="!requisitionGroup.supervisoryNode.facility"></td>
+                <td>{{requisitionGroup.memberFacilities.length}}</td>
+                <td>
+                    <button class="primary" ui-sref="openlmis.administration.requisitionGroupView({id: requisitionGroup.id})">{{'adminRequisitionGroupList.view' | message}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination/>
+</section>

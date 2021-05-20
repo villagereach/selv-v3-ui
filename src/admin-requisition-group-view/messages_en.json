@@ -1,0 +1,19 @@
+{
+    "adminRequisitionGroupView.viewRequisitionGroup": "View Requisition Group",
+    "adminRequisitionGroupView.requisitionGroupCode": "Requisition Group Code",
+    "adminRequisitionGroupView.requisitionGroupName": "Requisition Group Name",
+    "adminRequisitionGroupView.supervisoryNode": "Supervisory Node",
+    "adminRequisitionGroupView.programsAndSchedules": "Programs and Schedules",
+    "adminRequisitionGroupView.noAssociatedProgramAndSchedules": "No Associated Programs and Schedules",
+    "adminRequisitionGroupView.program": "Program",
+    "adminRequisitionGroupView.schedule": "Schedule",
+    "adminRequisitionGroupView.actions": "Actions",
+    "adminRequisitionGroupView.noAssociatedFacilities": "No Associated Facilities",
+    "adminRequisitionGroupView.facilityName": "Facility Name",
+    "adminRequisitionGroupView.geographicZone": "Geographic Zone",
+    "adminRequisitionGroupView.facilityType": "Facility Type",
+    "adminRequisitionGroupView.facilityEnabled": "Facility Enabled",
+    "adminRequisitionGroupView.cancel": "Cancel",
+    "adminRequisitionGroupView.facilities": "Facilities",
+    "adminRequisitionGroupList.facilityName": "Facility Name"
+}

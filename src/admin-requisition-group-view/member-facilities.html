@@ -1,0 +1,37 @@
+<section class="openlmis-table-container">
+    <form ng-submit="vm.searchForFacilities()">
+        <fieldset class="form-group">
+            <label for="facilityName">{{'adminRequisitionGroupList.facilityName' | message}}</label>
+            <input type="text" id="facilityName" ng-model="vm.facilityName"/>
+        </fieldset>
+        <button class="primary" type="submit">{{'adminRequisitionGroupList.search' | message}}</button>
+    </form>
+    <table>
+        <caption ng-if="!vm.memberFacilitiesPage ||
+                vm.memberFacilitiesPage.length === 0">
+            {{'adminRequisitionGroupView.noAssociatedFacilities' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th>{{'adminRequisitionGroupView.facilityName' | message}}</th>
+                <th>{{'adminRequisitionGroupView.geographicZone' | message}}</th>
+                <th>{{'adminRequisitionGroupView.facilityType' | message}}</th>
+                <th>{{'adminRequisitionGroupView.facilityEnabled' | message}}</th>
+                <th>{{'adminRequisitionGroupView.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="facility in vm.memberFacilitiesPage">
+                <td>{{facility.name}}</td>
+                <td>{{facility.geographicZone.name}}</td>
+                <td>{{facility.type.name}}</td>
+                <td><i ng-class="{'icon-ok': facility.enabled, 'icon-remove': !facility.enabled}"></i></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination
+        list="vm.memberFacilities"
+        paged-list="vm.memberFacilitiesPage"
+        pagination-id="'memberFacilities'"/>
+</section>

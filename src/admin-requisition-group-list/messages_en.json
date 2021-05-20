@@ -1,0 +1,14 @@
+{
+    "adminRequisitionGroupList.requisitionGroups": "Requisition Groups",
+    "adminRequisitionGroupList.requisitionGroupName": "Requisition Group Name",
+    "adminRequisitionGroupList.program": "Program",
+    "adminRequisitionGroupList.geographicZone": "Geographic Zone",
+    "adminRequisitionGroupList.search": "Search",
+    "adminRequisitionGroupList.code": "Code",
+    "adminRequisitionGroupList.supervisoryNode": "Supervisory Node",
+    "adminRequisitionGroupList.numberOfFacilities": "Number of Facilities",
+    "adminRequisitionGroupList.actions": "Actions",
+    "adminRequisitionGroupList.view": "View",
+    "adminRequisitionGroupList.noRequisitionGroups": "No requisition groups found.",
+    "adminRequisitionGroupList.programs": "${number} Programs"
+}
