@@ -1,0 +1,13 @@
+{
+    "adminSupplyLineEdit.editSupplyLine": "Edit Supply Line",
+    "adminSupplyLineEdit.program": "Program",
+    "adminSupplyLineEdit.supervisoryNode": "Supervisory Node",
+    "adminSupplyLineEdit.supplyingFacility": "Supplying Facility",
+    "adminSupplyLineEdit.description": "Description",
+    "adminSupplyLineEdit.catchmentPopulation": "Catchment Population",
+    "adminSupplyLineEdit.cancel": "Cancel",
+    "adminSupplyLineEdit.update": "Save",
+    "adminSupplyLineEdit.update.confirm": "Do you really want to save the Supply Line?",
+    "adminSupplyLineEdit.supplyLineUpdatedSuccessfully": "Supply Line has been saved sucessfully.",
+    "adminSupplyLineEdit.failure": "Failed to save the Supply Line."
+}

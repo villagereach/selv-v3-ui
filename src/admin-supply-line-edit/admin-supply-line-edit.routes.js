@@ -17,20 +17,20 @@
 
     'use strict';
 
-    angular.module('admin-supply-line-view').config(routes);
+    angular.module('admin-supply-line-edit').config(routes);
 
     routes.$inject = ['$stateProvider', 'ADMINISTRATION_RIGHTS'];
 
     function routes($stateProvider, ADMINISTRATION_RIGHTS) {
 
-        $stateProvider.state('openlmis.administration.supplyLines.view', {
-            label: 'adminSupplyLineView.viewSupplyLine',
+        $stateProvider.state('openlmis.administration.supplyLines.edit', {
+            label: 'adminSupplyLineEdit.editSupplyLine',
             url: '/supplyLines/:id',
             accessRights: [ADMINISTRATION_RIGHTS.SUPPLY_LINES_MANAGE],
             views: {
                 '@openlmis': {
-                    controller: 'SupplyLineViewController',
-                    templateUrl: 'admin-supply-line-view/supply-line-view.html',
+                    controller: 'SupplyLineEditController',
+                    templateUrl: 'admin-supply-line-edit/supply-line-edit.html',
                     controllerAs: 'vm'
                 }
             },

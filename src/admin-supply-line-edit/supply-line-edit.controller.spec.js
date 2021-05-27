@@ -13,10 +13,10 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('SupplyLineViewController', function() {
+describe('SupplyLineEditController', function() {
 
     beforeEach(function() {
-        module('admin-supply-line-view');
+        module('admin-supply-line-edit');
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
@@ -48,8 +48,9 @@ describe('SupplyLineViewController', function() {
         ];
 
         this.confirmDeferred = this.$q.defer();
+        this.saveDeferred = this.$q.defer();
 
-        this.vm = this.$controller('SupplyLineViewController', {
+        this.vm = this.$controller('SupplyLineEditController', {
             supplyLine: this.supplyLine,
             //SELV3-339
             facilities: this.facilities,
@@ -61,8 +62,10 @@ describe('SupplyLineViewController', function() {
         spyOn(this.$state, 'go').andReturn();
         spyOn(this.confirmService, 'confirm').andReturn(this.confirmDeferred.promise);
         spyOn(this.loadingModalService, 'open').andReturn(this.$q.resolve());
-        spyOn(this.SupplyLineResource.prototype, 'update').andReturn(this.$q.resolve());
+        spyOn(this.loadingModalService, 'close').andReturn(true);
+        spyOn(this.SupplyLineResource.prototype, 'update').andReturn(this.saveDeferred.promise);
         spyOn(this.notificationService, 'success').andReturn();
+        spyOn(this.notificationService, 'error').andReturn();
     });
 
     describe('onInit', function() {
@@ -87,17 +90,18 @@ describe('SupplyLineViewController', function() {
             this.vm.update(this.supplyLine);
 
             this.confirmDeferred.resolve();
+            this.saveDeferred.resolve(this.supplyLine);
             this.$rootScope.$apply();
 
             expect(this.confirmService.confirm).toHaveBeenCalledWith(
-                'adminSupplyLineViev.update.confirm', 'adminSupplyLineView.update'
+                'adminSupplyLineEdit.update.confirm', 'adminSupplyLineEdit.update'
             );
 
             expect(this.loadingModalService.open).toHaveBeenCalled();
             expect(this.SupplyLineResource.prototype.update).toHaveBeenCalledWith(this.supplyLine);
             expect(this.$state.go).toHaveBeenCalled();
             expect(this.notificationService.success)
-                .toHaveBeenCalledWith('adminSupplyLineView.supplyLineUpdatedSuccessfully');
+                .toHaveBeenCalledWith('adminSupplyLineEdit.supplyLineUpdatedSuccessfully');
         });
 
         it('should not update the supply line if user clicked cancel button', function() {
@@ -109,6 +113,17 @@ describe('SupplyLineViewController', function() {
             expect(this.SupplyLineResource.prototype.update).not.toHaveBeenCalled();
             expect(this.$state.go).not.toHaveBeenCalled();
             expect(this.notificationService.success).not.toHaveBeenCalled();
+        });
+
+        it('should show notification if supply line update has failed', function() {
+            this.vm.update(this.supplyLine);
+
+            this.confirmDeferred.resolve();
+            this.saveDeferred.reject();
+            this.$rootScope.$apply();
+
+            expect(this.notificationService.error).toHaveBeenCalledWith('adminSupplyLineEdit.failure');
+            expect(this.loadingModalService.close).toHaveBeenCalled();
         });
     });
 });

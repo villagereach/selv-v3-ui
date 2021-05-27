@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc controller
-     * @name admin-supply-line-view.controller:SupplyLineViewController
+     * @name admin-supply-line-edit.controller:SupplyLineEditController
      *
      * @description
-     * Controller for managing supply line view screen.
+     * Controller for managing supply line edit screen.
      */
     angular
-        .module('admin-supply-line-view')
-        .controller('SupplyLineViewController', controller);
+        .module('admin-supply-line-edit')
+        .controller('SupplyLineEditController', controller);
 
     controller.$inject = ['supplyLine', 'facilities', 'supervisoryNodes', 'SupplyLineResource',
         '$state', 'confirmService', 'loadingModalService', 'notificationService', '$q'];
@@ -42,7 +42,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-supply-line-view.controller:SupplyLineViewController
+         * @propertyOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name supplyLine
          * @type {Object}
          *
@@ -53,7 +53,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-supply-line-view.controller:SupplyLineViewController
+         * @propertyOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name facilities
          * @type {Array}
          *
@@ -64,7 +64,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-supply-line-view.controller:SupplyLineViewController
+         * @propertyOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name supervisoryNodes
          * @type {Array}
          *
@@ -75,11 +75,11 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-supply-line-view.controller:SupplyLineViewController
+         * @methodOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name $onInit
          *
          * @description
-         * Method that is executed on initiating SupplyLineViewController.
+         * Method that is executed on initiating SupplyLineEditController.
          */
         function onInit() {
             vm.supplyLine = supplyLine;
@@ -91,7 +91,7 @@
         //SELV3-339: Update the supply line
         /**
          * @ngdoc method
-         * @methodOf admin-supply-line-view.controller:SupplyLineViewController
+         * @methodOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name update
          *
          * @description
@@ -99,7 +99,7 @@
          */
         function update() {
             return confirmService
-                .confirm('adminSupplyLineViev.update.confirm', 'adminSupplyLineView.update')
+                .confirm('adminSupplyLineEdit.update.confirm', 'adminSupplyLineEdit.update')
                 .then(function() {
                     loadingModalService.open();
                     return new SupplyLineResource()
@@ -109,9 +109,11 @@
                     goToSupplyLineList();
                 })
                 .then(function() {
-                    notificationService.success('adminSupplyLineView.supplyLineUpdatedSuccessfully');
+                    notificationService.success('adminSupplyLineEdit.supplyLineUpdatedSuccessfully');
                 })
                 .catch(function(error) {
+                    loadingModalService.close();
+                    notificationService.error('adminSupplyLineEdit.failure');
                     return $q.reject(error);
                 })
                 .finally(function() {
@@ -121,7 +123,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-supply-line-view.controller:SupplyLineViewController
+         * @methodOf admin-supply-line-edit.controller:SupplyLineEditController
          * @name goToSupplyLineList
          *
          * @description
