@@ -1,0 +1,22 @@
+<h2>{{'adminSupplyLineView.viewSupplyLine' | message}}</h2>
+<form id="viewSupplyLine">
+    <fieldset class="form-group">
+        <label for="program">{{'adminSupplyLineView.program' | message}}</label>
+        <input id="program" class="form-control" ng-model="vm.supplyLine.program.name" required disabled/>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="supervisoryNode">{{'adminSupplyLineView.supervisoryNode' | message}}</label>
+        <input id="supervisoryNode" class="form-control" ng-model="vm.supplyLine.supervisoryNode.code" required disabled/>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="supplyingFacility">{{'adminSupplyLineView.supplyingFacility' | message}}</label>
+        <input id="supplyingFacility" class="form-control" ng-model="vm.supplyLine.supplyingFacility.name" required disabled/>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="description">{{'adminSupplyLineView.description' | message}}</label>
+        <textarea id="description" class="form-control" ng-model="vm.supplyLine.description" disabled/>
+    </fieldset>
+</form>
+<div class="openlmis-toolbar">
+    <button ui-sref="openlmis.administration.supplyLines" ui-sref-opts="{reload: true}">{{'adminSupplyLineView.cancel' | message}}</button>
+</div>
