@@ -5,7 +5,7 @@
     "adminSupplyLineList.noSupplyLinesFound": "No supply lines found.",
     "adminSupplyLineList.supervisoryNode": "Supervisory Node",
     "adminSupplyLineList.program": "Program",
-    "adminSupplyLineList.view": "View",
+    "adminSupplyLineList.view": "Edit",
     "adminSupplyLineList.actions": "Action",
     "adminSupplyLineList.servedFacilities": "Served Facilities",
     "adminSupplyLineList.delete": "Delete",

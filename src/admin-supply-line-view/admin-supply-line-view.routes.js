@@ -37,6 +37,16 @@
             resolve: {
                 supplyLine: function(SupplyLineResource, $stateParams) {
                     return new SupplyLineResource().get($stateParams.id);
+                },
+                //SELV3-339
+                facilities: function(facilityService) {
+                    return facilityService.getAllMinimal();
+                },
+                supervisoryNodes: function(SupervisoryNodeResource) {
+                    return new SupervisoryNodeResource().query()
+                        .then(function(response) {
+                            return response.content;
+                        });
                 }
             }
         });

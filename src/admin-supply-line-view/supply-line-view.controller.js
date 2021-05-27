@@ -28,13 +28,17 @@
         .module('admin-supply-line-view')
         .controller('SupplyLineViewController', controller);
 
-    controller.$inject = ['supplyLine'];
+    controller.$inject = ['supplyLine', 'facilities', 'supervisoryNodes', 'SupplyLineResource',
+        '$state', 'confirmService', 'loadingModalService', 'notificationService', '$q'];
 
-    function controller(supplyLine) {
+    function controller(supplyLine, facilities, supervisoryNodes, SupplyLineResource,
+                        $state, confirmService, loadingModalService, notificationService, $q) {
 
         var vm = this;
 
         vm.$onInit = onInit;
+        //SELV3-339
+        vm.update = update;
 
         /**
          * @ngdoc property
@@ -48,6 +52,28 @@
         vm.supplyLine = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf admin-supply-line-view.controller:SupplyLineViewController
+         * @name facilities
+         * @type {Array}
+         *
+         * @description
+         * List of all possible facilities.
+         */
+        vm.facilities = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-supply-line-view.controller:SupplyLineViewController
+         * @name supervisoryNodes
+         * @type {Array}
+         *
+         * @description
+         * List of all possible supervisory nodes.
+         */
+        vm.supervisoryNodes = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf admin-supply-line-view.controller:SupplyLineViewController
          * @name $onInit
@@ -57,6 +83,55 @@
          */
         function onInit() {
             vm.supplyLine = supplyLine;
+            //SELV3-339: facilities and supervisoryNodes added
+            vm.facilities = facilities;
+            vm.supervisoryNodes = supervisoryNodes;
         }
+
+        //SELV3-339: Update the supply line
+        /**
+         * @ngdoc method
+         * @methodOf admin-supply-line-view.controller:SupplyLineViewController
+         * @name update
+         *
+         * @description
+         * Updates supply line.
+         */
+        function update() {
+            return confirmService
+                .confirm('adminSupplyLineViev.update.confirm', 'adminSupplyLineView.update')
+                .then(function() {
+                    loadingModalService.open();
+                    return new SupplyLineResource()
+                        .update(vm.supplyLine);
+                })
+                .then(function() {
+                    goToSupplyLineList();
+                })
+                .then(function() {
+                    notificationService.success('adminSupplyLineView.supplyLineUpdatedSuccessfully');
+                })
+                .catch(function(error) {
+                    return $q.reject(error);
+                })
+                .finally(function() {
+                    loadingModalService.close();
+                });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-supply-line-view.controller:SupplyLineViewController
+         * @name goToSupplyLineList
+         *
+         * @description
+         * Redirects to supply line list.
+         */
+        function goToSupplyLineList() {
+            $state.go('openlmis.administration.supplyLines', {}, {
+                reload: true
+            });
+        }
+
     }
 })();

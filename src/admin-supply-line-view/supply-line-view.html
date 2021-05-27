@@ -6,17 +6,23 @@
     </fieldset>
     <fieldset class="form-group">
         <label for="supervisoryNode">{{'adminSupplyLineView.supervisoryNode' | message}}</label>
-        <input id="supervisoryNode" class="form-control" ng-model="vm.supplyLine.supervisoryNode.code" required disabled/>
+        <!--SELV3-339: Enabled Supervisory Node dropdown-->
+        <select id="supervisoryNode" class="form-control" ng-model="vm.supplyLine.supervisoryNode" 
+        ng-options="supervisoryNode.code for supervisoryNode in vm.supervisoryNodes track by supervisoryNode.id" required/>
     </fieldset>
     <fieldset class="form-group">
         <label for="supplyingFacility">{{'adminSupplyLineView.supplyingFacility' | message}}</label>
-        <input id="supplyingFacility" class="form-control" ng-model="vm.supplyLine.supplyingFacility.name" required disabled/>
+        <!--SELV3-339: Enabled Supplying Facility dropdown-->
+        <select id="supplyingFacility" class="form-control" ng-model="vm.supplyLine.supplyingFacility" 
+        ng-options="facility.name for facility in vm.facilities track by facility.id" required/>
     </fieldset>
     <fieldset class="form-group">
         <label for="description">{{'adminSupplyLineView.description' | message}}</label>
-        <textarea id="description" class="form-control" ng-model="vm.supplyLine.description" disabled/>
+        <!--SELV3-339: Enabled description freetext-->
+        <textarea id="description" class="form-control" ng-model="vm.supplyLine.description"/>
     </fieldset>
 </form>
 <div class="openlmis-toolbar">
     <button ui-sref="openlmis.administration.supplyLines" ui-sref-opts="{reload: true}">{{'adminSupplyLineView.cancel' | message}}</button>
+    <button class="primary" ng-click="vm.update()">{{'adminSupplyLineView.update' | message}}</button>
 </div>

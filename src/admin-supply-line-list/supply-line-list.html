@@ -40,7 +40,8 @@
                 </td>
                 <td>{{supplyLine.program.name}}</td>
                 <td>
-                    <button ui-sref="openlmis.administration.supplyLines.view({id: supplyLine.id})">{{'adminSupplyLineList.view' | message}}</button>
+                    <!-- SELV3-339: Button class changed -->
+                    <button class="primary" ui-sref="openlmis.administration.supplyLines.view({id: supplyLine.id})">{{'adminSupplyLineList.view' | message}}</button>
                     <!--SELV3-340: Delete Supply Line button-->
                     <button class="danger" ng-click="vm.deleteSupplyLine(supplyLine)">{{'adminSupplyLineList.delete' | message}}</button>
                 </td>

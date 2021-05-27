@@ -21,20 +21,94 @@ describe('SupplyLineViewController', function() {
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
             this.SupplyLineDataBuilder = $injector.get('SupplyLineDataBuilder');
+            //SELV3-339
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.SupervisoryNodeDataBuilder = $injector.get('SupervisoryNodeDataBuilder');
+            this.SupplyLineResource = $injector.get('SupplyLineResource');
+            this.loadingModalService = $injector.get('loadingModalService');
+            this.confirmService = $injector.get('confirmService');
+            this.notificationService = $injector.get('notificationService');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$state = $injector.get('$state');
         });
 
         this.supplyLine = new this.SupplyLineDataBuilder().buildJson();
 
+        //SELV3-339
+        this.facilities = [
+            new this.FacilityDataBuilder().build(),
+            new this.FacilityDataBuilder().build()
+        ];
+
+        //SELV3-339
+        this.supervisoryNodes = [
+            new this.SupervisoryNodeDataBuilder().build(),
+            new this.SupervisoryNodeDataBuilder().build()
+        ];
+
+        this.confirmDeferred = this.$q.defer();
+
         this.vm = this.$controller('SupplyLineViewController', {
-            supplyLine: this.supplyLine
+            supplyLine: this.supplyLine,
+            //SELV3-339
+            facilities: this.facilities,
+            supervisoryNodes: this.supervisoryNodes
         });
         this.vm.$onInit();
+
+        //SELV3-339
+        spyOn(this.$state, 'go').andReturn();
+        spyOn(this.confirmService, 'confirm').andReturn(this.confirmDeferred.promise);
+        spyOn(this.loadingModalService, 'open').andReturn(this.$q.resolve());
+        spyOn(this.SupplyLineResource.prototype, 'update').andReturn(this.$q.resolve());
+        spyOn(this.notificationService, 'success').andReturn();
     });
 
     describe('onInit', function() {
 
         it('should expose supply line', function() {
             expect(this.vm.supplyLine).toEqual(this.supplyLine);
+        });
+
+        it('should expose facilities', function() {
+            expect(this.vm.facilities).toEqual(this.facilities);
+        });
+
+        it('should expose supervisory nodes', function() {
+            expect(this.vm.supervisoryNodes).toEqual(this.supervisoryNodes);
+        });
+    });
+
+    //SELV3-339
+    describe('update', function() {
+
+        it('should call update method', function() {
+            this.vm.update(this.supplyLine);
+
+            this.confirmDeferred.resolve();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
+                'adminSupplyLineViev.update.confirm', 'adminSupplyLineView.update'
+            );
+
+            expect(this.loadingModalService.open).toHaveBeenCalled();
+            expect(this.SupplyLineResource.prototype.update).toHaveBeenCalledWith(this.supplyLine);
+            expect(this.$state.go).toHaveBeenCalled();
+            expect(this.notificationService.success)
+                .toHaveBeenCalledWith('adminSupplyLineView.supplyLineUpdatedSuccessfully');
+        });
+
+        it('should not update the supply line if user clicked cancel button', function() {
+            this.vm.update(this.supplyLine);
+
+            this.confirmDeferred.reject();
+            this.$rootScope.$apply();
+
+            expect(this.SupplyLineResource.prototype.update).not.toHaveBeenCalled();
+            expect(this.$state.go).not.toHaveBeenCalled();
+            expect(this.notificationService.success).not.toHaveBeenCalled();
         });
     });
 });

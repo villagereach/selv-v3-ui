@@ -1,9 +1,12 @@
 {
-    "adminSupplyLineView.viewSupplyLine": "View Supply Line",
+    "adminSupplyLineView.viewSupplyLine": "Edit Supply Line",
     "adminSupplyLineView.program": "Program",
     "adminSupplyLineView.supervisoryNode": "Supervisory Node",
     "adminSupplyLineView.supplyingFacility": "Supplying Facility",
     "adminSupplyLineView.description": "Description",
     "adminSupplyLineView.catchmentPopulation": "Catchment Population",
-    "adminSupplyLineView.cancel": "Cancel"
+    "adminSupplyLineView.cancel": "Cancel",
+    "adminSupplyLineView.update": "Update",
+    "adminSupplyLineViev.update.confirm": "Do you really want to update the Supply Line?",
+    "adminSupplyLineView.supplyLineUpdatedSuccessfully": "Supply Line has beeen updated sucessfully."
 }
