@@ -45,19 +45,12 @@ body > header {
     > .title {
         background-image: url('common/openlmis-logo-white.svg');
     }
-    > .openlmis-header-actions {
-        > * {
-            align-items: center;
-        }
-    }
 }
 
 .openlmis-header-actions {
     > * {
-        align-items: flex-end;
         display: flex;
-        flex-wrap: nowrap;
-        flex-direction: column-reverse;
+        justify-content: flex-end;
         > * {
             flex: 0 0 auto;
             margin: 0px;
@@ -71,6 +64,7 @@ body > header {
 
 .status-offline {
     @extend a.is-offline;
+    margin-right: 0;
 }
 
 .openlmis-header-info {
