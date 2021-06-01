@@ -125,12 +125,13 @@
          * @return {Promise}     physical inventory promise
          */
         function getPhysicalInventory(draft) {
-            return physicalInventoryDraftCacheService.getDraft(draft.id).then(function(offlineDraft) {
+            var draftId = draft.id ? draft.id : draft;
+            return physicalInventoryDraftCacheService.getDraft(draftId).then(function(offlineDraft) {
                 if (offlineService.isOffline() || offlineDraft && offlineDraft.$modified) {
                     return offlineDraft;
                 }
                 return resource.get({
-                    id: draft
+                    id: draftId
                 }).$promise;
             });
         }

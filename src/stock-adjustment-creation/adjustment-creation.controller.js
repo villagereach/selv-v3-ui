@@ -35,8 +35,9 @@
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
         'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES',
         // SELV3-142: Added lot-management feature
-        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment'
-        // SELV3-142: ends here
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment',
+        // SELV3-142: ends here,
+        'offlineService'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
@@ -45,7 +46,7 @@
                         orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
                         // SELV3-142: Added lot-management feature
-                        hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment) {
+                        hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment, offlineService) {
         // SELV3-142: ends here
         var vm = this,
             previousAdded = {};
@@ -87,6 +88,17 @@
          * Indicates if VVM Status column should be visible.
          */
         vm.showVVMStatusColumn = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name offline
+         * @type {boolean}
+         *
+         * @description
+         * Holds information about internet connection
+         */
+        vm.offline = offlineService.isOffline;
 
         // SELV3-142: Added lot-management feature
         /**
@@ -554,8 +566,11 @@
                         program.id, facility.id, addedLineItems, adjustmentType
                     )
                         .then(function() {
-                            notificationService.success(vm.key('submitted'));
-
+                            if (offlineService.isOffline()) {
+                                notificationService.offline(vm.key('submittedOffline'));
+                            } else {
+                                notificationService.success(vm.key('submitted'));
+                            }
                             $state.go('openlmis.stockmanagement.stockCardSummaries', {
                                 facility: facility.id,
                                 program: program.id

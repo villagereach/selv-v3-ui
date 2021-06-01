@@ -24,6 +24,7 @@
 
     function routes($stateProvider, STOCKMANAGEMENT_RIGHTS, SEARCH_OPTIONS, ADJUSTMENT_TYPE) {
         $stateProvider.state('openlmis.stockmanagement.issue.creation', {
+            isOffline: true,
             url: '/:programId/create?page&size&keyword',
             views: {
                 '@openlmis': {
@@ -59,7 +60,7 @@
                 },
                 orderableGroups: function($stateParams, program, facility, existingStockOrderableGroupsFactory) {
                     return existingStockOrderableGroupsFactory
-                        .getGroupsWithoutStock($stateParams, program, facility);
+                        .getGroupsWithNotZeroSoh($stateParams, program, facility);
                 },
                 displayItems: function($stateParams, registerDisplayItemsService) {
                     return registerDisplayItemsService($stateParams);

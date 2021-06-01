@@ -86,6 +86,10 @@
          * @return {Promise}          Physical inventory promise
          */
         function getDraftByProgramAndFacility(programId, facilityId) {
+            if (offlineService.isOffline()) {
+                return getOfflineDraftByProgramAndFacility(programId, facilityId);
+            }
+
             return physicalInventoryService.getDrafts(programId, facilityId)
                 .then(function(response) {
                     var draft = response,
@@ -110,9 +114,7 @@
                             }
                         );
                     });
-                    if (draft.length >= 1 && draft[draft.length - 1].occurredDate && offlineService.isOffline()) {
-                        return;
-                    }
+
                     if (draft.length >= 1 && ifOfflineDraft(draft[draft.length - 1])) {
                         tempDraft.id = draft.pop().id;
                     }
@@ -122,6 +124,30 @@
                         listDrafts.push(tempDraft);
                     }
 
+                    return listDrafts;
+                });
+        }
+
+        function getOfflineDraftByProgramAndFacility(programId, facilityId) {
+            return physicalInventoryService.getDraft(programId, facilityId)
+                .then(function(response) {
+                    var draft = response,
+                        listDrafts = [],
+                        draftToReturn = {
+                            programId: programId,
+                            facilityId: facilityId,
+                            lineItems: []
+                        };
+
+                    // no saved draft
+                    if (draft.length === 0) {
+                        return;
+                    }
+                    if (draftExists(draft)) {
+                        draftToReturn = draft[0];
+                        draftToReturn.isDraft = true;
+                    }
+                    listDrafts.push(draftToReturn);
                     return listDrafts;
                 });
         }
@@ -316,6 +342,13 @@
 
         function getQuantity(item) {
             return (_.isNull(item.quantity) || _.isUndefined(item.quantity)) && item.isAdded ? -1 : item.quantity;
+        }
+
+        function draftExists(draft) {
+            if (draft[0] !== undefined) {
+                return true;
+            }
+            return false;
         }
 
         function getExtraData(lineItem) {

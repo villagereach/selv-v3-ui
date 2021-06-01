@@ -25,7 +25,14 @@ describe('StockAdjustmentCreationController', function() {
     beforeEach(function() {
 
         module('referencedata-lot');
-        module('stock-adjustment-creation');
+        module('stock-adjustment-creation', function($provide) {
+            var stockEventRepositoryMock = jasmine.createSpyObj('stockEventRepository', ['create']);
+            $provide.factory('StockEventRepository', function() {
+                return function() {
+                    return stockEventRepositoryMock;
+                };
+            });
+        });
 
         inject(function($q, $rootScope, $injector) {
             q = $injector.get('$q');
@@ -48,6 +55,7 @@ describe('StockAdjustmentCreationController', function() {
             UNPACK_REASONS = $injector.get('UNPACK_REASONS');
             this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             this.OrderableChildrenDataBuilder = $injector.get('OrderableChildrenDataBuilder');
+            this.offlineService = $injector.get('offlineService');
             // SELV3-142: Added lot-management feature
             LotResource = $injector.get('LotResource');
             editLotModalService = $injector.get('editLotModalService');
@@ -392,10 +400,23 @@ describe('StockAdjustmentCreationController', function() {
             spyOn(alertService, 'error');
             spyOn(confirmService, 'confirm');
             spyOn(notificationService, 'success');
+            spyOn(notificationService, 'offline');
+            spyOn(this.offlineService, 'isOffline').andReturn(false);
             confirmService.confirm.andReturn(q.resolve());
         });
 
-        it('should rediect with proper state params after success', function() {
+        it('should not show success message after success if offline', function() {
+            this.offlineService.isOffline.andReturn(true);
+            spyOn(stockAdjustmentCreationService, 'submitAdjustments');
+            stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
+
+            vm.submit();
+            rootScope.$apply();
+
+            expect(notificationService.success).not.toHaveBeenCalledWith('stockAdjustmentCreation.submitted');
+        });
+
+        it('should redirect with proper state params after success', function() {
             spyOn(stockAdjustmentCreationService, 'submitAdjustments');
             stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
 
@@ -411,7 +432,7 @@ describe('StockAdjustmentCreationController', function() {
             expect(alertService.error).not.toHaveBeenCalled();
         });
 
-        it('should not rediect after error', function() {
+        it('should not redirect after error', function() {
             spyOn(stockAdjustmentCreationService, 'submitAdjustments');
             stockAdjustmentCreationService.submitAdjustments
                 .andReturn(q.reject({
@@ -426,6 +447,25 @@ describe('StockAdjustmentCreationController', function() {
             expect(state.go).not.toHaveBeenCalled();
             expect(alertService.error).toHaveBeenCalledWith('error occurred');
             expect(notificationService.success).not.toHaveBeenCalled();
+        });
+
+        it('should redirect with proper state params after success in offline mode', function() {
+            this.offlineService.isOffline.andReturn(true);
+
+            spyOn(stockAdjustmentCreationService, 'submitAdjustments');
+            stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
+
+            vm.submit();
+            rootScope.$apply();
+
+            expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
+                facility: facility.id,
+                program: program.id
+            });
+
+            expect(notificationService.offline).toHaveBeenCalledWith('stockAdjustmentCreation.submittedOffline');
+            expect(notificationService.success).not.toHaveBeenCalled();
+            expect(alertService.error).not.toHaveBeenCalled();
         });
 
         // SELV3-142: Added lot-management feature

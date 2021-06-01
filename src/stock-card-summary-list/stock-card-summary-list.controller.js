@@ -30,17 +30,20 @@
 
     controller.$inject = [
         'loadingModalService', '$state', '$stateParams', 'StockCardSummaryRepositoryImpl', 'stockCardSummaries',
-        'accessTokenFactory', '$window', 'openlmisUrlFactory'
+        'accessTokenFactory', '$window', 'openlmisUrlFactory', 'offlineService', '$scope'
     ];
 
     function controller(loadingModalService, $state, $stateParams, StockCardSummaryRepositoryImpl,
-                        stockCardSummaries, accessTokenFactory, $window, openlmisUrlFactory) {
+                        stockCardSummaries, accessTokenFactory, $window, openlmisUrlFactory,
+                        offlineService, $scope) {
         var vm = this;
 
         vm.$onInit = onInit;
         vm.loadStockCardSummaries = loadStockCardSummaries;
         vm.viewSingleCard = viewSingleCard;
         vm.print = print;
+        vm.offline = offlineService.isOffline;
+        vm.goToPendingOfflineEventsPage = goToPendingOfflineEventsPage;
 
         /**
          * @ngdoc property
@@ -54,6 +57,17 @@
         vm.stockCardSummaries = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name displayStockCardSummaries
+         * @type {Array}
+         *
+         * @description
+         *  Holds current display list of Stock Card Summaries.
+         */
+        vm.displayStockCardSummaries = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
          * @name getStockSummaries
@@ -63,6 +77,15 @@
          */
         function onInit() {
             vm.stockCardSummaries = stockCardSummaries;
+            vm.displayStockCardSummaries = angular.copy(stockCardSummaries);
+
+            $scope.$watchCollection(function() {
+                return vm.pagedList;
+            }, function(newList) {
+                if (vm.offline()) {
+                    vm.displayStockCardSummaries = newList;
+                }
+            }, true);
         }
 
         /**
@@ -115,6 +138,18 @@
             var popup = $window.open('', '_blank');
             popup.location.href = accessTokenFactory.addAccessToken(getPrintUrl(vm.program.id, vm.facility.id));
             loadingModalService.close();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name goToPendingOfflineEventsPage
+         *
+         * @description
+         * Takes the user to the pending offline events page.
+         */
+        function goToPendingOfflineEventsPage() {
+            $state.go('openlmis.pendingOfflineEvents');
         }
 
         function getPrintUrl(programId, facilityId) {

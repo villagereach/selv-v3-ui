@@ -48,11 +48,6 @@
                     if (offlineService.isOffline() || $stateParams.noReload) {
                         return physicalInventoryDraftCacheService.getDraft($stateParams.id);
                     }
-                    // SELV3-142: Added lot-management feature
-                    if (_.isUndefined($stateParams.draft)) {
-                        return physicalInventoryFactory.getPhysicalInventory($stateParams.id);
-                    }
-                    // SELV3-142: ends here
                     return physicalInventoryFactory.getPhysicalInventory(getDraftFromParent(drafts, $stateParams));
                 },
                 program: function($stateParams, programService, draft) {
@@ -119,6 +114,7 @@
         });
 
         function getDraftFromParent(drafts, $stateParams) {
+            drafts = drafts.flat();
             return drafts.reduce(function(draft, physicalInventory) {
                 if (physicalInventory.id === $stateParams.id) {
                     draft = physicalInventory;
