@@ -3,11 +3,11 @@
 <!-- SELV3-247 - Added posibility to view and print history Physical inventory -->
 <!-- START -->
 <section class="openlmis-table-container">
+  <p ng-if="!vm.drafts.length">{{'stockPhysicalInventory.noPhysicalInventoryFound' |
+    message}}
+  </p>
   <div class="openlmis-table-container" ng-repeat="draft in vm.drafts">
     <table>
-      <caption ng-if="!vm.drafts.length">{{'stockPhysicalInventory.noPhysicalInventoryFound' |
-        message}}
-      </caption>
       <thead>
         <tr>
           <th>{{'stockPhysicalInventory.status' | message}}</th>
