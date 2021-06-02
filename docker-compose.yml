@@ -72,10 +72,6 @@ services:
     image: openlmis/ui-layout:${OL_UI_LAYOUT_VERSION}
     volumes:
       - '/openlmis-ui-layout'
-  offline-ui:
-    image: openlmis/offline-ui:${OL_OFFLINE_UI_VERSION}
-    volumes:
-      - '/openlmis-offline-ui'
   equipment-ui:
     image: openlmismz/equipment-ui:1.0.0-SNAPSHOT
     volumes:
@@ -84,6 +80,10 @@ services:
     image: openlmismz/requisition-batch-ui:1.0.0-SNAPSHOT
     volumes:
      - '/openlmis-requisition-batch-ui'
+  offline-ui:
+    image: openlmis/offline-ui:${OL_OFFLINE_UI_VERSION}
+    volumes:
+      - '/openlmis-offline-ui'
   image:
     build: .
     image: openlmismz/selv-v3-ui:latest
