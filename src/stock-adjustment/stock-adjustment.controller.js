@@ -47,14 +47,14 @@
         vm.facility = facility;
 
         /**
-          * @ngdoc property
-          * @propertyOf stock-adjustment.controller:StockAdjustmentController
-          * @name program
-          * @type {Array}
-          *
-          * @description
-          * Holds available program for home facility.
-          */
+         * @ngdoc property
+         * @propertyOf stock-adjustment.controller:StockAdjustmentController
+         * @name program
+         * @type {Array}
+         *
+         * @description
+         * Holds available program for home facility.
+         */
         vm.program = program;
 
         /**
