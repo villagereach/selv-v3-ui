@@ -1,5 +1,5 @@
 {
-  "stockReceive.receive": "Receive",
+  "stockReceive.module": "Receive",
   "stockReceive.proceed": "Make Receive",
   "stockReceive.program": "Program",
   "stockReceive.action": "Action",

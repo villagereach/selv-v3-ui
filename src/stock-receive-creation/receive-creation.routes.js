@@ -69,9 +69,11 @@
                 displayItems: function($stateParams, registerDisplayItemsService) {
                     return registerDisplayItemsService($stateParams);
                 },
-                reasons: function($stateParams, stockReasonsFactory, facility) {
+                // SELV3-348: Enable to show reasons for selected facility's type
+                reasons: function($stateParams, stockReasonsFactory) {
                     if (_.isUndefined($stateParams.reasons)) {
-                        return stockReasonsFactory.getReceiveReasons($stateParams.programId, facility.type.id);
+                        return stockReasonsFactory.getReceiveReasons($stateParams.programId,
+                            $stateParams.facilityTypeId);
                     }
                     return $stateParams.reasons;
                 },

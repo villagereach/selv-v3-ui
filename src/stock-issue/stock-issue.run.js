@@ -12,22 +12,20 @@
  * the GNU Affero General Public License along with this program. If not, see
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
-
+//SELV3-348: Enable to make Adjustments, Receive and Isuue for supervised facilities
 (function() {
+
     'use strict';
 
-    /**
-   * @module stock-adjustment
-   *
-   * @description
-   * Responsible for make adjustment list screen.
-   */
-    angular.module('stock-adjustment', [
-        'stockmanagement',
-        'stock-program-util',
-        'referencedata-facility',
-        'referencedata-program',
-        // SELV3-348: Enable to make Adjustments, Receive and Isuue for supervised facilities
-        'openlmis-facility-program-select'
-    ]);
+    angular
+        .module('stock-issue')
+        .run(declareRights);
+
+    declareRights.$inject = ['facilityProgramCacheService', 'STOCKMANAGEMENT_RIGHTS'];
+
+    function declareRights(facilityProgramCacheService, STOCKMANAGEMENT_RIGHTS) {
+        facilityProgramCacheService.pushRightsForModule('stock-issue', [
+            STOCKMANAGEMENT_RIGHTS.STOCK_ADJUST
+        ]);
+    }
 })();

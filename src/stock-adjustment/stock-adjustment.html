@@ -1,4 +1,8 @@
-<h2 ng-show="vm.facility">{{ vm.key('title') | message: {'facility': vm.facility.name} }}</h2>
+<!-- SELV3-348: Enable to make Adjustments, Receive and Isuue for supervised facilities -->
+<h2 ng-if="vm.facility && vm.program">
+    {{vm.key('title') | message: {'facility': vm.facility.name, 'program': vm.program.name} }}
+</h2>
+<h2 ng-hide="vm.facility && vm.program">{{vm.key('module') | message}}</h2>
 <p class="alert is-offline" ng-if="vm.offline() && vm.offlineStockEvents()">
     {{ vm.key('offline1') | message}}<br>
     {{ vm.key('offline2') | message}}
@@ -6,24 +10,13 @@
     {{ vm.key('offline3') | message}}<br>
 </p>
 
-<section class="openlmis-table-container">
-    <table>
-        <caption ng-if="!vm.programs.length">{{vm.key('noProgramAvailable') | message}}
-        </caption>
-        <thead>
-            <tr>
-                <th>{{vm.key('program') | message}}</th>
-                <th>{{vm.key('action') | message}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="program in vm.programs">
-                <td>{{program.name}}</td>
-                <td>
-                    <input id="proceedButton" type="button" ng-click="vm.proceed(program)"
-                        value="{{vm.key('proceed') | message}}" class="primary"/>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+<form class="sidebar">
+    <openlmis-facility-program-select
+        is-supervised="vm.isSupervised"
+        facility="vm.facility"
+        program="vm.program"
+        module="'stock-adjustment'">
+    </openlmis-facility-program-select>
+
+    <input type="submit" value="{{vm.key('proceed') | message}}" ng-click="vm.proceed()"/>
+</form>

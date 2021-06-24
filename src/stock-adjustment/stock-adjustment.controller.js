@@ -28,10 +28,10 @@
         .module('stock-adjustment')
         .controller('StockAdjustmentController', controller);
 
-    controller.$inject = ['facility', 'programs', 'adjustmentType', '$state', 'offlineService',
+    controller.$inject = ['facility', 'program', 'adjustmentType', '$state', '$stateParams', 'offlineService',
         'localStorageService', 'ADJUSTMENT_TYPE'];
 
-    function controller(facility, programs, adjustmentType, $state, offlineService, localStorageService,
+    function controller(facility, program, adjustmentType, $state, $stateParams, offlineService, localStorageService,
                         ADJUSTMENT_TYPE) {
         var vm = this;
 
@@ -47,15 +47,15 @@
         vm.facility = facility;
 
         /**
-         * @ngdoc property
-         * @propertyOf stock-adjustment.controller:StockAdjustmentController
-         * @name programs
-         * @type {Array}
-         *
-         * @description
-         * Holds available programs for home facility.
-         */
-        vm.programs = programs;
+          * @ngdoc property
+          * @propertyOf stock-adjustment.controller:StockAdjustmentController
+          * @name program
+          * @type {Array}
+          *
+          * @description
+          * Holds available program for home facility.
+          */
+        vm.program = program;
 
         /**
          * @ngdoc property
@@ -72,14 +72,6 @@
 
         vm.key = function(secondaryKey) {
             return adjustmentType.prefix + '.' + secondaryKey;
-        };
-
-        vm.proceed = function(program) {
-            $state.go('openlmis.stockmanagement.' + adjustmentType.state + '.creation', {
-                programId: program.id,
-                program: program,
-                facility: facility
-            });
         };
 
         /**
@@ -108,6 +100,30 @@
                 });
                 return sameAdjustmentTypeEvent;
             }
+        };
+
+        // SELV3-348: Proceed function changed
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment.controller:StockAdjustmentController
+         * @name proceed
+         * @type {boolean}
+         *
+         * @description
+         * Called with submitting the form which chooses the facility and program
+         */
+        vm.proceed = function() {
+            var stateParams = angular.copy($stateParams);
+
+            stateParams.program = vm.program;
+            stateParams.programId = vm.program.id;
+            stateParams.facility = vm.facility;
+            stateParams.supervised = vm.isSupervised;
+            $state.go('openlmis.stockmanagement.' + adjustmentType.state + '.creation', {
+                programId: stateParams.programId,
+                program: stateParams.program,
+                facility: stateParams.facility
+            });
         };
 
         /**

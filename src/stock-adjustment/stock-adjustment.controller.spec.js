@@ -15,7 +15,7 @@
 
 describe('StockAdjustmentController', function() {
 
-    var vm, state, facility, programs;
+    var vm, state, facility, program;
 
     beforeEach(function() {
 
@@ -31,7 +31,7 @@ describe('StockAdjustmentController', function() {
 
         state = jasmine.createSpyObj('$state', ['go']);
 
-        programs = [{
+        program = [{
             name: 'HIV',
             id: '1'
         }, {
@@ -41,12 +41,12 @@ describe('StockAdjustmentController', function() {
         facility = {
             id: '10134',
             name: 'National Warehouse',
-            supportedPrograms: programs
+            supportedprogram: program
         };
 
         vm = this.$controller('StockAdjustmentController', {
             facility: facility,
-            programs: programs,
+            program: program,
             adjustmentType: this.ADJUSTMENT_TYPE.ADJUSTMENT,
             $state: state
         });
@@ -54,14 +54,14 @@ describe('StockAdjustmentController', function() {
         this.events = {};
         this.events['user_1'] = [
             {
-                programId: programs[0].id,
+                programId: program[0].id,
                 facilityId: facility.id,
                 lineItems: [{
                     orderableId: 'orderableid-1'
                 }]
             },
             {
-                programId: programs[0].id,
+                programId: program[0].id,
                 facilityId: facility.id,
                 lineItems: [{
                     orderableId: 'orderableid-1',
@@ -73,24 +73,17 @@ describe('StockAdjustmentController', function() {
         spyOn(this.localStorageService, 'get').andReturn(angular.fromJson(this.events));
     });
 
-    it('should init programs properly', function() {
-        expect(vm.programs).toEqual(programs);
+    it('should init program properly', function() {
+        expect(vm.program).toEqual(program);
     });
 
     it('should go to stock adjustment draft page when proceed', function() {
-        var chooseProgram = {
-            name: 'HIV',
-            id: '1'
-        };
 
-        vm.proceed(chooseProgram);
+        // SELV3-348: proceed function changed
+        vm.proceed();
 
         expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.adjustment.creation', {
-            programId: '1',
-            program: {
-                name: 'HIV',
-                id: '1'
-            },
+            program: program,
             facility: facility
         });
     });
@@ -103,7 +96,7 @@ describe('StockAdjustmentController', function() {
         var receiveEvents = {};
         receiveEvents['user_1'] = [
             {
-                programId: programs[0].id,
+                programId: program[0].id,
                 facilityId: facility.id,
                 lineItems: [{
                     sourceId: 'sourceId-1'

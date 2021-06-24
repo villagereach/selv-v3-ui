@@ -44,11 +44,25 @@
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                programs: function(user, stockProgramUtilService) {
+                program: function(user, stockProgramUtilService) {
                     return stockProgramUtilService.getPrograms(user.user_id, STOCKMANAGEMENT_RIGHTS.STOCK_ADJUST);
                 },
                 adjustmentType: function() {
                     return ADJUSTMENT_TYPE.ISSUE;
+                },
+                // SELV3-348: Enable to make Adjustments, Receive and Isuue for supervised facilities
+                params: function($stateParams) {
+                    var paramsCopy = angular.copy($stateParams);
+
+                    paramsCopy.facility = $stateParams.facility;
+                    paramsCopy.program = $stateParams.program;
+                    paramsCopy.nonEmptyOnly = true;
+
+                    delete paramsCopy.facility;
+                    delete paramsCopy.program;
+                    delete paramsCopy.supervised;
+
+                    return paramsCopy;
                 }
             }
         });

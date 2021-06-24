@@ -1,5 +1,5 @@
 {
-  "stockReceiveCreation.title": "${facilityCode} - ${facilityName} - ${program}",
+  "stockReceiveCreation.title": "${facilityName} - ${program}",
   "stockReceiveCreation.keyword": "Keywords",
   "stockReceiveCreation.search": "Search",
   "stockReceiveCreation.product": "Product",

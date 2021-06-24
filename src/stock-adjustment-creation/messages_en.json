@@ -1,5 +1,5 @@
 {
-  "stockAdjustmentCreation.title": "${facilityCode} - ${facilityName} - ${program}",
+  "stockAdjustmentCreation.title": "${facilityName} - ${program}",
   "stockAdjustmentCreation.keyword": "Keywords",
   "stockAdjustmentCreation.search": "Search",
   "stockAdjustmentCreation.product": "Product",
