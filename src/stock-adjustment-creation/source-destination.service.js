@@ -18,97 +18,68 @@
     'use strict';
 
     /**
-   * @ngdoc service
-   * @name stock-adjustment-creation.sourceDestinationService
-   *
-   * @description
-   * Responsible for fetching valid sources or destinations.
-   */
+     * @ngdoc service
+     * @name stock-adjustment-creation.sourceDestinationService
+     *
+     * @description
+     * Responsible for fetching valid sources or destinations.
+     */
     angular
         .module('stock-adjustment-creation')
         .service('sourceDestinationService', service);
 
-    service.$inject = ['$resource', 'stockmanagementUrlFactory', 'localStorageFactory', '$q',
-        'offlineService', 'alertService'];
+    // SELV3-439 Fix “out of memory“ error on stock management issue page
+    service.$inject = ['ValidSourceResource', 'ValidDestinationResource'];
 
-    function service($resource, stockmanagementUrlFactory, localStorageFactory, $q,
-                     offlineService, alertService) {
-
-        var offlineSources = localStorageFactory('validSources'),
-            offlineDestinations = localStorageFactory('validDestinations');
+    function service(ValidSourceResource, ValidDestinationResource) {
+    // SELV3-439 ends here
         this.getSourceAssignments = getSourceAssignments;
         this.getDestinationAssignments = getDestinationAssignments;
         this.clearSourcesCache = clearSourcesCache;
         this.clearDestinationsCache = clearDestinationsCache;
 
+        // SELV3-439 Fix “out of memory“ error on stock management issue page
+        this.validSourceResource = new ValidSourceResource();
+        this.validDestinationResource = new ValidDestinationResource();
+        // SELV3-439 ends here
+
         function getSourceAssignments(programId, facilityId) {
-            var resource = $resource(stockmanagementUrlFactory('/api/validSources'));
-
-            if (offlineService.isOffline()) {
-                var sources = offlineSources.search({
-                    programId: programId,
-                    facilityId: facilityId
-                });
-
-                return checkArrayAndGetData(sources);
-            }
-            return resource.get({
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            return this.validSourceResource.query({
                 programId: programId,
                 facilityId: facilityId
-            }).$promise.then(function(validSourcesPage) {
-                cacheSources(validSourcesPage.content, facilityId);
-                return $q.resolve(validSourcesPage.content);
-            });
+            }).then(
+                function(validSourcesPage) {
+                    return validSourcesPage;
+                }
+            );
+            // SELV3-439 ends here
+
         }
 
         function getDestinationAssignments(programId, facilityId) {
-            var resource = $resource(stockmanagementUrlFactory('/api/validDestinations'));
-
-            if (offlineService.isOffline()) {
-                var destinations = offlineDestinations.search({
-                    programId: programId,
-                    facilityId: facilityId
-                });
-
-                return checkArrayAndGetData(destinations);
-            }
-            return resource.get({
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            return this.validDestinationResource.query({
                 programId: programId,
                 facilityId: facilityId
-            }).$promise.then(function(validDestinationsPage) {
-                cacheDestinations(validDestinationsPage.content, facilityId);
-                return $q.resolve(validDestinationsPage.content);
-            });
-        }
-
-        function checkArrayAndGetData(array) {
-            if (array.length === 0) {
-                alertService.error('stockAdjustmentCreation.notCachedData');
-                return $q.reject();
-            }
-            return $q.resolve(array);
-        }
-
-        function cacheSources(sources, facilityId) {
-            sources.forEach(function(source) {
-                source.facilityId = facilityId;
-                offlineSources.put(source);
-            });
-        }
-
-        function cacheDestinations(destinations, facilityId) {
-            destinations.forEach(function(destination) {
-                destination.facilityId = facilityId;
-                offlineDestinations.put(destination);
-            });
+            }).then(
+                function(validDestinationsPage) {
+                    return validDestinationsPage;
+                }
+            );
+            // SELV3-439 ends here
         }
 
         function clearSourcesCache() {
-            offlineSources.clearAll();
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            this.validSourceResource.deleteAll();
+            // SELV3-439 ends here
         }
 
         function clearDestinationsCache() {
-            offlineDestinations.clearAll();
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            this.validDestinationResource.deleteAll();
+            // SELV3-439 ends here
         }
     }
 })();
