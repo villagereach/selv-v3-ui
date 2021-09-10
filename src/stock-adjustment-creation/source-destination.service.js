@@ -41,10 +41,21 @@
         // SELV3-439 Fix “out of memory“ error on stock management issue page
         this.validSourceResource = new ValidSourceResource();
         this.validDestinationResource = new ValidDestinationResource();
-        // SELV3-439 ends here
 
+        /**
+         * @ngdoc method
+         * @propertyOf stock-adjustment-creation.sourceDestinationService
+         * @name getSourceAssignments
+         *
+         * @param {String} programId
+         * @param {String} facilityId
+         *
+         * @return {Promise}
+         *
+         * @description
+         * Returns promise which resolves to source assignments
+         */
         function getSourceAssignments(programId, facilityId) {
-            // SELV3-439 Fix “out of memory“ error on stock management issue page
             return this.validSourceResource.query({
                 programId: programId,
                 facilityId: facilityId
@@ -53,12 +64,22 @@
                     return validSourcesPage;
                 }
             );
-            // SELV3-439 ends here
-
         }
 
+        /**
+         * @ngdoc method
+         * @propertyOf stock-adjustment-creation.sourceDestinationService
+         * @name getDestinationAssignments
+         *
+         * @description
+         * Returns promise which resolves to destination assignments
+         *
+         * @param {String} programId
+         * @param {String} facilityId
+         *
+         * @return {Promise}
+         */
         function getDestinationAssignments(programId, facilityId) {
-            // SELV3-439 Fix “out of memory“ error on stock management issue page
             return this.validDestinationResource.query({
                 programId: programId,
                 facilityId: facilityId
@@ -67,8 +88,8 @@
                     return validDestinationsPage;
                 }
             );
-            // SELV3-439 ends here
         }
+        // SELV3-439 ends here
 
         function clearSourcesCache() {
             // SELV3-439 Fix “out of memory“ error on stock management issue page

@@ -368,6 +368,11 @@ describe('StockAdjustmentCreationController', function() {
             facility: facility,
             reasons: reasons,
             orderableGroups: orderableGroups,
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            srcDstAssignments: {
+                content: undefined
+            },
+            // SELV3-439 ends here
             addedLineItems: [lineItem1, lineItem2],
             displayItems: [lineItem1],
             keyword: undefined
@@ -602,7 +607,11 @@ describe('StockAdjustmentCreationController', function() {
             program: program,
             facility: facility,
             adjustmentType: adjustmentType ? adjustmentType : ADJUSTMENT_TYPE.ADJUSTMENT,
-            srcDstAssignments: undefined,
+            // SELV3-439 Fix “out of memory“ error on stock management issue page
+            srcDstAssignments: {
+                content: undefined
+            },
+            // SELV3-439 ends here
             user: {},
             reasons: reasons,
             orderableGroups: orderableGroups,
