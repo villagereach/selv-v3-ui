@@ -61,7 +61,7 @@
                 facilityId: facilityId
             }).then(
                 function(validSourcesPage) {
-                    return validSourcesPage;
+                    return validSourcesPage.content;
                 }
             );
         }
@@ -85,7 +85,7 @@
                 facilityId: facilityId
             }).then(
                 function(validDestinationsPage) {
-                    return validDestinationsPage;
+                    return validDestinationsPage.content;
                 }
             );
         }
