@@ -83,15 +83,16 @@
         };
 
         /**
-     * @ngdoc method
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name getDraftStatus
-     *
-     * @description
-     * Responsible for getting physical inventory status.
-     *
-     * @param {Boolean} isStarter Indicates starter or saved draft.
-     */
+         * @ngdoc method
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name getDraftStatus
+         *
+         * @description
+         * Responsible for getting physical inventory status.
+         *
+         * @param {Boolean} isStarter Indicates starter.
+         * @param {Boolean} isDraft Indicates draft.
+         */
         vm.getDraftStatus = function(isStarter, isDraft) {
             // SELV3-247 - Added posibility to view and print history Physical inventory
             // START
@@ -124,15 +125,15 @@
         };
 
         /**
-     * @ngdoc method
-     * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
-     * @name getPrintUrl
-     *
-     * @description
-     * Prepares a print URL for the given physical inventory.
-     *
-     * @return {String} the prepared URL
-     */
+         * @ngdoc method
+         * @propertyOf stock-physical-inventory-list.controller:PhysicalInventoryListController
+         * @name getPrintUrl
+         *
+         * @description
+         * Prepares a print URL for the given physical inventory.
+         *
+         * @return {String} the prepared URL
+         */
         vm.getPrintUrl = function(id) {
             return stockmanagementUrlFactory('/api/reports/templates/common/' +
                 '968b4abc-ea64-4285-9f46-64544d8af37e/pdf?physInventoryId=' + id);

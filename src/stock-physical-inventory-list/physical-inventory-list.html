@@ -19,19 +19,23 @@
         </thead>
         <tbody>
           <tr ng-repeat="(key,value) in draft | orderBy: '-occurredDate'">
-            <td>{{vm.getDraftStatus(value.isStarter)}}</td>
+            <!-- SELV-440 Starts here -->
+            <td>{{vm.getDraftStatus(value.isStarter, value.isDraft)}}</td>
+            <!-- SELV-440 Ends here -->
             <td>{{value.occurredDate}}</td>
             <td>{{value.signature}}</td>
             <td>{{vm.getProgramName(value.programId)}}</td>
             <td>
-              <input ng-if="value.occurredDate"
+              <!-- SELV-440 Starts here -->
+              <input ng-if="!(value.isStarter || value.isDraft)"
                     id="proceedButton" type="button" ng-click="vm.printHistoryPhysicalInventory(value)"
                     value="{{('stockPhysicalInventory.print') | message}}"
                     class="primary"/>
-              <input ng-if="!value.occurredDate"
+              <input ng-if="value.isStarter || value.isDraft"
                     id="proceedButton" type="button" ng-click="vm.editDraft(value)"
                     value="{{(value.isStarter ? 'stockPhysicalInventory.start' : 'stockPhysicalInventory.continue') | message}}"
                     class="primary"/>
+              <!-- SELV-440 Ends here -->
             </td>
           </tr>
         </tbody>
