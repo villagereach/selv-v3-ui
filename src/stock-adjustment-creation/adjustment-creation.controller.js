@@ -675,7 +675,7 @@
             vm.reasons = reasons;
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
             // SELV3-439 Fix “out of memory“ error on stock management issue page
-            vm.srcDstAssignments = srcDstAssignments;
+            vm.srcDstAssignments = srcDstAssignments.content;
             // SELV3-439 ends here
             vm.addedLineItems = $stateParams.addedLineItems || [];
             $stateParams.displayItems = displayItems;

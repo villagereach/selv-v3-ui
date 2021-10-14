@@ -47,9 +47,7 @@ describe('sourceDestinationService', function() {
                         query: function() {
                             // eslint-disable-next-line no-undef
                             return new Promise(function(resolve) {
-                                return resolve({
-                                    content: validSources
-                                });
+                                return resolve(validSources);
                             });
                         }
                     }
@@ -62,9 +60,7 @@ describe('sourceDestinationService', function() {
                         query: function() {
                             // eslint-disable-next-line no-undef
                             return new Promise(function(resolve) {
-                                return resolve({
-                                    content: validDestinations
-                                });
+                                return resolve(validDestinations);
                             });
                         }
                     }
