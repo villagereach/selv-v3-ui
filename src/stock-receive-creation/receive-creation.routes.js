@@ -80,19 +80,9 @@
                 adjustmentType: function() {
                     return ADJUSTMENT_TYPE.RECEIVE;
                 },
-                srcDstAssignments: function($stateParams, facility, sourceDestinationService, $q) {
+                srcDstAssignments: function($stateParams, facility, sourceDestinationService) {
                     if (_.isUndefined($stateParams.srcDstAssignments)) {
-                        // SELV3-439 Fix “out of memory“ error on stock management issue page
-                        var deferred = $q.defer();
-
-                        sourceDestinationService.getSourceAssignments(
-                            $stateParams.programId, facility.id
-                        ).then(function(result) {
-                            deferred.resolve(result);
-                        });
-
-                        return deferred.promise;
-                        // SELV3-439 ends here
+                        return sourceDestinationService.getSourceAssignments($stateParams.programId, facility.id);
                     }
                     return $stateParams.srcDstAssignments;
                 // SELV3-142: Added lot-management feature

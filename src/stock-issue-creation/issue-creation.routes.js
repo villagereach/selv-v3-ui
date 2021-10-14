@@ -76,21 +76,11 @@
                 adjustmentType: function() {
                     return ADJUSTMENT_TYPE.ISSUE;
                 },
-                // SELV3-439 Fix “out of memory“ error on stock management issue page
-                srcDstAssignments: function($stateParams, facility, sourceDestinationService, $q) {
-                // SELV3-439 ends here
+                srcDstAssignments: function($stateParams, facility, sourceDestinationService) {
                     if (_.isUndefined($stateParams.srcDstAssignments)) {
-                        // SELV3-439 Fix “out of memory“ error on stock management issue page
-                        var deferred = $q.defer();
-
-                        sourceDestinationService.getDestinationAssignments(
+                        return sourceDestinationService.getDestinationAssignments(
                             $stateParams.programId, facility.id
-                        ).then(function(result) {
-                            deferred.resolve(result);
-                        });
-
-                        return deferred.promise;
-                        // SELV3-439 ends here
+                        );
                     }
                     return $stateParams.srcDstAssignments;
                 },

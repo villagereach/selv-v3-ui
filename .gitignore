@@ -13,4 +13,3 @@ bower_components
 .tmp
 .sonar
 .vscode/
-npm-debug.log
