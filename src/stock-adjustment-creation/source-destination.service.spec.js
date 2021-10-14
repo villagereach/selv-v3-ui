@@ -13,12 +13,41 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-// SELV3-439 Fix “out of memory“ error on stock management issue page
 describe('sourceDestinationService', function() {
+    var PageDataBuilder;
+
     beforeEach(function() {
+        this.offlineService = jasmine.createSpyObj('offlineService', ['isOffline', 'checkConnection']);
+        this.storage = jasmine.createSpyObj('offlineStorage', ['put', 'search', 'getAll']);
+
+        var storage = this.storage,
+            offlineService = this.offlineService;
+
+        module('stock-adjustment-creation', function($provide) {
+            $provide.service('offlineService', function() {
+                return offlineService;
+            });
+
+            $provide.factory('localStorageFactory', function() {
+                return jasmine.createSpy('localStorageFactory').andReturn(storage);
+            });
+        });
+
+        inject(function($injector) {
+            this.$q = $injector.get('$q');
+            this.$httpBackend = $injector.get('$httpBackend');
+            this.$rootScope = $injector.get('$rootScope');
+            this.stockmanagementUrlFactory = $injector.get('stockmanagementUrlFactory');
+            this.sourceDestinationService = $injector.get('sourceDestinationService');
+            this.offlineService = $injector.get('offlineService');
+            this.alertService = $injector.get('alertService');
+            PageDataBuilder = $injector.get('PageDataBuilder');
+        });
+        spyOn(this.alertService, 'error');
+
         this.homeFacilityId = 'home-facility-id';
 
-        var validSources = [
+        this.validSources = [
             {
                 facilityTypeId: 'fac-type-id-1',
                 id: 'source-id-1',
@@ -27,9 +56,8 @@ describe('sourceDestinationService', function() {
                 facilityId: this.homeFacilityId
             }
         ];
-        this.validSources = validSources;
 
-        var validDestinations = [
+        this.validDestinations = [
             {
                 facilityTypeId: 'fac-type-id-1',
                 id: 'dest-id-1',
@@ -38,65 +66,134 @@ describe('sourceDestinationService', function() {
                 facilityId: this.homeFacilityId
             }
         ];
-        this.validDestinations = validDestinations;
-
-        module('stock-adjustment-creation', function($provide) {
-            $provide.factory('ValidSourceResource', function() {
-                return jasmine.createSpy('ValidSourceResource').andReturn(
-                    {
-                        query: function() {
-                            // eslint-disable-next-line no-undef
-                            return new Promise(function(resolve) {
-                                return resolve(validSources);
-                            });
-                        }
-                    }
-                );
-            });
-
-            $provide.factory('ValidDestinationResource', function() {
-                return jasmine.createSpy('ValidDestinationResource').andReturn(
-                    {
-                        query: function() {
-                            // eslint-disable-next-line no-undef
-                            return new Promise(function(resolve) {
-                                return resolve(validDestinations);
-                            });
-                        }
-                    }
-                );
-            });
-        });
-
-        inject(function($injector) {
-            this.sourceDestinationService = $injector.get('sourceDestinationService');
-        });
-
     });
 
     describe('getSourceAssignments', function() {
 
         it('should get source assignments', function() {
-            var expected = this.validSources;
+            var validSourcesPage;
+            validSourcesPage = new PageDataBuilder().withContent(this.validSources)
+                .build();
+            this.offlineService.isOffline.andReturn(false);
 
+            this.$httpBackend
+                .whenGET(this.stockmanagementUrlFactory('/api/validSources?programId=' +
+                    this.validSources[0].programId + '&facilityId=' + this.homeFacilityId))
+                .respond(200, validSourcesPage);
+
+            var result;
             this.sourceDestinationService.getSourceAssignments(this.validSources[0].programId, this.homeFacilityId)
                 .then(function(response) {
-                    expect(response).toBe(expected);
+                    result = response;
                 });
+
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
+
+            expect(result[0]).toEqual(this.validSources[0]);
+        });
+
+        it('should search source assignments while offline', function() {
+            this.offlineService.isOffline.andReturn(true);
+
+            var result;
+
+            this.storage.search.andReturn(this.$q.resolve(this.validSources));
+            this.sourceDestinationService.getSourceAssignments(this.validSources[0].programId, this.homeFacilityId)
+                .then(function(response) {
+                    result = response;
+                });
+            this.$rootScope.$apply();
+
+            expect(this.offlineService.isOffline).toHaveBeenCalled();
+
+            expect(this.storage.search).toHaveBeenCalledWith({
+                programId: this.validSources[0].programId,
+                facilityId: this.homeFacilityId
+            });
+
+            expect(result[0]).toBe(this.validSources[0]);
+            expect(this.alertService.error).not.toHaveBeenCalled();
+        });
+
+        it('should reject if offline and source assignments not found in local storage', function() {
+            this.offlineService.isOffline.andReturn(true);
+
+            this.storage.search.andReturn([]);
+            this.sourceDestinationService.getSourceAssignments(this.validSources[0].programId, this.homeFacilityId);
+            this.$rootScope.$apply();
+
+            expect(this.offlineService.isOffline).toHaveBeenCalled();
+            expect(this.alertService.error).toHaveBeenCalled();
         });
     });
 
     describe('getDestinationAssignments', function() {
 
         it('should get destination assignments', function() {
-            var expected = this.validDestinations;
+            var validDestinationsPage;
+            validDestinationsPage = new PageDataBuilder().withContent(this.validDestinations)
+                .build();
 
-            this.sourceDestinationService.getDestinationAssignments(
-                this.validDestinations[0].programId, this.homeFacilityId
-            ).then(function(response) {
-                expect(response).toBe(expected);
+            this.offlineService.isOffline.andReturn(false);
+
+            this.$httpBackend
+                .whenGET(this.stockmanagementUrlFactory('/api/validDestinations?programId=' +
+                    this.validDestinations[0].programId + '&facilityId=' + this.homeFacilityId))
+                .respond(200, validDestinationsPage);
+
+            var result;
+            this.sourceDestinationService
+                .getDestinationAssignments(this.validDestinations[0].programId, this.homeFacilityId)
+                .then(function(response) {
+                    result = response;
+                });
+
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
+
+            expect(result[0]).toEqual(this.validDestinations[0]);
+        });
+
+        it('should search destination assignments while offline', function() {
+            this.offlineService.isOffline.andReturn(true);
+
+            var result;
+
+            this.storage.search.andReturn(this.$q.resolve(this.validDestinations));
+            this.sourceDestinationService.getDestinationAssignments(this.validDestinations[0].programId,
+                this.homeFacilityId)
+                .then(function(response) {
+                    result = response;
+                });
+            this.$rootScope.$apply();
+
+            expect(this.offlineService.isOffline).toHaveBeenCalled();
+
+            expect(this.storage.search).toHaveBeenCalledWith({
+                programId: this.validSources[0].programId,
+                facilityId: this.homeFacilityId
             });
+
+            expect(result[0]).toBe(this.validDestinations[0]);
+            expect(this.alertService.error).not.toHaveBeenCalled();
+        });
+
+        it('should reject if offline and destination assignments not found in local storage', function() {
+            this.offlineService.isOffline.andReturn(true);
+
+            this.storage.search.andReturn([]);
+            this.sourceDestinationService.getDestinationAssignments(this.validDestinations[0].programId,
+                this.homeFacilityId);
+            this.$rootScope.$apply();
+
+            expect(this.offlineService.isOffline).toHaveBeenCalled();
+            expect(this.alertService.error).toHaveBeenCalled();
         });
     });
+
+    afterEach(function() {
+        this.$httpBackend.verifyNoOutstandingExpectation();
+        this.$httpBackend.verifyNoOutstandingRequest();
+    });
 });
-// SELV3-439 ends here
