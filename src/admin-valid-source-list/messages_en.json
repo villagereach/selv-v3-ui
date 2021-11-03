@@ -1,5 +1,5 @@
 {
-    "adminValidSourceList.validSources": "Valid Sources",
+    "adminValidSourceList.validSource": "Valid Sources",
     "adminValidSourceList.noValidSources": "No valid sources found.",
     "adminValidSourceList.program": "Program",
     "adminValidSourceList.facilityType": "Facility Type",
@@ -7,6 +7,7 @@
     "adminValidSourceList.geoZone": "Geo Zone",
     "adminValidSourceList.geoLevelAffinity": "Geo Level Affinity",
     "adminValidSourceList.facility": "Facility",
-    "adminValidSourceList.search": "Search"
+    "adminValidSourceList.search": "Search",
+    "adminValidSourceList.addValidSource": "Add Valid Source"
 }
 

@@ -1,6 +1,11 @@
 <!-- SELV3-346 Starts here -->
 <h2>{{'adminValidSourceList.validSources' | message}}</h2>
 <section class="openlmis-table-container">
+<!--    SELV3-343: Add possibility to add valid sources-->
+    <button id="add-valid-source" class="add" ng-click="vm.openAddValidSourceModal()">
+        {{'adminValidSourceList.addValidSource' | message}}
+    </button>
+<!--    SELV3-343: Ends here-->
     <form ng-submit="vm.search()">
         <fieldset class="form-group">
             <label for="facilityId">{{'adminValidSourceList.facility' | message}}</label>
