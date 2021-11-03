@@ -24,14 +24,14 @@
 
     function routes($stateProvider, ADMINISTRATION_RIGHTS) {
 
-        $stateProvider.state('openlmis.administration.validSources', {
+        $stateProvider.state('openlmis.administration.validSource', {
             showInNavigation: true,
-            label: 'adminValidSourceList.validSources',
+            label: 'adminValidSourceList.validSource',
             url: '/validSources?page&size&programId&facilityId',
             controller: 'ValidSourceListController',
             templateUrl: 'admin-valid-source-list/valid-source-list.html',
             controllerAs: 'vm',
-            accessRights: [ADMINISTRATION_RIGHTS.FACILITIES_MANAGE],
+            accessRights: [ADMINISTRATION_RIGHTS.STOCK_SOURCES_MANAGE],
             resolve: {
                 validSourcesData: function(paginationService, ValidSourceResource, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(params) {

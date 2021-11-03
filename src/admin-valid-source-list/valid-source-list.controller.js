@@ -56,7 +56,7 @@
             stateParams.programId = vm.programId;
             stateParams.facilityId = vm.facilityId;
 
-            $state.go('openlmis.administration.validSources', stateParams, {
+            $state.go('openlmis.administration.validSource', stateParams, {
                 reload: true
             });
         }
@@ -159,6 +159,20 @@
          * The map of geographic levels zones names by ids.
          */
         vm.geographicLevelMap = [];
+
+        // SELV3-343: Add possibility to add valid sources
+        /**
+         * @ngdoc method
+         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @name openAddValidSourceModal
+         *
+         * @description
+         * Takes the user to the add facility page.
+         */
+        vm.openAddValidSourceModal = function() {
+            $state.go('openlmis.administration.validSource.add');
+        };
+        // SELV3-343: Ends here
 
         /**
          * @ngdoc method
