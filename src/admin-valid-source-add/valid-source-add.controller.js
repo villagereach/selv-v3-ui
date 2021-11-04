@@ -240,13 +240,13 @@
             loadingModalService.open();
             return vm.validSourceResource.create(payload)
                 .then(function(validSource) {
-                    notificationService.success('Added valid source');
+                    notificationService.success('adminValidSourceAdd.validSourceAddedSuccessfully');
                     loadingModalService.close();
                     vm.goToPreviousState();
                     return validSource;
                 })
                 .catch(function() {
-                    notificationService.error('Failed to add valid source');
+                    notificationService.error('adminValidSourceAdd.failure');
                     loadingModalService.close();
                 });
         };

@@ -46,7 +46,13 @@ describe('ValidSourceListController', function() {
             geographicZonesMap: {
                 3: 'geo zone 1'
             },
-            geographicLevelMap: geoLevelMap
+            geographicLevelMap: geoLevelMap,
+            programs: [
+                'program 1'
+            ],
+            facilities: [
+                'type 1'
+            ]
         });
 
     });
