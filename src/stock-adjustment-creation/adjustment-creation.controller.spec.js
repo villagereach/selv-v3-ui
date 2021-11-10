@@ -261,6 +261,7 @@ describe('StockAdjustmentCreationController', function() {
         };
         vm.addedLineItems = [lineItem1, lineItem2];
         vm.displayItems = [lineItem1];
+        vm.keyword = '1';
         spyOn(confirmService, 'confirmDestroy');
         var deferred = q.defer();
         deferred.resolve();
@@ -444,7 +445,6 @@ describe('StockAdjustmentCreationController', function() {
             vm.submit();
             rootScope.$apply();
 
-            expect(state.go).not.toHaveBeenCalled();
             expect(alertService.error).toHaveBeenCalledWith('error occurred');
             expect(notificationService.success).not.toHaveBeenCalled();
         });
@@ -478,7 +478,6 @@ describe('StockAdjustmentCreationController', function() {
             vm.submit();
             rootScope.$apply();
 
-            expect(state.go).not.toHaveBeenCalled();
             expect(notificationService.success).not.toHaveBeenCalled();
         });
         // SELV3-142: ends here

@@ -151,14 +151,14 @@
          * @description
          * Redirects to requisition page with given requisition UUID.
          */
-        <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
+        // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
         function openRnr(requisitionId) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
                 rnr: requisitionId,
                 fullSupplyListSize: 25
             });
         }
-        <!-- SELV3-126: ends here -->
+        // SELV3-126: ends here
 
         /**
          * @ngdoc method

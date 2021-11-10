@@ -1,7 +1,7 @@
 
 .header > .openlmis-header > .title,
 .header > .openlmis-header.is-offline > .title {
-	background-image: url('branding-selv/logo-header.png') !important;
+	background-image: url('../assets/branding-selv/logo-header.png') !important;
 }
 
 .header > .openlmis-header.is-offline > .title {
@@ -9,7 +9,7 @@
 }
 
 .auth-modal .modal-body {
-	background-image: url('branding-selv/logo.png') !important;
+	background-image: url('../assets/branding-selv/logo.png') !important;
 	background-size: auto !important;
 	background-position: $space-size*2 $space-size !important;
 	min-height: 258px + $space-size !important;

@@ -308,12 +308,12 @@ describe('RequisitionSearchController', function() {
 
             this.vm.openRnr('requisition-id');
 
-            <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
+            // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
                 rnr: 'requisition-id',
                 fullSupplyListSize: 25
             });
-            <!-- SELV3-126: ends here -->
+            // SELV3-126: ends here
         });
 
     });

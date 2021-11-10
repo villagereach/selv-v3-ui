@@ -187,7 +187,7 @@
          *
          * @param {Object} id A requisition id
          */
-        <!-- SELV3-126: Increases pagination size of requisition forms from 10 to 25 items -->
+        // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
         function goToRequisition(id) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
                 rnr: id,
@@ -202,6 +202,6 @@
                 fullSupplyListSize: 25
             });
         }
-        <!-- SELV3-126: ends here -->
+        // SELV3-126: ends here
     }
 })();
