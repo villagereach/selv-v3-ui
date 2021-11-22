@@ -1,25 +1,29 @@
 <!-- SELV3-346 Starts here -->
 <h2>{{'adminValidSourceList.validSources' | message}}</h2>
 <section class="openlmis-table-container">
-<!--    SELV3-343: Add possibility to add valid sources-->
+    <!--    SELV3-343: Add possibility to add valid sources-->
     <button id="add-valid-source" class="add" ng-click="vm.openAddValidSourceModal()">
         {{'adminValidSourceList.addValidSource' | message}}
     </button>
-<!--    SELV3-343: Ends here-->
+    <!--    SELV3-343: Ends here-->
     <form ng-submit="vm.search()">
         <fieldset class="form-group">
-            <label for="facilityId">{{'adminValidSourceList.facility' | message}}</label>
+            <label for="facilityId" ng-class="{'is-required': vm.programId}">
+                {{'adminValidSourceList.facility' | message}}
+            </label>
             <select id="facilityId"
                     ng-model="vm.facilityId"
                     ng-options="f.id as f.name for f in vm.facilities"
+                    ng-required="vm.programId"
             >
             </select>
-        </fieldset>
-        <fieldset class="form-group">
-            <label for="programId">{{'adminValidSourceList.program' | message}}</label>
+            <label for="programId" ng-class="{'is-required': vm.facilityId}">
+                {{'adminValidSourceList.program' | message}}
+            </label>
             <select id="programId"
                     ng-model="vm.programId"
                     ng-options="p.id as p.name for p in vm.programs"
+                    ng-required="vm.facilityId"
             >
             </select>
         </fieldset>
@@ -30,22 +34,22 @@
             {{'adminValidSourceList.noValidSources' | message}}
         </caption>
         <thead>
-            <tr>
-                <th>{{'adminValidSourceList.program' | message}}</th>
-                <th>{{'adminValidSourceList.facilityType' | message}}</th>
-                <th>{{'adminValidSourceList.name' | message}}</th>
-                <th>{{'adminValidSourceList.geoZone' | message}}</th>
-                <th>{{'adminValidSourceList.geoLevelAffinity' | message}}</th>
-            </tr>
+        <tr>
+            <th>{{'adminValidSourceList.program' | message}}</th>
+            <th>{{'adminValidSourceList.facilityType' | message}}</th>
+            <th>{{'adminValidSourceList.name' | message}}</th>
+            <th>{{'adminValidSourceList.geoZone' | message}}</th>
+            <th>{{'adminValidSourceList.geoLevelAffinity' | message}}</th>
+        </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="validSource in vm.validSources">
-                <td>{{vm.programsMap[validSource.programId]}}</td>
-                <td>{{vm.facilityTypesMap[validSource.facilityTypeId]}}</td>
-                <td>{{validSource.name}}</td>
-                <td>{{vm.geographicZonesMap[validSource.geoZoneId]}}</td>
-                <td>{{vm.geographicLevelMap[validSource.geoLevelId]}}</td>
-            </tr>
+        <tr ng-repeat="validSource in vm.validSources">
+            <td>{{vm.programsMap[validSource.programId]}}</td>
+            <td>{{vm.facilityTypesMap[validSource.facilityTypeId]}}</td>
+            <td>{{validSource.name}}</td>
+            <td>{{vm.geographicZonesMap[validSource.geoZoneId]}}</td>
+            <td>{{vm.geographicLevelMap[validSource.geoLevelId]}}</td>
+        </tr>
         </tbody>
     </table>
     <openlmis-pagination/>

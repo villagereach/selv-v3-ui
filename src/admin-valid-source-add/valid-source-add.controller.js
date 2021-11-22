@@ -205,7 +205,7 @@
         /**
          * @ngdoc method
          * @methodOf admin-valid-source-add.controller:ValidSourceAddController
-         * @name $onInit
+         * @name goToPreviousState
          *
          * @description
          * Helper for using previous state from view layer
