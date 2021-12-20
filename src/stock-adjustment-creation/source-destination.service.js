@@ -58,7 +58,9 @@
         function getSourceAssignments(programId, facilityId) {
             return this.validSourceResource.query({
                 programId: programId,
-                facilityId: facilityId
+                facilityId: facilityId,
+                page: 0,
+                size: 2147483647
             }).then(
                 function(validSourcesPage) {
                     // Workaround for /api/validSources endpoint incompatibility
@@ -85,7 +87,9 @@
         function getDestinationAssignments(programId, facilityId) {
             return this.validDestinationResource.query({
                 programId: programId,
-                facilityId: facilityId
+                facilityId: facilityId,
+                page: 0,
+                size: 2147483647
             }).then(
                 function(validDestinationsPage) {
                     // Workaround for /api/validDestinations endpoint incompatibility
