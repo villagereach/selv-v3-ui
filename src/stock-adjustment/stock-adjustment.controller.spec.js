@@ -77,17 +77,6 @@ describe('StockAdjustmentController', function() {
         expect(vm.program).toEqual(program);
     });
 
-    it('should go to stock adjustment draft page when proceed', function() {
-
-        // SELV3-348: proceed function changed
-        vm.proceed();
-
-        expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.adjustment.creation', {
-            program: program,
-            facility: facility
-        });
-    });
-
     it('should find offline Adjustment events', function() {
         expect(vm.offlineStockEvents()).toEqual(true);
     });

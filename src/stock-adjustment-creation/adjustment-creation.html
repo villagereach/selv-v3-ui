@@ -95,7 +95,7 @@
                     <td ng-if="vm.showReasonDropdown" openlmis-invalid="{{lineItem.$errors.reasonInvalid ? 'openlmisForm.required' : '' | message}}" class="digit-cell">
                         <select ng-model="lineItem.reason"
                             ng-change="vm.validateReason(lineItem);vm.clearFreeText(lineItem, 'reasonFreeText')"
-                            ng-options="reason.name for reason in vm.reasons track by reason.id | unique:'name'" autofocus>
+                            ng-options="reason.name for reason in vm.reasons track by reason.id" autofocus>
                         </select>
                     </td>
                     <td ng-if="vm.showReasonDropdown">

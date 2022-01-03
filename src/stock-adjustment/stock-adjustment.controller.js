@@ -29,10 +29,10 @@
         .controller('StockAdjustmentController', controller);
 
     controller.$inject = ['facility', 'program', 'adjustmentType', '$state', '$stateParams', 'offlineService',
-        'localStorageService', 'ADJUSTMENT_TYPE'];
+        'localStorageService', 'ADJUSTMENT_TYPE', 'facilityService'];
 
     function controller(facility, program, adjustmentType, $state, $stateParams, offlineService, localStorageService,
-                        ADJUSTMENT_TYPE) {
+                        ADJUSTMENT_TYPE, facilityService) {
         var vm = this;
 
         /**
@@ -119,10 +119,17 @@
             stateParams.programId = vm.program.id;
             stateParams.facility = vm.facility;
             stateParams.supervised = vm.isSupervised;
+
+            // SELV3-466: Filter reasons
+            var fullFacility = facilityService.get(stateParams.facility.id);
+            // SELV3-466: ends here
+
             $state.go('openlmis.stockmanagement.' + adjustmentType.state + '.creation', {
                 programId: stateParams.programId,
                 program: stateParams.program,
-                facility: stateParams.facility
+                // SELV3-466: Filter reasons
+                facility: fullFacility
+                // SELV3-466: ends here
             });
         };
 
