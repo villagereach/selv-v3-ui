@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-// SELV3-346 Starts here
+
 (function() {
 
     'use strict';
@@ -26,8 +26,8 @@
 
         $stateProvider.state('openlmis.administration.validSource', {
             showInNavigation: true,
-            label: 'adminValidSourceList.validSource',
-            url: '/validSources?page&size&programId&facilityId',
+            label: 'adminValidSourceList.validSources',
+            url: '/validSources?page&size&programId&facilityId&storageKey',
             controller: 'ValidSourceListController',
             templateUrl: 'admin-valid-source-list/valid-source-list.html',
             controllerAs: 'vm',
@@ -65,7 +65,8 @@
                         var item = {
                             programId: validSource.programId,
                             facilityTypeId: validSource.facilityTypeId,
-                            name: validSource.name
+                            name: validSource.name,
+                            id: validSource.id
                         };
 
                         if (validSource.node.refDataFacility) {
@@ -121,4 +122,3 @@
         });
     }
 })();
-// SELV3-346 Ends here

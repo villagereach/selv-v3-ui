@@ -12,7 +12,7 @@
  * the GNU Affero General Public License along with this program. If not, see
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
-// SELV3-346 Starts here
+
 (function() {
 
     'use strict';
@@ -29,18 +29,28 @@
         .controller('ValidSourceListController', controller);
 
     controller.$inject = [
-        'validSources', 'facilityTypesMap', 'programsMap', 'geographicZonesMap',
-        'geographicLevelMap', 'programs', 'facilities', '$stateParams', '$state'
+        'ValidSourceResource', 'stateTrackerService', 'validSources', 'facilityTypesMap', 'programsMap',
+        'geographicZonesMap', 'geographicLevelMap', 'programs', 'facilities', '$stateParams', '$state',
+        'UuidGenerator', '$window', 'confirmService', 'loadingModalService', 'notificationService', '$q'
     ];
 
-    function controller(validSources, facilityTypesMap, programsMap,
-                        geographicZonesMap, geographicLevelMap, programs,
-                        facilities, $stateParams, $state) {
+    function controller(ValidSourceResource, stateTrackerService, validSources, facilityTypesMap,
+                        programsMap, geographicZonesMap, geographicLevelMap, programs,
+                        facilities, $stateParams, $state, UuidGenerator,
+                        $window, confirmService, loadingModalService, notificationService, $q) {
 
-        var vm = this;
+        var vm = this,
+            uuidGenerator = new UuidGenerator();
 
         vm.$onInit = onInit;
         vm.search = search;
+        vm.onValidSourceSelect = onValidSourceSelect;
+        vm.toggleSelectAll = toggleSelectAll;
+        vm.setSelectAll = setSelectAll;
+        vm.getSelected = getSelected;
+        vm.deleteSelectedValidSources = deleteSelectedValidSources;
+        vm.$window = $window;
+        vm.goToPreviousState = stateTrackerService.goToPreviousState;
 
         /**
          * @ngdoc method
@@ -70,7 +80,7 @@
          * @description
          * Id of facility selected in for filtering
          */
-        vm.facilityId = null;
+        vm.facilityId = $stateParams.facilityId;
 
         /**
          * @ngdoc property
@@ -81,7 +91,7 @@
          * @description
          * Id of program selected in for filtering
          */
-        vm.programId = null;
+        vm.programId = $stateParams.programId;
 
         /**
          * @ngdoc property
@@ -92,7 +102,7 @@
          * @description
          * Contains filtered validSources.
          */
-        vm.validSources = [];
+        vm.validSources = validSources;
 
         /**
          * @ngdoc property
@@ -103,7 +113,7 @@
          * @description
          * Facilities available for filtering
          */
-        vm.facilities = [];
+        vm.facilities = facilities;
 
         /**
          * @ngdoc property
@@ -114,7 +124,7 @@
          * @description
          * Programs available for filtering
          */
-        vm.programs = [];
+        vm.programs = programs;
 
         /**
          * @ngdoc property
@@ -125,7 +135,7 @@
          * @description
          * The map of facility type names by ids.
          */
-        vm.facilityTypesMap = [];
+        vm.facilityTypesMap = facilityTypesMap;
 
         /**
            * @ngdoc property
@@ -136,7 +146,7 @@
            * @description
            * The map of program names by ids.
            */
-        vm.programsMap = {};
+        vm.programsMap = programsMap;
 
         /**
            * @ngdoc property
@@ -147,7 +157,7 @@
            * @description
            * The map of geographic zones names by ids.
            */
-        vm.geographicZonesMap = {};
+        vm.geographicZonesMap = geographicZonesMap;
 
         /**
          * @ngdoc property
@@ -158,7 +168,51 @@
          * @description
          * The map of geographic levels zones names by ids.
          */
-        vm.geographicLevelMap = [];
+        vm.geographicLevelMap = geographicLevelMap;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @name selectAll
+         * @type {Boolean}
+         *
+         * @description
+         * Indicates if all valid sources from list all selected or not.
+         */
+        vm.selectAll = false;
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @name getSelected
+         *
+         * @description
+         * Returns a list of valid sources selected by user, that are supposed to be converted to
+         *     orders.
+         *
+         * @return {Array} list of selected valid sources
+         */
+        function getSelected() {
+            var storageSelected = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
+
+            storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
+
+            var selected = [];
+
+            for (var id in storageSelected) {
+                if (storageSelected.hasOwnProperty(id)) {
+                    selected.push(storageSelected[id]);
+                }
+            }
+
+            angular.forEach(vm.validSources, function(validSource) {
+                if (validSource.$selected && storageSelected[validSource.id] === undefined) {
+                    selected.push(validSource);
+                }
+            });
+
+            return selected;
+        }
 
         // SELV3-343: Add possibility to add valid sources
         /**
@@ -177,22 +231,145 @@
         /**
          * @ngdoc method
          * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @name toggleSelectAll
+         *
+         * @description
+         * Responsible for marking/unmarking all valid sources as selected.
+         *
+         * @param {Boolean} selectAll Determines if all valid sources should be selected or not
+         */
+        function toggleSelectAll(selectAll) {
+            angular.forEach(vm.validSources, function(validSource) {
+                validSource.$selected = selectAll;
+                vm.onValidSourceSelect(validSource);
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @name setSelectAll
+         *
+         * @description
+         * Responsible for making the checkbox "select all" checked when all valid sources are
+         *     selected by user.
+         */
+        function setSelectAll() {
+            var value = true;
+            angular.forEach(vm.validSources, function(validSource) {
+                value = value && validSource.$selected;
+            });
+            vm.selectAll = value;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @name loadPreviouslySelectedValidSources
+         *
+         * @description
+         * Selects checkboxes on current page if checked before
+         */
+        function loadPreviouslySelectedValidSources() {
+            var storageValidSources = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
+            storageValidSources = storageValidSources ? JSON.parse(storageValidSources) : {};
+
+            for (var i = 0; i < vm.validSources.length; i++) {
+                var vs = vm.validSources[i];
+
+                if (storageValidSources[vs.id] !== undefined) {
+                    vm.validSources[i].$selected = true;
+                }
+            }
+
+            setSelectAll();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @name onValidSourceSelect
+         *
+         * @description
+         * Syncs valid source selection with storage
+         */
+        function onValidSourceSelect(validSource) {
+            var storageValidSources = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
+
+            storageValidSources = storageValidSources ? JSON.parse(storageValidSources) : {};
+
+            var validSourceId = validSource.id;
+
+            if (validSource.$selected) {
+                storageValidSources[validSourceId] = validSource;
+            } else {
+                delete storageValidSources[validSourceId];
+            }
+
+            $window.sessionStorage.setItem(
+                vm.selectedValidSourcesStorageKey, JSON.stringify(storageValidSources)
+            );
+
+            setSelectAll();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-valid-source-list.controller:ValidSourceListController
          * @name $onInit
          *
          * @description
          * Method that is executed on initiating ValidSourceListController.
          */
         function onInit() {
-            vm.validSources = validSources;
-            vm.programsMap = programsMap;
-            vm.facilityTypesMap = facilityTypesMap;
-            vm.geographicZonesMap = geographicZonesMap;
-            vm.geographicLevelMap = geographicLevelMap;
-            vm.programs = programs;
-            vm.facilities = facilities;
-            vm.facilityId = $stateParams.facilityId;
-            vm.programId = $stateParams.programId;
+            if ($stateParams.storageKey === undefined) {
+                $stateParams.storageKey = uuidGenerator.generate();
+                $state.go($state.current.name, $stateParams, {
+                    reload: false,
+                    notify: false
+                });
+            }
+
+            vm.selectedValidSourcesStorageKey = 'admin-valid-source-list/selected-valid-sources/'
+                + $stateParams.storageKey;
+
+            loadPreviouslySelectedValidSources();
+        }
+
+        function deleteSelectedValidSources() {
+            var validSources = getSelected();
+
+            if (validSources.length > 0) {
+                confirmService
+                    .confirm('adminValidSourceList.delete.confirm', 'adminValidSourceList.delete')
+                    .then(function() {
+                        loadingModalService.open();
+                        angular.forEach(validSources, function(validSource) {
+                            return new ValidSourceResource().delete(validSource);
+                        });
+                    })
+                    .then(function() {
+                        vm.goToPreviousState();
+                    })
+                    .then(function() {
+                        notificationService.success('adminValidSourceList.validSourceDeletedSuccessfully');
+                    })
+                    .catch(function(error) {
+                        loadingModalService.close();
+                        notificationService.error('adminValidSourceList.failure');
+                        return $q.reject(error);
+                    })
+                    .finally(function() {
+                        loadingModalService.close();
+                        $window.sessionStorage.removeItem('admin-valid-source-list/selected-valid-sources/'
+                        + $stateParams.storageKey);
+                        $state.go($state.current.name, $stateParams, {
+                            reload: true
+                        });
+                    });
+            } else {
+                notificationService.error('adminValidSourceList.selectAtLeastOneValidSource');
+            }
         }
     }
 })();
-// SELV3-346 Ends here

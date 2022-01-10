@@ -1,11 +1,8 @@
-<!-- SELV3-346 Starts here -->
 <h2>{{'adminValidSourceList.validSources' | message}}</h2>
 <section class="openlmis-table-container">
-    <!--    SELV3-343: Add possibility to add valid sources-->
     <button id="add-valid-source" class="add" ng-click="vm.openAddValidSourceModal()">
         {{'adminValidSourceList.addValidSource' | message}}
     </button>
-    <!--    SELV3-343: Ends here-->
     <form ng-submit="vm.search()">
         <fieldset class="form-group">
             <label for="facilityId" ng-class="{'is-required': vm.programId}">
@@ -35,6 +32,10 @@
         </caption>
         <thead>
         <tr>
+            <th class="col-sticky">
+                <input type="checkbox" ng-model="vm.selectAll"
+                       ng-change="vm.toggleSelectAll(vm.selectAll)">
+            </th>
             <th>{{'adminValidSourceList.program' | message}}</th>
             <th>{{'adminValidSourceList.facilityType' | message}}</th>
             <th>{{'adminValidSourceList.name' | message}}</th>
@@ -44,6 +45,10 @@
         </thead>
         <tbody>
         <tr ng-repeat="validSource in vm.validSources">
+            <td>
+                <input type="checkbox" ng-model="validSource.$selected"
+                       ng-change="vm.onValidSourceSelect(validSource)">
+            </td>
             <td>{{vm.programsMap[validSource.programId]}}</td>
             <td>{{vm.facilityTypesMap[validSource.facilityTypeId]}}</td>
             <td>{{validSource.name}}</td>
@@ -54,4 +59,6 @@
     </table>
     <openlmis-pagination/>
 </section>
-<!-- SELV3-346 Ends here -->
+<div class="openlmis-toolbar" ng-if="vm.validSources.length">
+	<button class="danger" ng-click="vm.deleteSelectedValidSources()">{{'adminValidSourceList.delete' | message}}</button>
+</div>

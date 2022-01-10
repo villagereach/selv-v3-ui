@@ -13,7 +13,6 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-// SELV3-346 Starts here
 (function() {
 
     'use strict';
@@ -30,7 +29,8 @@
         'openlmis-rights',
         'ui.router',
         'referencedata-geographic-zone',
-        'stock-adjustment-creation'
+        'stock-adjustment-creation',
+        'openlmis-state-tracker',
+        'openlmis-uuid'
     ]);
 })();
-// SELV3-346 Ends here
