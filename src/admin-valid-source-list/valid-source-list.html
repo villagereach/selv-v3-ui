@@ -40,7 +40,8 @@
             <th>{{'adminValidSourceList.facilityType' | message}}</th>
             <th>{{'adminValidSourceList.name' | message}}</th>
             <th>{{'adminValidSourceList.geoZone' | message}}</th>
-            <th>{{'adminValidSourceList.geoLevelAffinity' | message}}</th>
+            <!--Geographic level affinity temporarily is not displayed-->
+            <!--<th>{{'adminValidSourceList.geoLevelAffinity' | message}}</th>-->
         </tr>
         </thead>
         <tbody>
@@ -53,7 +54,8 @@
             <td>{{vm.facilityTypesMap[validSource.facilityTypeId]}}</td>
             <td>{{validSource.name}}</td>
             <td>{{vm.geographicZonesMap[validSource.geoZoneId]}}</td>
-            <td>{{vm.geographicLevelMap[validSource.geoLevelId]}}</td>
+            <!--Geographic level affinity temporarily is not displayed-->
+            <!--<td>{{vm.geographicLevelMap[validSource.geoLevelId]}}</td>-->
         </tr>
         </tbody>
     </table>

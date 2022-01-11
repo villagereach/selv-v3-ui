@@ -232,7 +232,7 @@
                 }
             };
 
-            if (!isRefDataFacility && vm.geoLevel !== null) {
+            if (vm.geoLevel !== null) {
                 payload.geoLevelAffinityId = vm.geoLevel.id;
             }
 

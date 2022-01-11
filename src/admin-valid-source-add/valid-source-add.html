@@ -52,15 +52,6 @@
                                 ng-model="vm.organization"
                                 ng-options="o.name for o in vm.organizations track by o.id" required>
                         </select>
-
-                        <label for="geoLevelAffinity">
-                            {{'adminValidSourceAdd.geoLevelAffinity' | message}}
-                        </label>
-    
-                        <select id="geoLevelAffinity"
-                                ng-model="vm.geoLevel"
-                                ng-options="g.name for g in vm.geoLevels track by g.id">
-                        </select>
                     </div>
 
                     <div ng-if="vm.unitType === 'facility'">
@@ -73,6 +64,15 @@
                                 ng-options="f.name for f in vm.facilities track by f.id" required>
                         </select>
                     </div>
+
+                    <label for="geoLevelAffinity">
+                        {{'adminValidSourceAdd.geoLevelAffinity' | message}}
+                    </label>
+
+                    <select id="geoLevelAffinity"
+                            ng-model="vm.geoLevel"
+                            ng-options="g.name for g in vm.geoLevels track by g.id">
+                    </select>
                 </form>
             </div>
             <div class="modal-footer">
