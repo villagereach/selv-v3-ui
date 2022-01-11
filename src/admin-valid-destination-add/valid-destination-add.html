@@ -2,12 +2,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1>{{'adminValidSourceAdd.addValidSource' | message}}</h1>
+                <h1>{{'adminValidDestinationAdd.addValidDestination' | message}}</h1>
             </div>
             <div class="modal-body">
-                <form id="add-valid-source-form" ng-submit="vm.submit()">
+                <form id="add-valid-destination-form" ng-submit="vm.submit()">
                     <label for="program">
-                        {{'adminValidSourceAdd.selectProgram' | message}}
+                        {{'adminValidDestinationAdd.selectProgram' | message}}
                     </label>
                     <select id="program"
                             ng-model="vm.program"
@@ -15,7 +15,7 @@
                     </select>
 
                     <label for="facilityType">
-                        {{'adminValidSourceAdd.facilityType' | message}}
+                        {{'adminValidDestinationAdd.facilityType' | message}}
                     </label>
 
                     <select id="facilityType"
@@ -30,7 +30,7 @@
                                 ng-model="vm.unitType"
                                 value="facility"
                                 required>
-                        {{'adminValidSourceAdd.isFacility' | message}}
+                        {{'adminValidDestinationAdd.isFacility' | message}}
                     </label>
 
                     <label for="organizationUnitType">
@@ -40,32 +40,23 @@
                                 ng-model="vm.unitType"
                                 value="organization"
                                 required>
-                        {{'adminValidSourceAdd.isOrganization' | message}}
+                        {{'adminValidDestinationAdd.isOrganization' | message}}
                     </label>
 
                     <div ng-if="vm.unitType === 'organization'">
                         <label for="organization">
-                            {{'adminValidSourceAdd.organization' | message}}
+                            {{'adminValidDestinationAdd.organization' | message}}
                         </label>
 
                         <select id="organization"
                                 ng-model="vm.organization"
                                 ng-options="o.name for o in vm.organizations track by o.id" required>
                         </select>
-
-                        <label for="geoLevelAffinity">
-                            {{'adminValidSourceAdd.geoLevelAffinity' | message}}
-                        </label>
-    
-                        <select id="geoLevelAffinity"
-                                ng-model="vm.geoLevel"
-                                ng-options="g.name for g in vm.geoLevels track by g.id">
-                        </select>
                     </div>
 
                     <div ng-if="vm.unitType === 'facility'">
                         <label for="facility">
-                            {{'adminValidSourceAdd.facility' | message}}
+                            {{'adminValidDestinationAdd.facility' | message}}
                         </label>
 
                         <select id="facility"
@@ -73,14 +64,23 @@
                                 ng-options="f.name for f in vm.facilities track by f.id" required>
                         </select>
                     </div>
+
+                    <label for="geoLevelAffinity">
+                        {{'adminValidSourceAdd.geoLevelAffinity' | message}}
+                    </label>
+
+                    <select id="geoLevelAffinity"
+                            ng-model="vm.geoLevel"
+                            ng-options="g.name for g in vm.geoLevels track by g.id">
+                    </select>
                 </form>
             </div>
             <div class="modal-footer">
                 <button id="cancel" ng-click="vm.goToPreviousState()">
-                    {{'adminValidSourceAdd.cancel' | message}}
+                    {{'adminValidDestinationAdd.cancel' | message}}
                 </button>
-                <button class="primary" form="add-valid-source-form">
-                    {{'adminValidSourceAdd.add' | message}}
+                <button class="primary" form="add-valid-destination-form">
+                    {{'adminValidDestinationAdd.add' | message}}
                 </button>
             </div>
         </div>

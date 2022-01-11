@@ -19,22 +19,22 @@
 
     /**
      * @ngdoc controller
-     * @name admin-valid-source-list.controller:ValidSourceListController
+     * @name admin-valid-destination-list.controller:ValidDestinationListController
      *
      * @description
-     * Controller for managing valid sources list screen.
+     * Controller for managing valid destinations list screen.
      */
     angular
-        .module('admin-valid-source-list')
-        .controller('ValidSourceListController', controller);
+        .module('admin-valid-destination-list')
+        .controller('ValidDestinationListController', controller);
 
     controller.$inject = [
-        'ValidSourceResource', 'stateTrackerService', 'validSources', 'facilityTypesMap', 'programsMap',
+        'ValidDestinationResource', 'stateTrackerService', 'validDestinations', 'facilityTypesMap', 'programsMap',
         'geographicZonesMap', 'geographicLevelMap', 'programs', 'facilities', '$stateParams', '$state',
         'UuidGenerator', '$window', 'confirmService', 'loadingModalService', 'notificationService', '$q'
     ];
 
-    function controller(ValidSourceResource, stateTrackerService, validSources, facilityTypesMap,
+    function controller(ValidDestinationResource, stateTrackerService, validDestinations, facilityTypesMap,
                         programsMap, geographicZonesMap, geographicLevelMap, programs,
                         facilities, $stateParams, $state, UuidGenerator,
                         $window, confirmService, loadingModalService, notificationService, $q) {
@@ -44,17 +44,17 @@
 
         vm.$onInit = onInit;
         vm.search = search;
-        vm.onValidSourceSelect = onValidSourceSelect;
+        vm.onValidDestinationSelect = onValidDestinationSelect;
         vm.toggleSelectAll = toggleSelectAll;
         vm.setSelectAll = setSelectAll;
         vm.getSelected = getSelected;
-        vm.deleteSelectedValidSources = deleteSelectedValidSources;
+        vm.deleteSelectedValidDestinations = deleteSelectedValidDestinations;
         vm.$window = $window;
         vm.goToPreviousState = stateTrackerService.goToPreviousState;
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name search
          *
          * @description
@@ -66,14 +66,14 @@
             stateParams.programId = vm.programId;
             stateParams.facilityId = vm.facilityId;
 
-            $state.go('openlmis.administration.validSource', stateParams, {
+            $state.go('openlmis.administration.validDestination', stateParams, {
                 reload: true
             });
         }
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name facilityId
          * @type {String}
          *
@@ -84,7 +84,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name programId
          * @type {String}
          *
@@ -95,18 +95,18 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
-         * @name validSources
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name validDestinations
          * @type {Array}
          *
          * @description
-         * Contains filtered validSources.
+         * Contains filtered validDestinations.
          */
-        vm.validSources = validSources;
+        vm.validDestinations = validDestinations;
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name facilities
          * @type {Array}
          *
@@ -117,7 +117,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name programs
          * @type {Array}
          *
@@ -128,7 +128,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name facilityTypesMap
          *
@@ -139,7 +139,7 @@
 
         /**
            * @ngdoc property
-           * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+           * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
            * @type {Object}
            * @name programsMap
            *
@@ -150,7 +150,7 @@
 
         /**
            * @ngdoc property
-           * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+           * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
            * @type {Object}
            * @name geographicZonesMap
            *
@@ -161,7 +161,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name geographicLevelMap
          *
@@ -172,28 +172,28 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name selectAll
          * @type {Boolean}
          *
          * @description
-         * Indicates if all valid sources from list all selected or not.
+         * Indicates if all valid destinations from list all selected or not.
          */
         vm.selectAll = false;
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name getSelected
          *
          * @description
-         * Returns a list of valid sources selected by user, that are supposed to be converted to
+         * Returns a list of valid destinations selected by user, that are supposed to be converted to
          *     orders.
          *
-         * @return {Array} list of selected valid sources
+         * @return {Array} list of selected valid destinations
          */
         function getSelected() {
-            var storageSelected = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
+            var storageSelected = $window.sessionStorage.getItem(vm.selectedValidDestinationsStorageKey);
 
             storageSelected = storageSelected ? JSON.parse(storageSelected) : {};
 
@@ -205,9 +205,9 @@
                 }
             }
 
-            angular.forEach(vm.validSources, function(validSource) {
-                if (validSource.$selected && storageSelected[validSource.id] === undefined) {
-                    selected.push(validSource);
+            angular.forEach(vm.validDestinations, function(validDestination) {
+                if (validDestination.$selected && storageSelected[validDestination.id] === undefined) {
+                    selected.push(validDestination);
                 }
             });
 
@@ -216,67 +216,67 @@
 
         /**
          * @ngdoc method
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
-         * @name openAddValidSourceModal
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name openAddValidDestinationModal
          *
          * @description
          * Takes the user to the add facility page.
          */
-        vm.openAddValidSourceModal = function() {
-            $state.go('openlmis.administration.validSource.add');
+        vm.openAddValidDestinationModal = function() {
+            $state.go('openlmis.administration.validDestination.add');
         };
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name toggleSelectAll
          *
          * @description
-         * Responsible for marking/unmarking all valid sources as selected.
+         * Responsible for marking/unmarking all valid destinations as selected.
          *
-         * @param {Boolean} selectAll Determines if all valid sources should be selected or not
+         * @param {Boolean} selectAll Determines if all valid destinations should be selected or not
          */
         function toggleSelectAll(selectAll) {
-            angular.forEach(vm.validSources, function(validSource) {
-                validSource.$selected = selectAll;
-                vm.onValidSourceSelect(validSource);
+            angular.forEach(vm.validDestinations, function(validDestination) {
+                validDestination.$selected = selectAll;
+                vm.onValidDestinationSelect(validDestination);
             });
         }
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name setSelectAll
          *
          * @description
-         * Responsible for making the checkbox "select all" checked when all valid sources are
+         * Responsible for making the checkbox "select all" checked when all valid destinations are
          *     selected by user.
          */
         function setSelectAll() {
             var value = true;
-            angular.forEach(vm.validSources, function(validSource) {
-                value = value && validSource.$selected;
+            angular.forEach(vm.validDestinations, function(validDestination) {
+                value = value && validDestination.$selected;
             });
             vm.selectAll = value;
         }
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
-         * @name loadPreviouslySelectedValidSources
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name loadPreviouslySelectedValidDestinations
          *
          * @description
          * Selects checkboxes on current page if checked before
          */
-        function loadPreviouslySelectedValidSources() {
-            var storageValidSources = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
-            storageValidSources = storageValidSources ? JSON.parse(storageValidSources) : {};
+        function loadPreviouslySelectedValidDestinations() {
+            var storageValidDestinations = $window.sessionStorage.getItem(vm.selectedValidDestinationsStorageKey);
+            storageValidDestinations = storageValidDestinations ? JSON.parse(storageValidDestinations) : {};
 
-            for (var i = 0; i < vm.validSources.length; i++) {
-                var vs = vm.validSources[i];
+            for (var i = 0; i < vm.validDestinations.length; i++) {
+                var vs = vm.validDestinations[i];
 
-                if (storageValidSources[vs.id] !== undefined) {
-                    vm.validSources[i].$selected = true;
+                if (storageValidDestinations[vs.id] !== undefined) {
+                    vm.validDestinations[i].$selected = true;
                 }
             }
 
@@ -285,27 +285,27 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
-         * @name onValidSourceSelect
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @name onValidDestinationSelect
          *
          * @description
-         * Syncs valid source selection with storage
+         * Syncs valid destination selection with storage
          */
-        function onValidSourceSelect(validSource) {
-            var storageValidSources = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
+        function onValidDestinationSelect(validDestination) {
+            var storageValidDestinations = $window.sessionStorage.getItem(vm.selectedValidDestinationsStorageKey);
 
-            storageValidSources = storageValidSources ? JSON.parse(storageValidSources) : {};
+            storageValidDestinations = storageValidDestinations ? JSON.parse(storageValidDestinations) : {};
 
-            var validSourceId = validSource.id;
+            var validDestinationId = validDestination.id;
 
-            if (validSource.$selected) {
-                storageValidSources[validSourceId] = validSource;
+            if (validDestination.$selected) {
+                storageValidDestinations[validDestinationId] = validDestination;
             } else {
-                delete storageValidSources[validSourceId];
+                delete storageValidDestinations[validDestinationId];
             }
 
             $window.sessionStorage.setItem(
-                vm.selectedValidSourcesStorageKey, JSON.stringify(storageValidSources)
+                vm.selectedValidDestinationsStorageKey, JSON.stringify(storageValidDestinations)
             );
 
             setSelectAll();
@@ -313,11 +313,11 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-list.controller:ValidSourceListController
+         * @methodOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name $onInit
          *
          * @description
-         * Method that is executed on initiating ValidSourceListController.
+         * Method that is executed on initiating ValidDestinationListController.
          */
         function onInit() {
             if ($stateParams.storageKey === undefined) {
@@ -328,45 +328,45 @@
                 });
             }
 
-            vm.selectedValidSourcesStorageKey = 'admin-valid-source-list/selected-valid-sources/'
+            vm.selectedValidDestinationsStorageKey = 'admin-valid-destination-list/selected-valid-sources/'
                 + $stateParams.storageKey;
 
-            loadPreviouslySelectedValidSources();
+            loadPreviouslySelectedValidDestinations();
         }
 
-        function deleteSelectedValidSources() {
-            var validSources = getSelected();
+        function deleteSelectedValidDestinations() {
+            var validDestinations = getSelected();
 
-            if (validSources.length > 0) {
+            if (validDestinations.length > 0) {
                 confirmService
-                    .confirm('adminValidSourceList.delete.confirm', 'adminValidSourceList.delete')
+                    .confirm('adminValidDestinationList.delete.confirm', 'adminValidDestinationList.delete')
                     .then(function() {
                         loadingModalService.open();
-                        angular.forEach(validSources, function(validSource) {
-                            return new ValidSourceResource().delete(validSource);
+                        angular.forEach(validDestinations, function(validDestination) {
+                            return new ValidDestinationResource().delete(validDestination);
                         });
                     })
                     .then(function() {
                         vm.goToPreviousState();
                     })
                     .then(function() {
-                        notificationService.success('adminValidSourceList.validSourceDeletedSuccessfully');
+                        notificationService.success('adminValidDestinationList.validDestinationDeletedSuccessfully');
                     })
                     .catch(function(error) {
                         loadingModalService.close();
-                        notificationService.error('adminValidSourceList.failure');
+                        notificationService.error('adminValidDestinationList.failure');
                         return $q.reject(error);
                     })
                     .finally(function() {
                         loadingModalService.close();
-                        $window.sessionStorage.removeItem('admin-valid-source-list/selected-valid-sources/'
+                        $window.sessionStorage.removeItem('admin-valid-destination-list/selected-valid-sources/'
                         + $stateParams.storageKey);
                         $state.go($state.current.name, $stateParams, {
                             reload: true
                         });
                     });
             } else {
-                notificationService.error('adminValidSourceList.selectAtLeastOneValidSource');
+                notificationService.error('adminValidDestinationList.selectAtLeastOneValidDestination');
             }
         }
     }

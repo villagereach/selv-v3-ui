@@ -47,8 +47,11 @@
             LOTS_MANAGE: 'LOTS_MANAGE',
             // SELV3-142: ends here
             // SELV3-343: Add possibility to add valid sources
-            STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE'
+            STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE',
             // SELV3-343: Ends here
+            // SELV3-469: Add possibility to add valid destinations
+            STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE'
+            // SELV3-469: Ends here
         };
     }
 

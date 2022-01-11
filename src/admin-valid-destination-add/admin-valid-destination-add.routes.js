@@ -18,18 +18,18 @@
     'use strict';
 
     angular
-        .module('admin-valid-source-add')
+        .module('admin-valid-destination-add')
         .config(routes);
 
     routes.$inject = ['modalStateProvider', 'ADMINISTRATION_RIGHTS'];
 
     function routes(modalStateProvider, ADMINISTRATION_RIGHTS) {
 
-        modalStateProvider.state('openlmis.administration.validSource.add', {
-            controller: 'ValidSourceAddController',
+        modalStateProvider.state('openlmis.administration.validDestination.add', {
+            controller: 'ValidDestinationAddController',
             controllerAs: 'vm',
-            accessRights: [ADMINISTRATION_RIGHTS.STOCK_SOURCES_MANAGE],
-            templateUrl: 'admin-valid-source-add/valid-source-add.html',
+            accessRights: [ADMINISTRATION_RIGHTS.STOCK_DESTINATIONS_MANAGE],
+            templateUrl: 'admin-valid-destination-add/valid-destination-add.html',
             url: '/add',
             resolve: {
                 organizations: organizationsResolve,

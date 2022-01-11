@@ -19,17 +19,17 @@
 
     /**
      * @ngdoc controller
-     * @name admin-valid-source-add.controller:ValidSourceAddController
+     * @name admin-valid-destination-add.controller:ValidDestinationAddController
      *
      * @description
-     * Controls Add Valid Source modal.
+     * Controls Add Valid Destination modal.
      */
     angular
-        .module('admin-valid-source-add')
-        .controller('ValidSourceAddController', ValidSourceAddController);
+        .module('admin-valid-destination-add')
+        .controller('ValidDestinationAddController', ValidDestinationAddController);
 
-    ValidSourceAddController.$inject = [
-        'ValidSourceResource',
+    ValidDestinationAddController.$inject = [
+        'ValidDestinationResource',
         'stateTrackerService',
         'loadingModalService',
         'notificationService',
@@ -40,8 +40,8 @@
         'geoLevels'
     ];
 
-    function ValidSourceAddController(
-        ValidSourceResource,
+    function ValidDestinationAddController(
+        ValidDestinationResource,
         stateTrackerService,
         loadingModalService,
         notificationService,
@@ -55,18 +55,18 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
-         * @type {ValidSourceResource}
-         * @name validSourceResource
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
+         * @type {ValidDestinationResource}
+         * @name validDestinationResource
          *
          * @description
-         * Resource for handling valid sources
+         * Resource for handling valid destinations
          */
-        vm.validSourceResource = null;
+        vm.validDestinationResource = null;
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name programs
          *
@@ -77,7 +77,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name unitType
          *
@@ -88,7 +88,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name unitType
          *
@@ -99,7 +99,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name geoLevels
          *
@@ -110,7 +110,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Array}
          * @name organizations
          *
@@ -121,7 +121,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Object}
          * @name unitType
          *
@@ -132,7 +132,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {String}
          * @name unitType
          *
@@ -143,7 +143,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Object}
          * @name facility
          *
@@ -154,7 +154,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Object}
          * @name organization
          *
@@ -165,7 +165,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Object}
          * @name geoLevel
          *
@@ -176,7 +176,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @type {Object}
          * @name facilityType
          *
@@ -187,24 +187,24 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-add.controller:ValidSourceAddController
+         * @methodOf admin-valid-destination-add.controller:ValidDestinationAddController
          * @name $onInit
          *
          * @description
-         * Initialization method of the ValidSourceAddController.
+         * Initialization method of the ValidDestinationAddController.
          */
         vm.$onInit = function() {
             vm.programs = programs;
             vm.facilities = facilities;
             vm.organizations = organizations;
-            vm.validSourceResource = new ValidSourceResource();
+            vm.validDestinationResource = new ValidDestinationResource();
             vm.facilityTypes = facilityTypes;
             vm.geoLevels = geoLevels;
         };
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-add.controller:ValidSourceAddController
+         * @methodOf admin-valid-destination-add.controller:ValidDestinationAddController
          * @name goToPreviousState
          *
          * @description
@@ -214,7 +214,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-valid-source-add.controller:ValidSourceAddController
+         * @methodOf admin-valid-destination-add.controller:ValidDestinationAddController
          * @name submit
          *
          * @description
@@ -232,20 +232,20 @@
                 }
             };
 
-            if (!isRefDataFacility && vm.geoLevel !== null) {
+            if (vm.geoLevel !== null) {
                 payload.geoLevelAffinityId = vm.geoLevel.id;
             }
 
             loadingModalService.open();
-            return vm.validSourceResource.create(payload)
-                .then(function(validSource) {
-                    notificationService.success('adminValidSourceAdd.validSourceAddedSuccessfully');
+            return vm.validDestinationResource.create(payload)
+                .then(function(validDestination) {
+                    notificationService.success('adminValidDestinationAdd.validDestinationAddedSuccessfully');
                     loadingModalService.close();
                     vm.goToPreviousState();
-                    return validSource;
+                    return validDestination;
                 })
                 .catch(function() {
-                    notificationService.error('adminValidSourceAdd.failure');
+                    notificationService.error('adminValidDestinationAdd.failure');
                     loadingModalService.close();
                 });
         };

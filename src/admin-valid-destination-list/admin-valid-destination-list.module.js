@@ -18,20 +18,19 @@
     'use strict';
 
     /**
-     * @module admin-valid-source-add
+     * @module admin-valid-destination-list
      *
      * @description
-     * Provides a modal for adding new valid source.
+     * Provides valid destination list screen for administrator.
      */
-    angular.module('admin-valid-source-add', [
-        'referencedata-facility',
-        'referencedata-facility-type',
-        'referencedata-facility-operator',
-        'admin-facility',
-        'openlmis-modal',
-        'openlmis-templates',
+    angular.module('admin-valid-destination-list', [
+        'openlmis-admin',
+        'openlmis-pagination',
+        'openlmis-rights',
+        'ui.router',
+        'referencedata-geographic-zone',
+        'stock-adjustment-creation',
         'openlmis-state-tracker',
-        'openlmis-modal-state'
+        'openlmis-uuid'
     ]);
-
 })();

@@ -18,12 +18,12 @@
     'use strict';
 
     /**
-     * @module admin-valid-source-add
+     * @module admin-valid-destination-add
      *
      * @description
-     * Provides a modal for adding new valid source.
+     * Provides a modal for adding new valid destination.
      */
-    angular.module('admin-valid-source-add', [
+    angular.module('admin-valid-destination-add', [
         'referencedata-facility',
         'referencedata-facility-type',
         'referencedata-facility-operator',
