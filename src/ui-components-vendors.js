@@ -28,7 +28,7 @@ window.shortid = require('js-shortid');
 window.PouchDB = require('pouchdb').default;
 // START: SELV3-480
 //eslint-disable-next-line no-undef
-window.PouchDB.plugin(require('pouchdb-find'));
+window.PouchDB.plugin(require('pouchdb-find').default);
 // END: SELV3-480
 
 //eslint-disable-next-line no-undef
