@@ -18,9 +18,7 @@ describe('StockAdjustmentCreationController', function() {
     var vm, q, rootScope, state, stateParams, facility, program, confirmService, VVM_STATUS, messageService, scope,
         stockAdjustmentCreationService, reasons, $controller, ADJUSTMENT_TYPE, ProgramDataBuilder, FacilityDataBuilder,
         ReasonDataBuilder, OrderableGroupDataBuilder, OrderableDataBuilder, alertService, notificationService,
-        // SELV3-142: Added lot-management feature
-        orderableGroups, LotDataBuilder, UNPACK_REASONS, LotResource, editLotModalService;
-    // SELV3-142: ends here
+        orderableGroups, LotDataBuilder, UNPACK_REASONS, LotResource;
 
     beforeEach(function() {
 
@@ -34,7 +32,7 @@ describe('StockAdjustmentCreationController', function() {
             });
         });
 
-        inject(function($q, $rootScope, $injector) {
+        inject(function($injector) {
             q = $injector.get('$q');
             rootScope = $injector.get('$rootScope');
             stateParams = $injector.get('$stateParams');
@@ -56,11 +54,9 @@ describe('StockAdjustmentCreationController', function() {
             this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             this.OrderableChildrenDataBuilder = $injector.get('OrderableChildrenDataBuilder');
             this.offlineService = $injector.get('offlineService');
-            // SELV3-142: Added lot-management feature
             LotResource = $injector.get('LotResource');
-            editLotModalService = $injector.get('editLotModalService');
-            spyOn(editLotModalService, 'show');
-            // SELV3-142: ends here
+            this.editLotModalService = $injector.get('editLotModalService');
+            spyOn(this.editLotModalService, 'show');
 
             state = jasmine.createSpyObj('$state', ['go']);
             state.current = {
@@ -99,9 +95,7 @@ describe('StockAdjustmentCreationController', function() {
             scope.productForm = jasmine.createSpyObj('productForm', ['$setUntouched', '$setPristine']);
 
             vm = initController(orderableGroups);
-            // SELV3-142: Added lot-management feature
             vm.$onInit();
-            // SELV3-142: ends here
         });
     });
 
@@ -113,9 +107,8 @@ describe('StockAdjustmentCreationController', function() {
         it('should set showVVMStatusColumn to true if any orderable use vvm', function() {
 
             vm = initController([this.orderableGroup]);
-            // SELV3-142: Added lot-management feature
             vm.$onInit();
-            // SELV3-142: ends here
+
             expect(vm.showVVMStatusColumn).toBe(true);
         });
 
@@ -157,7 +150,6 @@ describe('StockAdjustmentCreationController', function() {
             expect(lineItem.$errors.quantityInvalid).toEqual('stockAdjustmentCreation.positiveInteger');
         });
 
-        // SELV3-142: Added lot-management feature
         it('line item quantity is invalid when is greater than stock on hand and reason type is DEBIT', function() {
             var lineItem = {
                 id: '1',
@@ -172,7 +164,6 @@ describe('StockAdjustmentCreationController', function() {
 
             expect(lineItem.$errors.quantityInvalid).toEqual('stockAdjustmentCreation.quantityGreaterThanStockOnHand');
         });
-        // SELV3-142: ends here
 
         it('line item quantity is invalid given -1', function() {
             var lineItem = {
@@ -327,28 +318,7 @@ describe('StockAdjustmentCreationController', function() {
             expect(addedLineItem.occurredDate).toEqual(vm.addedLineItems[1].occurredDate);
         });
 
-        // SELV3-142: Added lot-management feature
-        it('should add line item if missing lot provided', function() {
-            vm.newLot.lotCode = 'NewLot001';
-            vm.addedItems = [];
-
-            var newLot = {
-                lotCode: vm.newLot.lotCode,
-                expirationDate: vm.newLot.expirationDate,
-                tradeItemId: vm.selectedOrderableGroup[0].orderable.identifiers.tradeItem,
-                active: true
-            };
-
-            vm.addProduct();
-
-            var addedLineItem = vm.addedLineItems[0];
-
-            expect(addedLineItem.orderable).toEqual(vm.selectedOrderableGroup[0].orderable);
-            expect(addedLineItem.lot).toEqual(newLot);
-            expect(addedLineItem.displayLotMessage).toEqual(newLot.lotCode);
-        });
     });
-    // SELV3-142: ends here
 
     it('should search from added line items', function() {
         var lineItem1 = {
@@ -426,7 +396,8 @@ describe('StockAdjustmentCreationController', function() {
 
             expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                 facility: facility.id,
-                program: program.id
+                program: program.id,
+                active: 'ACTIVE'
             });
 
             expect(notificationService.success).toHaveBeenCalledWith('stockAdjustmentCreation.submitted');
@@ -449,26 +420,6 @@ describe('StockAdjustmentCreationController', function() {
             expect(notificationService.success).not.toHaveBeenCalled();
         });
 
-        it('should redirect with proper state params after success in offline mode', function() {
-            this.offlineService.isOffline.andReturn(true);
-
-            spyOn(stockAdjustmentCreationService, 'submitAdjustments');
-            stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
-
-            vm.submit();
-            rootScope.$apply();
-
-            expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
-                facility: facility.id,
-                program: program.id
-            });
-
-            expect(notificationService.offline).toHaveBeenCalledWith('stockAdjustmentCreation.submittedOffline');
-            expect(notificationService.success).not.toHaveBeenCalled();
-            expect(alertService.error).not.toHaveBeenCalled();
-        });
-
-        // SELV3-142: Added lot-management feature
         it('should not submit if new lot code exists in the database', function() {
             spyOn(LotResource.prototype, 'query').andCallFake(function(response) {
                 response.numberOfElements = 1;
@@ -478,9 +429,13 @@ describe('StockAdjustmentCreationController', function() {
             vm.submit();
             rootScope.$apply();
 
+            expect(state.go).toHaveBeenCalledWith(state.current.name, stateParams, {
+                reload: false,
+                notify: false
+            });
+
             expect(notificationService.success).not.toHaveBeenCalled();
         });
-        // SELV3-142: ends here
 
         it('should generate kit constituent if the state is unpacking', function() {
             spyOn(stockAdjustmentCreationService, 'submitAdjustments');
@@ -511,6 +466,24 @@ describe('StockAdjustmentCreationController', function() {
             expect(unpackingLineItem[1].quantity).toEqual(60);
             expect(unpackingLineItem[0].quantity).toEqual(2);
         });
+
+        it('should redirect with proper state params after success in offline mode', function() {
+            this.offlineService.isOffline.andReturn(true);
+            spyOn(stockAdjustmentCreationService, 'submitAdjustments');
+            stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
+            vm.submit();
+            rootScope.$apply();
+
+            expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
+                facility: facility.id,
+                program: program.id,
+                active: 'ACTIVE'
+            });
+
+            expect(notificationService.offline).toHaveBeenCalledWith('stockAdjustmentCreation.submittedOffline');
+            expect(notificationService.success).not.toHaveBeenCalled();
+            expect(alertService.error).not.toHaveBeenCalled();
+        });
     });
 
     describe('orderableSelectionChanged', function() {
@@ -522,29 +495,6 @@ describe('StockAdjustmentCreationController', function() {
 
             expect(vm.selectedLot).toBe(null);
         });
-
-        // SELV3-142: Added lot-management feature
-        it('should clear new lot code', function() {
-            vm.newLot.lotCode = 'NewLot001';
-            vm.orderableSelectionChanged();
-
-            expect(vm.newLot.lotCode).not.toBeDefined();
-        });
-
-        it('should clear new lot expiration date', function() {
-            vm.newLot.expirationDate = '2019-08-06';
-            vm.orderableSelectionChanged();
-
-            expect(vm.newLot.expirationDate).not.toBeDefined();
-        });
-
-        it('should set canAddNewLot as false', function() {
-            vm.canAddNewLot = true;
-            vm.orderableSelectionChanged();
-
-            expect(vm.canAddNewLot).toBeFalsy();
-        });
-        // SELV3-142: ends here
 
         it('should clear form', function() {
             vm.selectedLot = new LotDataBuilder().build();
@@ -606,10 +556,8 @@ describe('StockAdjustmentCreationController', function() {
             reasons: reasons,
             orderableGroups: orderableGroups,
             displayItems: [],
-            // SELV3-142: Added lot-management feature
             hasPermissionToAddNewLot: true,
-            editLotModalService: editLotModalService
-            // SELV3-142: ends here
+            editLotModalService: this.editLotModalService
         });
     }
 

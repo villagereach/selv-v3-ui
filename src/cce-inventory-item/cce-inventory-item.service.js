@@ -46,6 +46,10 @@
             },
             delete: {
                 method: 'DELETE'
+            },
+            transfer: {
+                method: 'PUT',
+                url: cceUrlFactory('/api/inventoryItems/:id/transfer')
             }
         });
 
@@ -53,7 +57,8 @@
             get: get,
             query: query,
             save: save,
-            deleteInventory: deleteInventory
+            deleteInventory: deleteInventory,
+            transfer: transfer
         };
 
         /**
@@ -123,6 +128,26 @@
             return resource.delete({
                 id: inventoryItem.id
             }).$promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf cce-inventory-item.inventoryItemService
+         * @name transfer
+         *
+         * @description
+         * Changes the Inventory facility, program and istallation date
+         *
+         * @param  {Object}     inventoryItem   the updated inventory item
+         * @return {Promise}                    the promise resolving to the updated item
+         */
+        function transfer(inventoryItem) {
+            if (inventoryItem.id) {
+                return resource.transfer({
+                    id: inventoryItem.id
+                }, inventoryItem).$promise;
+            }
+            return resource.save({}, inventoryItem).$promise;
         }
 
         function transformGetResponse(data, headers, status) {

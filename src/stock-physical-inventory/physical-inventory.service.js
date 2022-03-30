@@ -165,9 +165,12 @@
          *
          * @param {String} keyword   keyword
          * @param {Array}  lineItems all line items
-         * @return {Array} result    search result
+         * @param {Boolean} includeInactive   is active stock card
+         * @return {Array}     search result
          */
-        function search(keyword, lineItems) {
+        function search(keyword, lineItems, includeInactive) {
+            // Workaround for eslint unexpected token on default param
+            includeInactive = typeof includeInactive === 'boolean' ? includeInactive : false;
             var result = lineItems;
             var hasLot = _.any(lineItems, function(item) {
                 return item.lot;
@@ -190,6 +193,12 @@
                     return _.any(searchableFields, function(field) {
                         return field.toLowerCase().contains(keyword.toLowerCase());
                     });
+                });
+            }
+
+            if (!includeInactive) {
+                result = _.filter(result, function(item) {
+                    return item.active;
                 });
             }
 

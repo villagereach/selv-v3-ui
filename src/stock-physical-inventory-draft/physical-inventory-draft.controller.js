@@ -35,9 +35,7 @@
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
         'offlineService', 'localStorageFactory', 'physicalInventoryDraftCacheService',
-        // SELV3-142: Added lot-management feature
-        'LotResource', 'editLotModalService'];
-    // SELV3-142: ends here
+        'stockCardService', 'LotResource', 'editLotModalService'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
                         physicalInventoryFactory, notificationService, alertService,
@@ -45,11 +43,8 @@
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
-                        offlineService, localStorageFactory,
-                        physicalInventoryDraftCacheService,
-                        // SELV3-142: Added lot-management feature
-                        LotResource, editLotModalService) {
-        // SELV3-142: ends here      
+                        offlineService, localStorageFactory, physicalInventoryDraftCacheService,
+                        stockCardService, LotResource, editLotModalService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -112,6 +107,17 @@
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name includeInactive
+         * @type {Boolean}
+         *
+         * @description
+         * When true shows inactive items
+         */
+        vm.includeInactive = $stateParams.includeInactive;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name vvmStatuses
          * @type {Object}
          *
@@ -141,6 +147,17 @@
          * Indicates if VVM Status column should be visible.
          */
         vm.showVVMStatusColumn = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name showVVMStatusColumn
+         * @type {boolean}
+         *
+         * @description
+         * Indicates if Hide buttons column should be visible.
+         */
+        vm.showHideButtonColumn = false;
 
         /**
          * @ngdoc property
@@ -203,7 +220,6 @@
                 .difference(_.flatten(vm.displayLineItemsGroup))
                 .value();
 
-            // SELV3-142: Added lot-management feature
             var orderablesWithoutAvailableLots = draft.lineItems.map(function(item) {
                 return item.orderable;
             }).filter(function(orderable) {
@@ -231,7 +247,7 @@
             });
 
             addProductsModalService.show(notYetAddedItems, draft.lineItems).then(function() {
-                // SELV3-142: ends here
+
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
                 $stateParams.draft = draft;
@@ -248,7 +264,6 @@
             });
         };
 
-        // SELV3-142: Added lot-management feature
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -265,7 +280,6 @@
                 $stateParams.draft = draft;
             });
         };
-        // SELV3-142: ends here
 
         /**
          * @ngdoc method
@@ -299,15 +313,55 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name getStatusDisplay
+         *
+         * @description
+         * Pops up a modal for users to hide product for physical inventory.
+         *
+         * @param  {Object} lineItem line items to be hidded.
+         */
+        vm.hideLineItem = function(lineItem) {
+            var itemToHide = lineItem;
+            confirmService.confirm(
+                messageService.get('stockPhysicalInventoryDraft.deactivateItem', {
+                    product: lineItem.orderable.fullProductName,
+                    lot: lineItem.displayLotMessage
+                }),
+                'stockPhysicalInventoryDraft.deactivate'
+            ).then(function() {
+                loadingModalService.open();
+                stockCardService.deactivateStockCard(lineItem.stockCardId).then(function() {
+                    draft.lineItems.find(function(item) {
+                        if (item.stockCardId === itemToHide.stockCardId) {
+                            return item;
+                        }
+                    }).active = false;
+                    vm.draft = draft;
+                    vm.saveDraft(true);
+                    $state.go($state.current.name, $stateParams, {
+                        reload: $state.current.name
+                    });
+                    notificationService.success('stockPhysicalInventoryDraft.deactivated');
+                })
+                    .catch(function() {
+                        loadingModalService.close();
+                    });
+            });
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name search
          *
          * @description
-         * It searches from the total line items with given keyword. If keyword is empty then all line
-         * items will be shown.
+         * It searches from the total line items with given keyword and/or includeInactive.
+         * If keyword and includeInactive are empty then all line items will be shown.
          */
         vm.search = function() {
             $stateParams.page = 0;
             $stateParams.keyword = vm.keyword;
+            $stateParams.includeInactive = vm.includeInactive;
             $stateParams.program = vm.program;
             $stateParams.facility = vm.facility;
             $stateParams.noReload = true;
@@ -317,8 +371,6 @@
                 reload: $state.current.name
             });
         };
-
-        // SELV3-142: Added lot-management feature
 
         /**
          * @ngdoc method
@@ -419,6 +471,20 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name canEditLot
+         *
+         * @description
+         * Checks if user can edit lot if it was created during inventory
+         *
+         * @param {Object} lineItem line item to edit
+         */
+        vm.canEditLot = function(lineItem) {
+            return lineItem.lot && lineItem.$isNewItem;
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name saveOnPageChange
          *
          * @description
@@ -429,7 +495,6 @@
             params.noReload = true;
             return $q.resolve(params);
         };
-        // SELV3-142: ends here
 
         /**
          * @ngdoc method
@@ -476,7 +541,6 @@
                     draft.occurredDate = resolvedData.occurredDate;
                     draft.signature = resolvedData.signature;
 
-                    // SELV3-142: Added lot-management feature
                     return saveLots(draft, function() {
                         physicalInventoryService.submitPhysicalInventory(draft).then(function() {
                             notificationService.success('stockPhysicalInventoryDraft.submitted');
@@ -490,7 +554,8 @@
                                 .finally(function() {
                                     $state.go('openlmis.stockmanagement.stockCardSummaries', {
                                         program: program.id,
-                                        facility: facility.id
+                                        facility: facility.id,
+                                        includeInactive: false
                                     });
                                 });
                         }, function(errorResponse) {
@@ -500,32 +565,9 @@
                         });
                     });
                 });
-                // SELV3-142: ends here
             }
         };
 
-        /**
-         * @ngdoc method
-         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
-         * @name validateQuantity
-         *
-         * @description
-         * Validate line item quantity and returns self.
-         *
-         * @param {Object} lineItem line item to be validated.
-         */
-        vm.validateQuantity = function(lineItem) {
-            if (lineItem.quantity > MAX_INTEGER_VALUE) {
-                lineItem.quantityInvalid = messageService.get('stockmanagement.numberTooLarge');
-            } else if (isEmpty(lineItem.quantity)) {
-                lineItem.quantityInvalid = messageService.get('stockPhysicalInventoryDraft.required');
-            } else {
-                lineItem.quantityInvalid = false;
-            }
-            return lineItem.quantityInvalid;
-        };
-
-        // SELV3-142: Added lot-management feature
         function containsLotCode(lotsArray, lotCode) {
             var containsCode = false;
             lotsArray.forEach(function(lot) {
@@ -564,8 +606,7 @@
                     }
                     responses.forEach(function(lot) {
                         draft.lineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
-                                && lineItem.lot.tradeItemId === lot.tradeItemId) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
                                 lineItem.lot = lot;
                             }
                         });
@@ -583,19 +624,44 @@
                     alertService.error(errorResponse.data.message);
                 });
         }
-        // SELV3-142: ends here
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateQuantity
+         *
+         * @description
+         * Validate line item quantity and returns self.
+         *
+         * @param {Object} lineItem line item to be validated.
+         */
+        vm.validateQuantity = function(lineItem) {
+            if (lineItem.quantity > MAX_INTEGER_VALUE) {
+                lineItem.quantityInvalid = messageService.get('stockmanagement.numberTooLarge');
+            } else if (isEmpty(lineItem.quantity)) {
+                lineItem.quantityInvalid = messageService.get('stockPhysicalInventoryDraft.required');
+            } else {
+                lineItem.quantityInvalid = false;
+            }
+            return lineItem.quantityInvalid;
+        };
+
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;
         }
 
         function validate() {
-            var anyError = false;
-
+            var qtyError = false;
+            var activeError = false;
             _.chain(displayLineItemsGroup).flatten()
                 .each(function(item) {
-                    anyError = vm.validateQuantity(item) || anyError;
+                    if (!item.active) {
+                        activeError = 'stockPhysicalInventoryDraft.submitInvalidActive';
+                    } else if (vm.validateQuantity(item)) {
+                        qtyError = 'stockPhysicalInventoryDraft.submitInvalid';
+                    }
                 });
-            return anyError;
+            return activeError || qtyError;
         }
 
         function onInit() {
@@ -611,10 +677,15 @@
             $stateParams.facility = undefined;
             $stateParams.draft = undefined;
 
+            vm.hasLot = _.any(draft.lineItems, function(item) {
+                return item.lot;
+            });
+
             vm.updateProgress();
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(orderableGroups);
+            shouldDisplayHideButtonColumn(draft.lineItems);
 
             $scope.$watchCollection(function() {
                 return vm.pagedLineItems;
@@ -676,59 +747,6 @@
                 '968b4abc-ea64-4285-9f46-64544d8af37e/pdf?physInventoryId=' + id);
         }
 
-        // SELV3-142: Added lot-management feature
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name removeLineItem
-         *
-         * @description
-         * Removes selected line item
-         *
-         * @param {Object} lineItem line item to remove
-         */
-        vm.removeLineItem = function(lineItem) {
-            confirmService.confirmDestroy(
-                'stockPhysicalInventoryDraft.deleteItem',
-                'stockPhysicalInventoryDraft.yes'
-            ).then(function() {
-                loadingModalService.open();
-                vm.displayLineItemsGroup.forEach(function(array) {
-                    var indexOfItem = array.indexOf(lineItem);
-                    if (indexOfItem > -1) {
-                        array[indexOfItem].isAdded = false;
-                        array[indexOfItem].quantity = null;
-                        array[indexOfItem].stockOnHand = null;
-                        if (array.length === 1 && angular.equals(array[0], lineItem)) {
-                            indexOfItem = vm.displayLineItemsGroup.indexOf(array);
-                            vm.displayLineItemsGroup.splice(indexOfItem, 1);
-                        } else {
-                            array.splice(indexOfItem, 1);
-                        }
-                    }
-                });
-                if (lineItem.$isNewItem) {
-                    var indexOfLineItem = draft.lineItems.indexOf(lineItem);
-                    draft.lineItems.splice(indexOfLineItem, 1);
-                }
-                vm.search();
-            });
-        };
-
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name canEditLot
-         *
-         * @description
-         * Checks if user can edit lot if it was created during inventory
-         *
-         * @param {Object} lineItem line item to edit
-         */
-        vm.canEditLot = function(lineItem) {
-            return lineItem.lot && lineItem.$isNewItem;
-        };
-
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -742,7 +760,6 @@
             params.draft = draft;
             return $q.resolve(params);
         };
-        // SELV3-142: ends here
 
         /**
          * @ngdoc method
@@ -754,6 +771,22 @@
          */
         function cacheDraft() {
             physicalInventoryDraftCacheService.cacheDraft(draft);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name shouldDisplayHideButtonColumn
+         *
+         * @description
+         * Check if column with hide buttons should be displayed.
+         */
+        function shouldDisplayHideButtonColumn(lineItems) {
+            lineItems.forEach(function(item) {
+                if (item.active && item.stockOnHand === 0 && !item.$isNewItem) {
+                    vm.showHideButtonColumn = true;
+                }
+            });
         }
     }
 })();

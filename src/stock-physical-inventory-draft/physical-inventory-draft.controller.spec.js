@@ -15,7 +15,7 @@
 
 describe('PhysicalInventoryDraftController', function() {
 
-    var $q, chooseDateModalService;
+    var chooseDateModalService;
 
     beforeEach(function() {
 
@@ -25,7 +25,7 @@ describe('PhysicalInventoryDraftController', function() {
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
-            $q = $injector.get('$q');
+            this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
             this.scope = this.$rootScope.$new();
             this.$window = $injector.get('$window');
@@ -47,10 +47,10 @@ describe('PhysicalInventoryDraftController', function() {
             this.confirmService = $injector.get('confirmService');
             this.physicalInventoryDraftCacheService = $injector.get('physicalInventoryDraftCacheService');
             this.alertService = $injector.get('alertService');
-            // SELV3-142: Added lot-management feature
+            this.stockCardService = $injector.get('stockCardService');
+            this.loadingModalService = $injector.get('loadingModalService');
             this.LotResource = $injector.get('LotResource');
             this.editLotModalService = $injector.get('editLotModalService');
-            // SELV3-142: ends here
         });
 
         spyOn(this.physicalInventoryService, 'submitPhysicalInventory');
@@ -62,9 +62,8 @@ describe('PhysicalInventoryDraftController', function() {
         spyOn(this.draftFactory, 'saveDraft');
         spyOn(this.physicalInventoryDraftCacheService, 'cacheDraft');
         spyOn(this.alertService, 'error');
-        // SELV3-142: Added lot-management feature
+        spyOn(this.stockCardService, 'deactivateStockCard');
         spyOn(this.editLotModalService, 'show');
-        // SELV3-142: ends here
 
         this.program = new this.ProgramDataBuilder()
             .withId('1')
@@ -78,6 +77,7 @@ describe('PhysicalInventoryDraftController', function() {
 
         this.lineItem1 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(1)
+            .withActive(true)
             .withOrderable(new this.OrderableDataBuilder()
                 .withProductCode('C100')
                 .withFullProductName('a')
@@ -91,6 +91,7 @@ describe('PhysicalInventoryDraftController', function() {
 
         this.lineItem2 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(null)
+            .withActive(true)
             .withOrderable(new this.OrderableDataBuilder()
                 .withProductCode('C300')
                 .withFullProductName('b')
@@ -100,17 +101,18 @@ describe('PhysicalInventoryDraftController', function() {
         this.lineItem3 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(null)
             .withOrderable(new this.OrderableDataBuilder()
-                .withProductCode('C200xx')
+                .withProductCode('C200')
                 .withFullProductName('b')
                 .build())
             .withLot(new this.LotDataBuilder()
                 .build())
+            .withActive(true)
             .buildAsAdded();
 
         this.lineItem4 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(null)
             .withOrderable(new this.OrderableDataBuilder()
-                .withProductCode('C300yy')
+                .withProductCode('C300')
                 .withFullProductName('b')
                 .build())
             .withLot(new this.LotDataBuilder()
@@ -159,15 +161,14 @@ describe('PhysicalInventoryDraftController', function() {
             ],
             draft: this.draft,
             addProductsModalService: this.addProductsModalService,
-            // SELV3-142: Added ability to edit lots and remove specified row
             editLotModalService: this.editLotModalService,
-            // SELV3-142: ends here
             chooseDateModalService: chooseDateModalService,
             reasons: this.reasons,
             physicalInventoryService: this.physicalInventoryService,
             stockmanagementUrlFactory: this.stockmanagementUrlFactory,
             accessTokenFactory: this.accessTokenFactory,
-            confirmService: this.confirmService
+            confirmService: this.confirmService,
+            stockCardService: this.stockCardService
         });
 
         this.vm.$onInit();
@@ -237,9 +238,8 @@ describe('PhysicalInventoryDraftController', function() {
         });
     });
 
-    // SELV3-142: Added lot-management feature
     it('should pass all available orderables to add products modal', function() {
-        var deferred = $q.defer();
+        var deferred = this.$q.defer();
         deferred.resolve();
         this.addProductsModalService.show.andReturn(deferred.promise);
 
@@ -268,10 +268,10 @@ describe('PhysicalInventoryDraftController', function() {
     describe('saveDraft', function() {
 
         it('should not save lots if all exists', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
             spyOn(this.LotResource.prototype, 'create');
 
-            this.draftFactory.saveDraft.andReturn($q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
 
             this.vm.saveDraft();
             this.$rootScope.$apply();
@@ -279,54 +279,8 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.LotResource.prototype.create).not.toHaveBeenCalled();
         });
 
-        it('should save lots if any missing lots were added', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-
-            this.lineItem3.lot.id = undefined;
-            this.lineItem3.$isNewItem = true;
-            this.lineItem4.lot.id = undefined;
-            this.lineItem4.$isNewItem = true;
-
-            spyOn(this.LotResource.prototype, 'create').andCallFake(function(lot) {
-                return $q.resolve(lot);
-            });
-            spyOn(this.LotResource.prototype, 'query').andCallFake(function(response) {
-                response.numberOfElements = 0;
-                return $q.resolve(response);
-            });
-            this.draftFactory.saveDraft.andReturn($q.resolve());
-
-            this.vm.saveDraft();
-            this.$rootScope.$apply();
-
-            expect(this.LotResource.prototype.create.calls.length).toBe(2);
-            expect(this.draftFactory.saveDraft).toHaveBeenCalledWith(this.draft);
-        });
-
-        it('should not save lots if new lot already exist', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-
-            this.lineItem3.lot.id = undefined;
-            this.lineItem3.$isNewItem = true;
-            this.lineItem4.lot.id = undefined;
-            this.lineItem4.$isNewItem = true;
-
-            spyOn(this.LotResource.prototype, 'query').andCallFake(function(response) {
-                response.numberOfElements = 1;
-                return $q.resolve(response);
-            });
-
-            this.draftFactory.saveDraft.andReturn($q.resolve());
-
-            this.vm.saveDraftOrSubmit(false);
-            this.$rootScope.$apply();
-
-            expect(this.LotResource.prototype.query.calls.length).toBe(2);
-            expect(this.draftFactory.saveDraft).not.toHaveBeenCalled();
-        });
-
         it('should save draft', function() {
-            this.draftFactory.saveDraft.andReturn($q.defer().promise);
+            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
             this.$rootScope.$apply();
 
             this.vm.saveDraftOrSubmit(false);
@@ -336,7 +290,7 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should cache draft', function() {
-            this.draftFactory.saveDraft.andReturn($q.defer().promise);
+            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
             this.$rootScope.$apply();
 
             this.vm.saveDraft();
@@ -349,6 +303,8 @@ describe('PhysicalInventoryDraftController', function() {
     describe('submit', function() {
 
         it('should highlight empty quantities before submit', function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.vm.submit();
 
             expect(this.lineItem1.quantityInvalid).toBeFalsy();
@@ -356,12 +312,16 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should not show modal for occurred date if any quantity missing', function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.vm.submit();
 
             expect(chooseDateModalService.show).not.toHaveBeenCalled();
         });
 
         it('should show modal for occurred date if no quantity missing', function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.lineItem3.quantity = 123;
             this.lineItem3.stockAdjustments = [{
                 quantity: 123,
@@ -369,7 +329,7 @@ describe('PhysicalInventoryDraftController', function() {
                     reasonType: 'CREDIT'
                 }
             }];
-            var deferred = $q.defer();
+            var deferred = this.$q.defer();
             deferred.resolve();
             chooseDateModalService.show.andReturn(deferred.promise);
 
@@ -380,8 +340,31 @@ describe('PhysicalInventoryDraftController', function() {
 
     });
 
+    describe('hideLineItem', function() {
+        it('should hide item', function() {
+            this.draft.lineItems[0] = {
+                displayLotMessage: 'product',
+                orderable: {
+                    fullProductName: 'product'
+                }
+            };
+            this.confirmDeferred = this.$q.defer();
+            this.deactivateStockCardDeferred = this.$q.defer();
+            this.confirmService.confirm.andReturn(this.confirmDeferred.promise);
+            this.stockCardService.deactivateStockCard.andReturn(this.deactivateStockCardDeferred.promise);
+            this.vm.hideLineItem(this.draft.lineItems[0]);
+            this.confirmDeferred.resolve();
+            this.deactivateStockCardDeferred.resolve();
+            this.$rootScope.$apply();
+
+            expect(this.draftFactory.saveDraft).toHaveBeenCalled();
+        });
+    });
+
     describe('when submit pass validations', function() {
         beforeEach(function() {
+            this.lineItem1.active = true;
+            this.lineItem3.active = true;
             this.lineItem3.quantity = 123;
             this.lineItem3.stockAdjustments = [{
                 quantity: 123,
@@ -390,14 +373,14 @@ describe('PhysicalInventoryDraftController', function() {
                 }
             }];
             spyOn(this.$window, 'open').andCallThrough();
-            chooseDateModalService.show.andReturn($q.when({}));
+            chooseDateModalService.show.andReturn(this.$q.when({}));
             spyOn(this.accessTokenFactory, 'addAccessToken').andCallThrough();
         });
 
         it('and choose "print" should open report and change state', function() {
             this.physicalInventoryService.submitPhysicalInventory
-                .andReturn($q.when());
-            this.confirmService.confirm.andReturn($q.when());
+                .andReturn(this.$q.when());
+            this.confirmService.confirm.andReturn(this.$q.when());
 
             this.draft.id = 1;
             this.vm.saveDraftOrSubmit(true);
@@ -411,14 +394,15 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',
                 {
                     program: this.program.id,
-                    facility: this.facility.id
+                    facility: this.facility.id,
+                    includeInactive: false
                 });
         });
 
         it('and choose "no" should change this.$state and not open report', function() {
             this.physicalInventoryService.submitPhysicalInventory
-                .andReturn($q.when());
-            this.confirmService.confirm.andReturn($q.reject());
+                .andReturn(this.$q.when());
+            this.confirmService.confirm.andReturn(this.$q.reject());
 
             this.draft.id = 1;
             this.vm.saveDraftOrSubmit(true);
@@ -429,12 +413,13 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries',
                 {
                     program: this.program.id,
-                    facility: this.facility.id
+                    facility: this.facility.id,
+                    includeInactive: false
                 });
         });
 
         it('and service call failed should not open report and not change state', function() {
-            this.physicalInventoryService.submitPhysicalInventory.andReturn($q.reject());
+            this.physicalInventoryService.submitPhysicalInventory.andReturn(this.$q.reject());
 
             this.vm.submit();
             this.$rootScope.$apply();
@@ -447,7 +432,7 @@ describe('PhysicalInventoryDraftController', function() {
         it('should return proper error message and remove from local storage', function() {
             spyOn(this.physicalInventoryDraftCacheService, 'removeById');
 
-            this.physicalInventoryService.submitPhysicalInventory.andReturn($q.reject({
+            this.physicalInventoryService.submitPhysicalInventory.andReturn(this.$q.reject({
                 data: {
                     message: 'error occurred'
                 }
@@ -460,35 +445,10 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.physicalInventoryDraftCacheService.removeById).toHaveBeenCalledWith(this.draft.id);
         });
 
-        it('should save lots if any missing lots were added', function() {
-            this.physicalInventoryService.submitPhysicalInventory
-                .andReturn($q.when());
-            this.confirmService.confirm.andReturn($q.reject());
-            this.accessTokenFactory.addAccessToken.andReturn('url');
-
-            this.lineItem3.lot.id = undefined;
-            this.lineItem3.$isNewItem = true;
-            this.lineItem4.lot.id = undefined;
-            this.lineItem4.$isNewItem = true;
-            spyOn(this.LotResource.prototype, 'create').andCallFake(function(lot) {
-                return $q.resolve(lot);
-            });
-            spyOn(this.LotResource.prototype, 'query').andCallFake(function(response) {
-                response.numberOfElements = 0;
-                return $q.resolve(response);
-            });
-
-            this.vm.saveDraftOrSubmit(true);
-            this.$rootScope.$apply();
-
-            expect(this.LotResource.prototype.create.calls.length).toBe(2);
-            expect(this.physicalInventoryService.submitPhysicalInventory).toHaveBeenCalledWith(this.draft);
-        });
-
         it('should not save lots if all exists', function() {
             this.physicalInventoryService.submitPhysicalInventory
-                .andReturn($q.when());
-            this.confirmService.confirm.andReturn($q.reject());
+                .andReturn(this.$q.when());
+            this.confirmService.confirm.andReturn(this.$q.reject());
             this.accessTokenFactory.addAccessToken.andReturn('url');
             spyOn(this.LotResource.prototype, 'create');
 
@@ -500,7 +460,6 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
     });
-    // SELV3-142: ends here
 
     it('should aggregate given field values', function() {
         var lineItem1 = new this.PhysicalInventoryLineItemDataBuilder()
@@ -572,7 +531,7 @@ describe('PhysicalInventoryDraftController', function() {
     describe('addProduct', function() {
 
         it('should reload current state after adding product', function() {
-            this.addProductsModalService.show.andReturn($q.resolve());
+            this.addProductsModalService.show.andReturn(this.$q.resolve());
 
             this.vm.addProducts();
             this.$rootScope.$apply();
@@ -587,7 +546,7 @@ describe('PhysicalInventoryDraftController', function() {
     describe('delete', function() {
 
         it('should open confirmation modal', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
 
             this.vm.delete();
             this.$rootScope.$apply();
@@ -599,8 +558,8 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should go to the physical inventory screen after deleting draft', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-            this.physicalInventoryService.deleteDraft.andReturn($q.resolve());
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.physicalInventoryService.deleteDraft.andReturn(this.$q.resolve());
 
             this.vm.delete();
             this.$rootScope.$apply();
@@ -613,34 +572,4 @@ describe('PhysicalInventoryDraftController', function() {
             );
         });
     });
-
-    // SELV3-142: Added lot-management feature
-    describe('remove item from form', function() {
-
-        it('should open confirmation modal', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-
-            this.vm.removeLineItem(this.lineItem1);
-            this.$rootScope.$apply();
-
-            expect(this.confirmService.confirmDestroy).toHaveBeenCalledWith(
-                'stockPhysicalInventoryDraft.deleteItem',
-                'stockPhysicalInventoryDraft.yes'
-            );
-        });
-
-        it('should remove selected lineItem from displayLineItemsGroup', function() {
-            this.confirmService.confirmDestroy.andReturn($q.resolve());
-            this.vm.removeLineItem(this.lineItem1);
-            this.$rootScope.$apply();
-
-            expect(this.lineItem1.quantity).toEqual(null);
-            expect(this.lineItem1.stockOnHand).toEqual(null);
-            expect(this.vm.displayLineItemsGroup).toEqual([
-                [this.lineItem3]
-            ]);
-        });
-    });
-    // SELV3-142: ends here
-
 });

@@ -58,6 +58,11 @@ describe('physicalInventoryService', function() {
                 .buildAsAdded()
         ];
 
+        this.physicalInventoryLineItems = _.map(this.physicalInventoryLineItems, function(lineItem) {
+            lineItem.active = true;
+            return lineItem;
+        });
+
         this.draft = new this.PhysicalInventoryDataBuilder().withLineItems(this.physicalInventoryLineItems)
             .build();
 
@@ -187,33 +192,50 @@ describe('physicalInventoryService', function() {
     });
 
     describe('search', function() {
-        it('should get all line items when keyword is empty', function() {
-            expect(this.physicalInventoryService.search('', this.physicalInventoryLineItems))
+
+        it('should get all line items when keyword is empty and includeActive is false', function() {
+            expect(this.physicalInventoryService.search('', this.physicalInventoryLineItems, false))
+                .toEqual(this.physicalInventoryLineItems);
+        });
+
+        it('should get all active line items when keyword is empty and includeActive is true', function() {
+            this.physicalInventoryLineItems.push(
+                {
+                    active: false
+                }
+            );
+
+            expect(this.physicalInventoryService.search('', this.physicalInventoryLineItems, true))
+                .toEqual(this.physicalInventoryLineItems);
+        });
+
+        it('should get all active line items when keyword is empty and includeActive is not boolean', function() {
+            expect(this.physicalInventoryService.search('', this.physicalInventoryLineItems, null))
                 .toEqual(this.physicalInventoryLineItems);
         });
 
         it('should search by productCode', function() {
-            expect(this.physicalInventoryService.search('c2', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('c2', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[1], this.physicalInventoryLineItems[2]]);
         });
 
         it('should search by productFullName', function() {
-            expect(this.physicalInventoryService.search('Streptococcus', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('Streptococcus', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[0]]);
         });
 
         it('should search by stockOnHand', function() {
-            expect(this.physicalInventoryService.search('233', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('233', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[0]]);
         });
 
         it('should search by quantity', function() {
-            expect(this.physicalInventoryService.search('4', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('4', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[1]]);
         });
 
         it('should search by lotCode', function() {
-            expect(this.physicalInventoryService.search('L1', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('L1', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[2]]);
         });
 
@@ -221,13 +243,42 @@ describe('physicalInventoryService', function() {
             spyOn(this.messageService, 'get');
             this.messageService.get.andReturn('No lot defined');
 
-            expect(this.physicalInventoryService.search('No lot defined', this.physicalInventoryLineItems))
+            expect(this.physicalInventoryService.search('No lot defined', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[0], this.physicalInventoryLineItems[1]]);
         });
 
         it('should search by expirationDate', function() {
-            expect(this.physicalInventoryService.search('02/05/2017', this.physicalInventoryLineItems))
+
+            expect(this.physicalInventoryService.search('02/05/2017', this.physicalInventoryLineItems, null))
                 .toEqual([this.physicalInventoryLineItems[2]]);
+        });
+
+        it('should search by only active', function() {
+            var lineItems = [
+                {
+                    active: true
+                },
+                {
+                    active: false
+                }
+            ];
+
+            expect(this.physicalInventoryService.search('', lineItems, false))
+                .toEqual([lineItems[0]]);
+        });
+
+        it('should find include inactive', function() {
+            var lineItems = [
+                {
+                    active: true
+                },
+                {
+                    active: false
+                }
+            ];
+
+            expect(this.physicalInventoryService.search('', lineItems, true))
+                .toEqual(lineItems);
         });
     });
 

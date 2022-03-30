@@ -31,33 +31,27 @@
     controller.$inject = [
         '$scope', '$state', '$stateParams', '$filter', 'confirmDiscardService', 'program', 'facility',
         'orderableGroups', 'reasons', 'confirmService', 'messageService', 'user', 'adjustmentType',
-        'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService',
+        'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService', 'offlineService',
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
-        'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES',
-        // SELV3-142: Added lot-management feature
-        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment',
-        // SELV3-142: ends here,
-        'offlineService'
+        'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES', 'STOCKCARD_STATUS',
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
                         facility, orderableGroups, reasons, confirmService, messageService, user,
                         adjustmentType, srcDstAssignments, stockAdjustmentCreationService, notificationService,
-                        orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
+                        offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
-                        // SELV3-142: Added lot-management feature
-                        hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment, offlineService) {
-        // SELV3-142: ends here
+                        STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment) {
         var vm = this,
             previousAdded = {};
 
-        // SELV3-142: Added lot-management feature
         vm.$onInit = onInit;
         vm.lotChanged = lotChanged;
         vm.expirationDateChanged = expirationDateChanged;
         vm.newLotCodeChanged = newLotCodeChanged;
         vm.validateExpirationDate = validateExpirationDate;
-        // SELV3-142: ends here
+        vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
 
         /**
          * @ngdoc property
@@ -100,7 +94,6 @@
          */
         vm.offline = offlineService.isOffline;
 
-        // SELV3-142: Added lot-management feature
         /**
          * @ngdoc property
          * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -111,7 +104,6 @@
          * Holds new lot object.
          */
         vm.newLot = undefined;
-        // SELV3-142: ends here
 
         vm.key = function(secondaryKey) {
             return adjustmentType.prefix + 'Creation.' + secondaryKey;
@@ -148,7 +140,6 @@
          * Add a product for stock adjustment.
          */
         vm.addProduct = function() {
-            // SELV3-142: Added lot-management feature
             var selectedItem;
 
             if (vm.selectedOrderableGroup && vm.selectedOrderableGroup.length) {
@@ -184,7 +175,6 @@
                 vm.search();
             }
         };
-        // SELV3-142: ends here
 
         function copyDefaultValue() {
             var defaultDate;
@@ -340,58 +330,16 @@
         vm.submit = function() {
             $scope.$broadcast('openlmis-form-submit');
             if (validateAllAddedItems()) {
-                // SELV3-142: Added lot-management feature
-                var lotPromises = [],
-                    existingLots = [];
-                var lotResource = new LotResource();
-                var distinctLots = [];
-
-                vm.addedLineItems.forEach(function(lineItem) {
-                    if (lineItem.lot && lineItem.$isNewItem && _.isUndefined(lineItem.lot.id) &&
-                    !listContainsTheSameLot(distinctLots, lineItem.lot)) {
-                        distinctLots.push(lineItem.lot);
-                    }
+                var confirmMessage = messageService.get(vm.key('confirmInfo'), {
+                    username: user.username,
+                    number: vm.addedLineItems.length
                 });
-
-                distinctLots.forEach(function(lot) {
-                    lotPromises.push(lotResource.query({
-                        lotCode: lot.lotCode
-                    })
-                        .then(function(queryResponse) {
-                            if (queryResponse.numberOfElements > 0 &&
-                                containsLotCode(queryResponse.content, lot.lotCode)) {
-                                existingLots.push(lot.lotCode);
-                                return queryResponse;
-                            }
-                        }));
-                });
-                return $q.all(lotPromises)
-                    .then(function() {
-                        var confirmMessage = messageService.get(vm.key('confirmInfo'), {
-                            username: user.username,
-                            number: vm.addedLineItems.length
-                        });
-
-                        if (existingLots.length > 0) {
-                            var existingLotsConfirmMessage =
-                            messageService.get('stockPhysicalInventoryDraft.alreadyExistingProducts', {
-                                lots: existingLots
-                            });
-                            confirmService.confirmDestroy(
-                                existingLotsConfirmMessage,
-                                'stockPhysicalInventoryDraft.yes'
-                            ).then(function() {
-                                confirmService.confirm(confirmMessage, vm.key('confirm')).then(confirmSubmit);
-                            });
-                        } else {
-                            confirmService.confirm(confirmMessage, vm.key('confirm')).then(confirmSubmit);
-                        }
-                    });
+                confirmService.confirm(confirmMessage, vm.key('confirm')).then(confirmSubmit);
+            } else {
+                vm.keyword = null;
+                reorderItems();
+                alertService.error('stockAdjustmentCreation.submitInvalid');
             }
-            vm.keyword = null;
-            reorderItems();
-            alertService.error('stockAdjustmentCreation.submitInvalid');
-            // SELV3-142: ends here
         };
 
         /**
@@ -417,9 +365,8 @@
             //make form good as new, so errors won't persist
             $scope.productForm.$setPristine();
 
-            // SELV3-142: Added lot-management feature
             vm.lots = orderableGroupService.lotsOf(vm.selectedOrderableGroup, vm.hasPermissionToAddNewLot);
-            // SELV3-142: ends here
+
             vm.selectedOrderableHasLots = vm.lots.length > 0;
         };
 
@@ -438,7 +385,6 @@
             return messageService.get(VVM_STATUS.$getDisplayName(status));
         };
 
-        // SELV3-142: Added lot-management feature
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -452,7 +398,6 @@
                 && vm.selectedLot.lotCode === messageService.get('orderableGroupService.addMissingLot');
             initiateNewLotObject();
         }
-        // SELV3-142: ends here
 
         function isEmpty(value) {
             return _.isUndefined(value) || _.isNull(value);
@@ -498,18 +443,6 @@
                 .value();
         }
 
-        // SELV3-142: Added lot-management feature
-        function containsLotCode(lotsArray, lotCode) {
-            var containsCode = false;
-            lotsArray.forEach(function(lot) {
-                if (lot.lotCode === lotCode) {
-                    containsCode = true;
-                }
-            });
-            return containsCode;
-        }
-        // SELV3-142: ends here
-
         function confirmSubmit() {
             loadingModalService.open();
 
@@ -517,7 +450,6 @@
 
             generateKitConstituentLineItem(addedLineItems);
 
-            // SELV3-142: Added lot-management feature
             var lotPromises = [],
                 errorLots = [];
             var distinctLots = [];
@@ -573,7 +505,8 @@
                             }
                             $state.go('openlmis.stockmanagement.stockCardSummaries', {
                                 facility: facility.id,
-                                program: program.id
+                                program: program.id,
+                                active: STOCKCARD_STATUS.ACTIVE
                             });
                         }, function(errorResponse) {
                             loadingModalService.close();
@@ -612,7 +545,6 @@
             });
             return itemExistsOnList;
         }
-        // SELV3-142: ends here
 
         function generateKitConstituentLineItem(addedLineItems) {
             if (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state) {
@@ -639,10 +571,8 @@
         }
 
         function onInit() {
-            // SELV3-142: Added lot-management feature
             var copiedOrderableGroups = angular.copy(orderableGroups);
             vm.allItems = _.flatten(copiedOrderableGroups);
-            // SELV3-142: ends here
 
             $state.current.label = messageService.get(vm.key('title'), {
                 facilityCode: facility.code,
@@ -693,16 +623,12 @@
             vm.orderableGroups = orderableGroups;
             vm.hasLot = false;
             vm.orderableGroups.forEach(function(group) {
-                // SELV3-142: Added lot-management feature
                 vm.hasLot = vm.hasLot || orderableGroupService.lotsOf(group, hasPermissionToAddNewLot).length > 0;
-                // SELV3-142: ends here
             });
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(vm.orderableGroups);
-            // SELV3-142: Added lot-management feature
             vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
             vm.canAddNewLot = false;
             initiateNewLotObject();
-            // SELV3-142: ends here
         }
 
         function initiateNewLotObject() {
@@ -729,7 +655,6 @@
             return pageNumber;
         }
 
-        // SELV3-142: Added lot-management feature
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -832,6 +757,5 @@
                 });
             }
         }
-        // SELV3-142: ends here
     }
 })();

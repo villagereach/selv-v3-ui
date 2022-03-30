@@ -61,18 +61,25 @@
                 <td>{{order.createdDate | openlmisDate}}</td>
                 <td>{{order.lastUpdatedDate | openlmisDate}}</td>
                 <td>
-                    <button class="print"
-                        ng-click="vm.printOrder(order)">
+                    <button ng-if="order.status !== 'CREATING'"
+                            class="print"
+                            openlmis-download="{{vm.printOrder(order)}}">
                         {{'orderView.print'|message}}
                     </button>
-                    <button class="download"
-                        openlmis-download="{{vm.getDownloadUrl(order)}}">
+                    <button ng-if="order.status !== 'CREATING'"
+                            class="download"
+                            openlmis-download="{{vm.getDownloadUrl(order)}}">
                         {{'orderView.download'|message}}
                     </button>
-                    <button ng-if="vm.canRetryTransfer && order.transferFailed()"
+                    <button ng-if="order.status !== 'CREATING' && vm.canRetryTransfer && order.transferFailed()"
                             class="retry"
                             ng-click="vm.retryTransfer(order)">
                         {{'orderView.retry'|message}}
+                    </button>
+                    <button ng-if="order.status === 'CREATING'"
+                            class="order-edit"
+                            ng-click="vm.redirectToOrderEdit(order.id)">
+                        {{ 'orderView.edit' | message }}
                     </button>
                 </td>
             </tr>

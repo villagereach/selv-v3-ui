@@ -30,18 +30,20 @@
 
     controller.$inject = [
         'loadingModalService', '$state', '$stateParams', 'StockCardSummaryRepositoryImpl', 'stockCardSummaries',
-        'accessTokenFactory', '$window', 'openlmisUrlFactory', 'offlineService', '$scope'
+        'accessTokenFactory', '$window', 'openlmisUrlFactory', 'offlineService', '$scope', 'STOCKCARD_STATUS',
+        'messageService', 'paginationService'
     ];
 
     function controller(loadingModalService, $state, $stateParams, StockCardSummaryRepositoryImpl,
                         stockCardSummaries, accessTokenFactory, $window, openlmisUrlFactory,
-                        offlineService, $scope) {
+                        offlineService, $scope, STOCKCARD_STATUS, messageService, paginationService) {
         var vm = this;
 
         vm.$onInit = onInit;
         vm.loadStockCardSummaries = loadStockCardSummaries;
         vm.viewSingleCard = viewSingleCard;
         vm.print = print;
+        vm.search = search;
         vm.offline = offlineService.isOffline;
         vm.goToPendingOfflineEventsPage = goToPendingOfflineEventsPage;
 
@@ -68,6 +70,17 @@
         vm.displayStockCardSummaries = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name includeInactive
+         * @type {Boolean}
+         *
+         * @description
+         * When true shows inactive items
+         */
+        vm.includeInactive = $stateParams.includeInactive;
+
+        /**
          * @ngdoc method
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
          * @name getStockSummaries
@@ -78,6 +91,13 @@
         function onInit() {
             vm.stockCardSummaries = stockCardSummaries;
             vm.displayStockCardSummaries = angular.copy(stockCardSummaries);
+
+            checkCanFulFillIsEmpty();
+            paginationService.registerList(null, $stateParams, function() {
+                return vm.displayStockCardSummaries;
+            }, {
+                paginationId: 'stockCardSummaries'
+            });
 
             $scope.$watchCollection(function() {
                 return vm.pagedList;
@@ -101,6 +121,7 @@
 
             stateParams.facility = vm.facility.id;
             stateParams.program = vm.program.id;
+            stateParams.active = STOCKCARD_STATUS.ACTIVE;
             stateParams.supervised = vm.isSupervised;
 
             $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
@@ -143,6 +164,22 @@
         /**
          * @ngdoc method
          * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name search
+         */
+        function search() {
+            var stateParams = angular.copy($stateParams);
+            stateParams.facility = vm.facility.id;
+            stateParams.program = vm.program.id;
+            stateParams.supervised = vm.isSupervised;
+            stateParams.includeInactive = vm.includeInactive;
+            $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
+                reload: true
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
          * @name goToPendingOfflineEventsPage
          *
          * @description
@@ -155,6 +192,22 @@
         function getPrintUrl(programId, facilityId) {
             return openlmisUrlFactory('/api/reports/templates/common/7d37ec81-a24d-402c-bd2d-3e37f43d7c2d/pdf?'
             + 'programId=' + programId + '&facilityId=' + facilityId);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card-summary-list.controller:StockCardSummaryListController
+         * @name checkCanFulFillIsEmpty
+         *
+         * @description
+         * Filters only not empty displayStockCardSummaries.
+         */
+        function checkCanFulFillIsEmpty() {
+            vm.displayStockCardSummaries = vm.displayStockCardSummaries.filter(function(summary) {
+                if (summary.canFulfillForMe.length !== 0) {
+                    return summary;
+                }
+            });
         }
     }
 })();

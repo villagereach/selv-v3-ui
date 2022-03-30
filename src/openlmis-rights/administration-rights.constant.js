@@ -43,15 +43,14 @@
             PROCESSING_SCHEDULES_MANAGE: 'PROCESSING_SCHEDULES_MANAGE',
             SYSTEM_NOTIFICATIONS_MANAGE: 'SYSTEM_NOTIFICATIONS_MANAGE',
             FACILITY_APPROVED_ORDERABLES_MANAGE: 'FACILITY_APPROVED_ORDERABLES_MANAGE',
-            // SELV3-142: Added lot-management feature
             LOTS_MANAGE: 'LOTS_MANAGE',
-            // SELV3-142: ends here
             // SELV3-343: Add possibility to add valid sources
             STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE',
             // SELV3-343: Ends here
             // SELV3-469: Add possibility to add valid destinations
-            STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE'
+            STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE',
             // SELV3-469: Ends here
+            ORDER_CREATE: 'ORDER_CREATE'
         };
     }
 
