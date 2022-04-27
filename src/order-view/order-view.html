@@ -63,7 +63,7 @@
                 <td>
                     <button ng-if="order.status !== 'CREATING'"
                             class="print"
-                            openlmis-download="{{vm.printOrder(order)}}">
+                            ng-click="vm.printOrder(order)">
                         {{'orderView.print'|message}}
                     </button>
                     <button ng-if="order.status !== 'CREATING'"
