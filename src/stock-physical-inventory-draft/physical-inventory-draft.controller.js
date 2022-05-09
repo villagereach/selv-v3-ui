@@ -34,7 +34,7 @@
         'displayLineItemsGroup', 'confirmService', 'physicalInventoryService', 'MAX_INTEGER_VALUE',
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
-        'offlineService', 'localStorageFactory', 'physicalInventoryDraftCacheService',
+        'offlineService', 'physicalInventoryDraftCacheService',
         'stockCardService', 'LotResource', 'editLotModalService'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
@@ -43,8 +43,8 @@
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
-                        offlineService, localStorageFactory, physicalInventoryDraftCacheService,
-                        stockCardService, LotResource, editLotModalService) {
+                        offlineService, physicalInventoryDraftCacheService, stockCardService,
+                        LotResource, editLotModalService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -250,10 +250,8 @@
 
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
-                $stateParams.draft = draft;
                 $stateParams.noReload = true;
 
-                $stateParams.isAddProduct = true;
                 draft.$modified = true;
                 vm.cacheDraft();
 
@@ -372,6 +370,7 @@
             });
         };
 
+        // SELV3-142: Added lot-management feature
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
@@ -380,7 +379,7 @@
          * @description
          * Inform about already existing lots and redirect to save physical inventory draft or submit it,
          * depending on the parameter.
-         * 
+         *
          * @param {boolean} submitDraft if true, redirect to submit method
          */
         vm.saveDraftOrSubmit = function(submitDraft) {
@@ -427,6 +426,7 @@
                     }
                 });
         };
+        // SELV3-142: ends here
 
         /**
          * @ngdoc method
@@ -436,35 +436,31 @@
          * @description
          * Save physical inventory draft.
          */
-        vm.saveDraft = function() {
+        vm.saveDraft = function(withNotification) {
             loadingModalService.open();
-            return saveLots(draft, function() {
-                return physicalInventoryFactory.saveDraft(draft).then(function() {
+            return physicalInventoryFactory.saveDraft(draft).then(function() {
+                if (!withNotification) {
                     notificationService.success('stockPhysicalInventoryDraft.saved');
+                }
 
-                    draft.$modified = undefined;
-                    vm.cacheDraft();
+                draft.$modified = undefined;
+                vm.cacheDraft();
 
-                    $stateParams.isAddProduct = false;
-
-                    $stateParams.program = vm.program;
-                    $stateParams.facility = vm.facility;
-                    $stateParams.noReload = true;
-                    draft.lineItems.forEach(function(lineItem) {
-                        if (lineItem.$isNewItem) {
-                            lineItem.$isNewItem = false;
-                        }
-                    });
-                    $stateParams.draft = draft;
-
-                    $state.go($state.current.name, $stateParams, {
-                        reload: $state.current.name
-                    });
-                    $stateParams.isAddProduct = false;
-                }, function(errorResponse) {
-                    loadingModalService.close();
-                    alertService.error(errorResponse.data.message);
+                $stateParams.program = vm.program;
+                $stateParams.facility = vm.facility;
+                draft.lineItems.forEach(function(lineItem) {
+                    if (lineItem.$isNewItem) {
+                        lineItem.$isNewItem = false;
+                    }
                 });
+                $stateParams.noReload = true;
+
+                $state.go($state.current.name, $stateParams, {
+                    reload: $state.current.name
+                });
+            }, function(errorResponse) {
+                loadingModalService.close();
+                alertService.error(errorResponse.data.message);
             });
         };
 
@@ -511,7 +507,6 @@
             ).then(function() {
                 loadingModalService.open();
                 physicalInventoryService.deleteDraft(draft.id).then(function() {
-                    $scope.needToConfirm = false;
                     $state.go('openlmis.stockmanagement.physicalInventory', $stateParams, {
                         reload: true
                     });
@@ -531,9 +526,10 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
-            if (validate()) {
+            var error = validate();
+            if (error) {
                 $scope.$broadcast('openlmis-form-submit');
-                alertService.error('stockPhysicalInventoryDraft.submitInvalid');
+                alertService.error(error);
             } else {
                 chooseDateModalService.show().then(function(resolvedData) {
                     loadingModalService.open();
@@ -568,6 +564,7 @@
             }
         };
 
+        // SELV3-142: Added lot-management feature
         function containsLotCode(lotsArray, lotCode) {
             var containsCode = false;
             lotsArray.forEach(function(lot) {
@@ -577,6 +574,7 @@
             });
             return containsCode;
         }
+        // SELV3-142: ends here
 
         function saveLots(draft, submitMethod) {
             var lotPromises = [],
@@ -675,7 +673,6 @@
             vm.stateParams = $stateParams;
             $stateParams.program = undefined;
             $stateParams.facility = undefined;
-            $stateParams.draft = undefined;
 
             vm.hasLot = _.any(draft.lineItems, function(item) {
                 return item.lot;
@@ -742,24 +739,12 @@
          *
          * @return {String} the prepared URL
          */
+        // SELV3-246: Update Inventory Printout
         function getPrintUrl(id) {
             return stockmanagementUrlFactory('/api/reports/templates/common/' +
                 '968b4abc-ea64-4285-9f46-64544d8af37e/pdf?physInventoryId=' + id);
         }
-
-        /**
-         * @ngdoc method
-         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name saveDraftOnPageChange
-         *
-         * @description
-         * Saves physical inventory draft on page change.
-         */
-        vm.saveDraftOnPageChange = function() {
-            var params = {};
-            params.draft = draft;
-            return $q.resolve(params);
-        };
+        // SELV3-246: ends here
 
         /**
          * @ngdoc method
