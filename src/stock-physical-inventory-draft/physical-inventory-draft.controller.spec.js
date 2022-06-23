@@ -322,13 +322,24 @@ describe('PhysicalInventoryDraftController', function() {
         it('should show modal for occurred date if no quantity missing', function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
+            // SELV3-508: Add validation to check unaccounted quantity
+            this.lineItem1.quantity = 1234;
             this.lineItem3.quantity = 123;
+            this.lineItem1.stockAdjustments = [{
+                quantity: 1234,
+                reason: {
+                    reasonType: 'CREDIT'
+                }
+            }];
             this.lineItem3.stockAdjustments = [{
                 quantity: 123,
                 reason: {
                     reasonType: 'CREDIT'
                 }
             }];
+            this.lineItem1.unaccountedQuantity = 0;
+            this.lineItem3.unaccountedQuantity = 0;
+            // SELV3-508: ends here
             var deferred = this.$q.defer();
             deferred.resolve();
             chooseDateModalService.show.andReturn(deferred.promise);
@@ -365,13 +376,24 @@ describe('PhysicalInventoryDraftController', function() {
         beforeEach(function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
+            // SELV3-508: Add validation to check unaccounted quantity
+            this.lineItem1.quantity = 1234;
             this.lineItem3.quantity = 123;
+            this.lineItem1.stockAdjustments = [{
+                quantity: 1234,
+                reason: {
+                    reasonType: 'CREDIT'
+                }
+            }];
             this.lineItem3.stockAdjustments = [{
                 quantity: 123,
                 reason: {
                     reasonType: 'CREDIT'
                 }
             }];
+            this.lineItem1.unaccountedQuantity = 0;
+            this.lineItem3.unaccountedQuantity = 0;
+            // SELV3-508: ends here
             spyOn(this.$window, 'open').andCallThrough();
             chooseDateModalService.show.andReturn(this.$q.when({}));
             spyOn(this.accessTokenFactory, 'addAccessToken').andCallThrough();

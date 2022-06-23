@@ -644,6 +644,28 @@
             return lineItem.quantityInvalid;
         };
 
+        // SELV3-508: Add validation to check unaccounted quantity
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateUnaccountedQuantity
+         *
+         * @description
+         * Validate line item quantity and returns self.
+         *
+         * @param {Object} lineItem line item to be validated.
+         */
+        vm.validateUnaccountedQuantity = function(lineItem) {
+            if (lineItem.unaccountedQuantity === 0) {
+                lineItem.unaccountedQuantityInvalid = false;
+            } else {
+                lineItem.unaccountedQuantityInvalid = messageService
+                    .get('stockPhysicalInventoryDraft.unaccountedQuantityError');
+            }
+            return lineItem.unaccountedQuantityInvalid;
+        };
+        // SELV3-508: ends here
+
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;
         }
@@ -655,7 +677,7 @@
                 .each(function(item) {
                     if (!item.active) {
                         activeError = 'stockPhysicalInventoryDraft.submitInvalidActive';
-                    } else if (vm.validateQuantity(item)) {
+                    } else if (vm.validateQuantity(item) || vm.validateUnaccountedQuantity(item)) {
                         qtyError = 'stockPhysicalInventoryDraft.submitInvalid';
                     }
                 });
