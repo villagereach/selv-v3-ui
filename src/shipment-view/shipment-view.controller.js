@@ -31,13 +31,13 @@
     ShipmentViewController.$inject = [
         'shipment', 'loadingModalService', '$state', '$window', 'fulfillmentUrlFactory',
         'messageService', 'accessTokenFactory', 'updatedOrder', 'QUANTITY_UNIT', 'tableLineItems',
-        'VVM_STATUS', 'confirmService'
+        'VVM_STATUS', 'confirmService', 'drafts'
     ];
 
     function ShipmentViewController(shipment, loadingModalService, $state, $window,
                                     fulfillmentUrlFactory, messageService, accessTokenFactory,
                                     updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS,
-                                    confirmService) {
+                                    confirmService, drafts) {
 
         var vm = this;
 
@@ -48,6 +48,7 @@
         vm.getVvmStatusLabel = VVM_STATUS.$getDisplayName;
         vm.printShipment = printShipment;
         vm.confirmShipment = confirmShipment;
+        vm.drafts = drafts;
 
         /**
          * @ngdoc property
@@ -94,6 +95,17 @@
         vm.quantityUnit = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf shipment-view.controller:ShipmentViewController
+         * @name drafts
+         * @type {Array}
+         *
+         * @description
+         * Holds drafts crucial to get minimum date for shipment date
+         */
+        vm.drafts = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf shipment-view.controller:ShipmentViewController
          * @name onInit
@@ -106,6 +118,12 @@
             vm.order = updatedOrder;
             vm.shipment = shipment;
             vm.tableLineItems = tableLineItems;
+            vm.drafts = drafts.flat().filter(function(draft) {
+                return !draft.isDraft && !draft.isStarter && draft.programId === vm.order.program.id;
+            })
+                .sort(function(a, b) {
+                    return new Date(b.occurredDate) - new Date(a.occurredDate);
+                });
         }
 
         /**

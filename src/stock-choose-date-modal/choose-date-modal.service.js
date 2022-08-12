@@ -49,12 +49,13 @@
             var isOnInventoryPage = urlPath.includes('/stockmanagement/physicalInventory');
             var templateUrlInventory = 'stock-choose-date-modal/choose-date-modal.html';
             var templateUrlShipment = 'stock-choose-date-modal/choose-date-modal-shipment.html';
-            // SELV3-507: ends here
+
             return openlmisModalService.createDialog(
                 {
                     controller: 'ChooseDateModalController',
                     controllerAs: 'vm',
                     templateUrl: isOnInventoryPage ? templateUrlInventory : templateUrlShipment,
+                    // SELV3-507: ends here
                     show: true
                 }
             ).promise.finally(function() {

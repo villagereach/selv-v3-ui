@@ -33,10 +33,12 @@
     function controller($filter, modalDeferred, authorizationService) {
         var vm = this;
 
+        // SELV3-507: Allow user to enter Shipment Date
+        // should have access to drafts to get the date of the most recent submitted draft
+        // vm.minDate = drafts[0].occurredDate;
         vm.maxDate = $filter('isoDate')(new Date());
         vm.occurredDate = vm.maxDate;
-        // SELV3-507: Allow user to enter Shipment Date
-        vm.shipmentDate = vm.maxDate;
+        vm.shipmentDate = vm.minDate;
         vm.signature = '';
         vm.username = authorizationService.getUser().username;
 

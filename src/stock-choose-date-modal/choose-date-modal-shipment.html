@@ -17,7 +17,7 @@
           <form id="dateForm" ng-submit="vm.submit()">
             <fieldset>
               <label for="date" class="required">{{'stockChooseDateModal.shipmentDate' | message}}</label>
-              <input id="date" type="date" ng-model="vm.shipmentDate" max-date="vm.maxDate" required/>
+              <input id="date" type="date" ng-model="vm.shipmentDate" min-date="vm.minDate" max-date="vm.maxDate" required/>
             </fieldset>  
           </form>
         </div>

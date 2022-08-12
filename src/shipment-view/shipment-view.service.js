@@ -28,7 +28,7 @@
         .module('shipment-view')
         .service('shipmentViewService', shipmentViewService);
 
-    // SELV3: Allow user to enter Shipment Date    
+    // SELV3-507: Allow user to enter Shipment Date    
     shipmentViewService.inject = [
         'ShipmentRepository', 'notificationService', '$state', 'stateTrackerService',
         'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService'
