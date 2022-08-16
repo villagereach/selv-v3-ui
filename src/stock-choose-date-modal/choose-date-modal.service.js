@@ -43,7 +43,7 @@
          *
          * @return {Promise} resolved with chosen date and signature.
          */
-        function show() {
+        function show(minimumShipmentDate) {
             // SELV3-507: Allow user to enter Shipment Date
             var urlPath = window.location.hash;
             var isOnInventoryPage = urlPath.includes('/stockmanagement/physicalInventory');
@@ -55,6 +55,11 @@
                     controller: 'ChooseDateModalController',
                     controllerAs: 'vm',
                     templateUrl: isOnInventoryPage ? templateUrlInventory : templateUrlShipment,
+                    resolve: isOnInventoryPage ? null : {
+                        minDate: function() {
+                            return minimumShipmentDate;
+                        }
+                    },
                     // SELV3-507: ends here
                     show: true
                 }

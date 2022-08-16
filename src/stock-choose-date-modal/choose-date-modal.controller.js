@@ -28,17 +28,15 @@
         .module('stock-choose-date-modal')
         .controller('ChooseDateModalController', controller);
 
-    controller.$inject = ['$filter', 'modalDeferred', 'authorizationService'];
+    controller.$inject = ['$filter', 'modalDeferred', 'authorizationService', 'minDate'];
 
-    function controller($filter, modalDeferred, authorizationService) {
+    function controller($filter, modalDeferred, authorizationService, minDate) {
         var vm = this;
-
         // SELV3-507: Allow user to enter Shipment Date
-        // should have access to drafts to get the date of the most recent submitted draft
-        // vm.minDate = drafts[0].occurredDate;
+        vm.minDate = minDate;
         vm.maxDate = $filter('isoDate')(new Date());
         vm.occurredDate = vm.maxDate;
-        vm.shipmentDate = vm.minDate;
+        vm.shipmentDate = vm.maxDate;
         vm.signature = '';
         vm.username = authorizationService.getUser().username;
 

@@ -37,11 +37,18 @@
     function shipmentViewService(ShipmentRepository, notificationService, stateTrackerService,
                                  $state, loadingModalService, ShipmentFactory,
                                  confirmService, $q, chooseDateModalService) {
-        // SELV3-507: ends here
+
         var shipmentRepository = new ShipmentRepository();
 
         this.getShipmentForOrder = getShipmentForOrder;
+        this.setDrafts = setDrafts;
 
+        var drafts;
+
+        function setDrafts(draftsToSet) {
+            drafts = draftsToSet;
+        }
+        // SELV3-507: ends here
         /**
          * @ngdoc method
          * @methodOf shipment-view.shipmentViewService
@@ -111,7 +118,8 @@
             return function() {
                 var shipment = this;
                 // SELV3: Allow user to enter Shipment Date
-                return chooseDateModalService.show()
+                var minimumShipmentDate = drafts[0].occurredDate;
+                return chooseDateModalService.show(minimumShipmentDate)
                     .then(function(resolvedData) {
                         loadingModalService.open();
                         shipment.shipmentDate = resolvedData.shipmentDate;
