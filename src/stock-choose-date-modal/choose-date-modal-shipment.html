@@ -1,0 +1,33 @@
+<!-- SELV3-507: Allow user to enter Shipment Date -->
+<div class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <div class="modal-header">
+          <button type="button" class="close" aria-label="Close" ng-click="$hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">
+            {{'stockChooseDateModal.confirmShipmentHeader' | message}}
+          </h4>
+        </div>
+  
+        <div class="modal-body">
+          <p>{{'stockChooseDateModal.confirmShipment.question' | message}}</p>
+          <form id="dateForm" ng-submit="vm.submit()">
+            <fieldset>
+              <label for="date" class="required">{{'stockChooseDateModal.shipmentDate' | message}}</label>
+              <input id="date" type="date" ng-model="vm.shipmentDate" min-date="vm.minDate" max-date="vm.maxDate" required/>
+            </fieldset>  
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <button ng-click="$hide()">{{'stockChooseDateModal.cancel' | message}}</button>
+          <input form="dateForm" type="submit" value="{{'stockChooseDateModal.confirmShipment' | message}}"/>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+<!-- SELV3-507: ends here -->

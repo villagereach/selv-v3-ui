@@ -31,13 +31,13 @@
     ShipmentViewController.$inject = [
         'shipment', 'loadingModalService', '$state', '$window', 'fulfillmentUrlFactory',
         'messageService', 'accessTokenFactory', 'updatedOrder', 'QUANTITY_UNIT', 'tableLineItems',
-        'VVM_STATUS', 'confirmService'
+        'VVM_STATUS', 'confirmService', 'drafts', 'shipmentViewService'
     ];
 
     function ShipmentViewController(shipment, loadingModalService, $state, $window,
                                     fulfillmentUrlFactory, messageService, accessTokenFactory,
                                     updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS,
-                                    confirmService) {
+                                    confirmService, drafts, shipmentViewService) {
 
         var vm = this;
 
@@ -48,6 +48,9 @@
         vm.getVvmStatusLabel = VVM_STATUS.$getDisplayName;
         vm.printShipment = printShipment;
         vm.confirmShipment = confirmShipment;
+        // SELV3-507: Allow user to enter Shipment Date
+        vm.drafts = drafts;
+        // SELV3-507: ends here
 
         /**
          * @ngdoc property
@@ -94,6 +97,17 @@
         vm.quantityUnit = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf shipment-view.controller:ShipmentViewController
+         * @name drafts
+         * @type {Array}
+         *
+         * @description
+         * Holds drafts crucial to get minimum date for shipment date
+         */
+        vm.drafts = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf shipment-view.controller:ShipmentViewController
          * @name onInit
@@ -106,6 +120,15 @@
             vm.order = updatedOrder;
             vm.shipment = shipment;
             vm.tableLineItems = tableLineItems;
+            // SELV3-507: Allow user to enter Shipment Date
+            vm.drafts = drafts.flat().filter(function(draft) {
+                return !draft.isDraft && !draft.isStarter && draft.programId === vm.order.program.id;
+            })
+                .sort(function(a, b) {
+                    return new Date(b.occurredDate) - new Date(a.occurredDate);
+                });
+            shipmentViewService.setDrafts(vm.drafts);
+            // SELV3-507: ends here
         }
 
         /**
