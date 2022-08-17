@@ -1,10 +1,4 @@
 {
-    "stockChooseDateModal.chooseOccurredDate": "Choose Occurred date",
-    "stockChooseDateModal.date": "Date",
-    "stockChooseDateModal.signature": "Signature",
-    "stockChooseDateModal.submittedBy": "Physical Inventory submitted by ${username}",
-    "stockChooseDateModal.cancel": "Cancel",
-    "stockChooseDateModal.confirm": "Confirm",
     "stockChooseDateModal.confirmShipmentHeader": "Confirm Shipment",
     "stockChooseDateModal.shipmentDate": "Shipment date",
     "stockChooseDateModal.confirmShipment": "Confirm shipment",

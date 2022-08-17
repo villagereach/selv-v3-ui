@@ -120,13 +120,13 @@
             vm.order = updatedOrder;
             vm.shipment = shipment;
             vm.tableLineItems = tableLineItems;
+            // SELV3-507: Allow user to enter Shipment Date
             vm.drafts = drafts.flat().filter(function(draft) {
                 return !draft.isDraft && !draft.isStarter && draft.programId === vm.order.program.id;
             })
                 .sort(function(a, b) {
                     return new Date(b.occurredDate) - new Date(a.occurredDate);
                 });
-            // SELV3-507: Allow user to enter Shipment Date
             shipmentViewService.setDrafts(vm.drafts);
             // SELV3-507: ends here
         }

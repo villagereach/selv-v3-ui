@@ -117,9 +117,9 @@
         function decorateConfirm(originalConfirm) {
             return function() {
                 var shipment = this;
-                // SELV3: Allow user to enter Shipment Date
+                // SELV3-507: Allow user to enter Shipment Date
                 var minimumShipmentDate = drafts[0].occurredDate;
-                return chooseDateModalService.show(minimumShipmentDate)
+                return chooseDateModalService.showWhenChoosingShipmentDate(minimumShipmentDate)
                     .then(function(resolvedData) {
                         loadingModalService.open();
                         shipment.shipmentDate = resolvedData.shipmentDate;

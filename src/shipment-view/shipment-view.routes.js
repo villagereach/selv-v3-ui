@@ -64,12 +64,14 @@
                 updatedOrder: function(shipment) {
                     return shipment.order;
                 },
+                // SELV3-507: Allow user to enter Shipment Date
                 drafts: function(physicalInventoryFactory, order) {
                     var programIds = [order.program.id];
                     var facilityId = order.supplyingFacility.id;
 
                     return physicalInventoryFactory.getDrafts(programIds, facilityId);
                 }
+                // SELV3-507: ends here
             }
         });
     }

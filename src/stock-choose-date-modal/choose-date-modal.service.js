@@ -28,10 +28,11 @@
         .module('stock-choose-date-modal')
         .service('chooseDateModalService', service);
 
-    service.$inject = ['openlmisModalService'];
+    service.$inject = ['openlmisModalService', '$filter'];
 
-    function service(openlmisModalService) {
+    function service(openlmisModalService, $filter) {
         this.show = show;
+        this.showWhenChoosingShipmentDate = showWhenChoosingShipmentDate;
 
         /**
          * @ngdoc method
@@ -43,30 +44,55 @@
          *
          * @return {Promise} resolved with chosen date and signature.
          */
-        function show(minimumShipmentDate) {
-            // SELV3-507: Allow user to enter Shipment Date
-            var urlPath = window.location.hash;
-            var isOnInventoryPage = urlPath.includes('/stockmanagement/physicalInventory');
-            var templateUrlInventory = 'stock-choose-date-modal/choose-date-modal.html';
-            var templateUrlShipment = 'stock-choose-date-modal/choose-date-modal-shipment.html';
-
+        function show() {
             return openlmisModalService.createDialog(
                 {
                     controller: 'ChooseDateModalController',
                     controllerAs: 'vm',
-                    templateUrl: isOnInventoryPage ? templateUrlInventory : templateUrlShipment,
-                    resolve: isOnInventoryPage ? null : {
+                    templateUrl: 'stock-choose-date-modal/choose-date-modal.html',
+                    show: true,
+                    // SELV3-507: Allow user to enter Shipment Date
+                    resolve: {
+                        minDate: function() {
+                            return $filter('isoDate')(new Date(1900, 1, 1));
+                        }
+                    }
+                    // SELV3-507: ends here
+                }
+            ).promise.finally(function() {
+                angular.element('.popover').popover('destroy');
+            });
+        }
+
+        // SELV3-507: Allow user to enter Shipment Date
+        /**
+         * @ngdoc method
+         * @methodOf stock-choose-date-modal.chooseDateModalService
+         * @name showWhenChoosingShipmentDate
+         *
+         * @description
+         * Shows modal that allows users to choose shipment date and signature.
+         *
+         * @return {Promise} resolved with chosen date and signature.
+         */
+        function showWhenChoosingShipmentDate(minimumShipmentDate) {
+            return openlmisModalService.createDialog(
+                {
+                    controller: 'ChooseDateModalController',
+                    controllerAs: 'vm',
+                    templateUrl: 'stock-choose-date-modal/choose-date-modal-shipment.html',
+                    resolve: {
                         minDate: function() {
                             return minimumShipmentDate;
                         }
                     },
-                    // SELV3-507: ends here
                     show: true
                 }
             ).promise.finally(function() {
                 angular.element('.popover').popover('destroy');
             });
         }
+        // SELV3-507: ends here
     }
 
 })();
