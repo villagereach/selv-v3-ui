@@ -15,6 +15,7 @@
 
 describe('ChooseDateModalController', function() {
 
+    // SELV3-507: Allow user to enter Shipment Date
     var vm, $q, $controller, authorizationService, UserDataBuilder, user, $filter, modalDeferred, minDate;
 
     beforeEach(function() {
@@ -77,5 +78,5 @@ describe('ChooseDateModalController', function() {
             });
         });
     });
-
+    // SELV3-507: ends here
 });

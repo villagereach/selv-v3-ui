@@ -23,7 +23,10 @@
      * Provides Shipment Draft view state and controller.
      */
     angular.module('shipment-view', [
+        // SELV3-507: Allow user to enter Shipment Date
+        'stock-physical-inventory',
         'stock-choose-date-modal',
+        // SELV3-507: ends here
         'fulfillment',
         'openlmis-auth',
         'openlmis-i18n',
@@ -35,8 +38,7 @@
         'order',
         'ui.router',
         'openlmis-state-tracker',
-        'stock-card',
-        'stock-physical-inventory'
+        'stock-card'
     ]);
 
 })();

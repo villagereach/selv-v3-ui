@@ -15,6 +15,7 @@
 
 describe('ShipmentViewController', function() {
 
+    // SELV3-507: Allow user to enter Shipment Date
     var vm, $q, $controller, ShipmentDataBuilder, shipment, drafts, tableLineItems, OrderDataBuilder,
         fulfillmentUrlFactory, QUANTITY_UNIT, order, messageService, $window, $rootScope, shipmentViewService;
 
@@ -46,6 +47,7 @@ describe('ShipmentViewController', function() {
             shipmentViewService: shipmentViewService,
             drafts: drafts
         });
+        // SELV3-507: ends here
     });
 
     describe('$onInit', function() {

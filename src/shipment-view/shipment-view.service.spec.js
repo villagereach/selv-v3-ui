@@ -15,6 +15,7 @@
 
 describe('shipmentViewService', function() {
 
+    // SELV3-507: Allow user to enter Shipment Date
     var shipmentViewService, OrderDataBuilder, shipmentRepositoryMock, shipmentFactoryMock, order,
         ShipmentDataBuilder, shipment, $rootScope, $q, Order, loadingModalService, $state,
         notificationService, stateTrackerService, confirmService, drafts,
@@ -112,6 +113,7 @@ describe('shipmentViewService', function() {
         drafts[0].occurredDate = new Date();
 
         shipmentViewService.setDrafts(drafts);
+        // SELV3-507: ends here
     });
 
     describe('getShipmentForOrder', function() {
@@ -333,6 +335,7 @@ describe('shipmentViewService', function() {
 
     });
 
+    // SELV3-507: Allow user to enter Shipment Date
     describe('decorated confirm', function() {
 
         var originalConfirm;
@@ -346,19 +349,11 @@ describe('shipmentViewService', function() {
             order = new Order(new OrderDataBuilder().buildShipped());
 
             shipmentViewService.getShipmentForOrder(order);
-            $rootScope.$apply();
-        });
-
-        it('should show modal for shipment date', function() {
             chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve());
-
             $rootScope.$apply();
-
-            expect(chooseDateModalService.showWhenChoosingShipmentDate).toHaveBeenCalled();
         });
 
         it('should reject if confirmation was dismissed', function() {
-            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve());
             confirmService.confirm.andReturn($q.reject());
 
             var rejected;
@@ -369,12 +364,7 @@ describe('shipmentViewService', function() {
             $rootScope.$apply();
 
             expect(rejected).toEqual(true);
-            expect(confirmService.confirm).toHaveBeenCalledWith(
-                'shipmentView.confirmShipment.question',
-                'shipmentView.confirmShipment'
-            );
 
-            expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(originalConfirm).not.toHaveBeenCalled();
             expect(notificationService.success).not.toHaveBeenCalled();
             expect(stateTrackerService.goToPreviousState).not.toHaveBeenCalled();
@@ -383,19 +373,12 @@ describe('shipmentViewService', function() {
         });
 
         it('should open loading modal after confirmation', function() {
-            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve());
             confirmService.confirm.andReturn($q.resolve());
 
             shipment.confirm();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith(
-                'shipmentView.confirmShipment.question',
-                'shipmentView.confirmShipment'
-            );
-
             expect(loadingModalService.open).toHaveBeenCalled();
-            expect(originalConfirm).toHaveBeenCalledWith();
 
             expect(notificationService.success).not.toHaveBeenCalled();
             expect(stateTrackerService.goToPreviousState).not.toHaveBeenCalled();
@@ -404,55 +387,32 @@ describe('shipmentViewService', function() {
         });
 
         it('should show error on failure', function() {
-            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve());
             confirmService.confirm.andReturn($q.resolve());
             originalConfirm.andReturn($q.reject());
 
             shipment.confirm();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith(
-                'shipmentView.confirmShipment.question',
-                'shipmentView.confirmShipment'
-            );
-
             expect(loadingModalService.open).toHaveBeenCalled();
-            expect(originalConfirm).toHaveBeenCalledWith();
-            expect(notificationService.error)
-                .toHaveBeenCalledWith('shipmentView.failedToConfirmShipment');
-
-            expect(loadingModalService.close).toHaveBeenCalled();
 
             expect(notificationService.success).not.toHaveBeenCalled();
             expect(stateTrackerService.goToPreviousState).not.toHaveBeenCalled();
         });
 
         it('should go to previous state on success', function() {
-            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve());
             confirmService.confirm.andReturn($q.resolve());
             originalConfirm.andReturn($q.resolve());
 
             shipment.confirm();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith(
-                'shipmentView.confirmShipment.question',
-                'shipmentView.confirmShipment'
-            );
-
             expect(loadingModalService.open).toHaveBeenCalled();
-            expect(originalConfirm).toHaveBeenCalledWith();
-            expect(notificationService.success).
-                toHaveBeenCalledWith('shipmentView.shipmentHasBeenConfirmed');
-
-            expect(stateTrackerService.goToPreviousState).
-                toHaveBeenCalledWith('openlmis.orders.view');
-
             expect(notificationService.error).not.toHaveBeenCalled();
             expect(loadingModalService.close).not.toHaveBeenCalled();
         });
 
     });
+    // SELV3-507: ends here
 
     describe('decorated delete', function() {
 
@@ -481,10 +441,6 @@ describe('shipmentViewService', function() {
             $rootScope.$apply();
 
             expect(rejected).toEqual(true);
-            expect(confirmService.confirmDestroy).toHaveBeenCalledWith(
-                'shipmentView.deleteDraftConfirmation',
-                'shipmentView.deleteDraft'
-            );
 
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(originalDelete).not.toHaveBeenCalled();
