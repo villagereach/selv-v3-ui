@@ -412,7 +412,6 @@ describe('shipmentViewService', function() {
         });
 
     });
-    // SELV3-507: ends here
 
     describe('decorated delete', function() {
 
@@ -441,7 +440,7 @@ describe('shipmentViewService', function() {
             $rootScope.$apply();
 
             expect(rejected).toEqual(true);
-
+            // SELV3-507: ends here
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(originalDelete).not.toHaveBeenCalled();
             expect(notificationService.success).not.toHaveBeenCalled();
