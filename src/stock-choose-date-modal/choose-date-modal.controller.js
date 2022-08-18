@@ -34,7 +34,7 @@
         var vm = this;
         // SELV3-507: Allow user to enter Shipment Date
         vm.minDate = minDate;
-        vm.maxDate = $filter('isoDate')(new Date());
+        vm.maxDate = new Date();
         vm.occurredDate = vm.maxDate;
         vm.shipmentDate = vm.maxDate;
         vm.signature = '';

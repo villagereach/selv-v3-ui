@@ -15,8 +15,8 @@
 
 describe('ShipmentViewController', function() {
 
-    var vm, $q, $controller, ShipmentDataBuilder, shipment, tableLineItems, OrderDataBuilder, fulfillmentUrlFactory,
-        QUANTITY_UNIT, order, messageService, $window, $rootScope;
+    var vm, $q, $controller, ShipmentDataBuilder, shipment, drafts, tableLineItems, OrderDataBuilder,
+        fulfillmentUrlFactory, QUANTITY_UNIT, order, messageService, $window, $rootScope, shipmentViewService;
 
     beforeEach(function() {
         module('shipment-view');
@@ -31,16 +31,20 @@ describe('ShipmentViewController', function() {
             $window = $injector.get('$window');
             $rootScope = $injector.get('$rootScope');
             fulfillmentUrlFactory = $injector.get('fulfillmentUrlFactory');
+            shipmentViewService = $injector.get('shipmentViewService');
         });
 
         shipment = new ShipmentDataBuilder().build();
         order = new OrderDataBuilder().build();
         tableLineItems = [{}, {}];
+        drafts = [{}, {}, {}];
 
         vm = $controller('ShipmentViewController', {
             shipment: shipment,
             tableLineItems: tableLineItems,
-            updatedOrder: order
+            updatedOrder: order,
+            shipmentViewService: shipmentViewService,
+            drafts: drafts
         });
     });
 
@@ -63,7 +67,6 @@ describe('ShipmentViewController', function() {
 
             expect(vm.tableLineItems).toEqual(tableLineItems);
         });
-
     });
 
     describe('showInDoses', function() {
