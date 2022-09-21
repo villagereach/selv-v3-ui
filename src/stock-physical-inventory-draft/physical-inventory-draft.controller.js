@@ -700,6 +700,12 @@
                 return item.lot;
             });
 
+            //SELV3-508: Fix error when submitting physical inventory
+            draft.lineItems.forEach(function(item) {
+                checkUnaccountedStockAdjustments(item);
+            });
+            //SELV3-508: Ends here
+
             vm.updateProgress();
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);

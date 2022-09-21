@@ -28,13 +28,15 @@
         .module('stock-choose-date-modal')
         .controller('ChooseDateModalController', controller);
 
-    controller.$inject = ['$filter', 'modalDeferred', 'authorizationService', 'minDate'];
+    controller.$inject = ['$filter', 'modalDeferred', 'authorizationService', 'minDate', '$location'];
 
-    function controller($filter, modalDeferred, authorizationService, minDate) {
+    function controller($filter, modalDeferred, authorizationService, minDate, $location) {
         var vm = this;
         // SELV3-507: Allow user to enter Shipment Date
         vm.minDate = minDate;
-        vm.maxDate = new Date();
+        // SELV3-529: Fix error when submitting physical inventory
+        vm.maxDate = $location.absUrl().includes('physicalInventory') ? $filter('isoDate')(new Date()) : new Date();
+        // SELV3-529: Ends here
         vm.occurredDate = vm.maxDate;
         vm.shipmentDate = vm.maxDate;
         vm.signature = '';
