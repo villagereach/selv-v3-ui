@@ -13,4 +13,30 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-export { default } from './Dhis2Page';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Routing from './Routing';
+import 'react-toastify/dist/ReactToastify.css';
+import 'tippy.js/dist/tippy.css';
+
+(function () {
+    'use strict';
+
+    angular
+        .module('admin-dhis2')
+        .directive('adminDhis2', adminDhis2);
+
+        adminDhis2.$inject = [];
+
+    function adminDhis2() {
+        return {
+            template: '<div id="adminDhis2" class="admin-dhis2"></div>',
+            replace: true,
+            link: function () {
+                const app = document.getElementById('adminDhis2');
+
+                ReactDOM.render(<Routing />, app);
+            }
+        };
+    }
+})();

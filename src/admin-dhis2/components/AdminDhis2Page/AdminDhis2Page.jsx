@@ -13,11 +13,10 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
-    'use strict';
+import React from 'react';
 
-    angular.module('dhis2', [
-        'stock-card-summary'
-    ]);
+const AdminDhis2Page = () => (
+    <div></div>
+);
 
-})();
+export default AdminDhis2Page;

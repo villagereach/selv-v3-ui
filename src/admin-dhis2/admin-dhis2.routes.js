@@ -13,30 +13,27 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Routing from './Routing';
-import 'react-toastify/dist/ReactToastify.css';
-import 'tippy.js/dist/tippy.css';
-
-(function () {
+(function() {
     'use strict';
 
     angular
-        .module('dhis2')
-        .directive('dhis2', dhis2);
+        .module('admin-dhis2')
+        .config(routes);
 
-    dhis2.$inject = [];
+    routes.$inject = ['$stateProvider'];
 
-    function dhis2() {
-        return {
-            template: '<div id="dhis2" class="dhis2"></div>',
-            replace: true,
-            link: function () {
-                const app = document.getElementById('dhis2');
-
-                ReactDOM.render(<Routing />, app);
+    function routes($stateProvider) {
+        $stateProvider.state('openlmis.administration.dhis2', {
+            url: '/dhis2',
+            label: 'admin.dhis2.label',
+            isOffline: false,
+            priority: 11,
+            showInNavigation: true,
+            views: {
+                '@': {
+                    templateUrl: 'admin-dhis2/admin-dhis2.html'
+                }
             }
-        };
+        });
     }
 })();

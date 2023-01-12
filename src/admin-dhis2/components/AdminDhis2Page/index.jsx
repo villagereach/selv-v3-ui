@@ -13,30 +13,4 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
-    'use strict';
-
-    angular
-        .module('dhis2')
-        .config(routes);
-
-    routes.$inject = ['$stateProvider', 'ADMINISTRATION_RIGHTS'];
-
-    function routes($stateProvider, ADMINISTRATION_RIGHTS) {
-        var showRequisitionLessOrder = '@@SHOW_REQUISITION_LESS_ORDER' !== 'false';
-
-        $stateProvider.state('openlmis.administration.dhis2', {
-            url: '/dhis2',
-            label: 'dhis2.label',
-            isOffline: false,
-            priority: 11,
-            showInNavigation: showRequisitionLessOrder,
-            views: {
-                '@': {
-                    templateUrl: 'dhis2/dhis2.html'
-                }
-            },
-            accessRights: [ADMINISTRATION_RIGHTS.ORDER_CREATE]
-        });
-    }
-})();
+export { default } from './AdminDhis2Page';
