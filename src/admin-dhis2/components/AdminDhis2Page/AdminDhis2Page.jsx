@@ -13,10 +13,50 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
-const AdminDhis2Page = () => (
-    <div></div>
-);
+import EditableTable from '../../../react-components/table/editable-table';
+
+const AdminDhis2Page = () => {
+    const columns = useMemo(
+        () => [
+            {
+                Header: 'Product Code',
+                accessor: 'orderable.productCode'
+            },
+            {
+                Header: 'Product',
+                accessor: 'orderable.fullProductName'
+            },
+            {
+                Header: 'SOH',
+                accessor: 'soh',
+            },
+            {
+                Header: 'Quantity',
+                accessor: 'orderedQuantity',
+            },
+            {
+                Header: 'Actions',
+                accessor: 'id',
+            }
+        ],
+        []
+    );
+
+    return (
+        <div className="order-create-table-container">
+            <div className="order-create-table">
+                <div className="order-create-table-header">
+                    <button className="add">Add</button>
+                </div>
+                <EditableTable
+                    columns={[columns]}
+                    data={[]}
+                />
+            </div>
+        </div>
+    )
+};
 
 export default AdminDhis2Page;

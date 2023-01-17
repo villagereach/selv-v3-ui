@@ -17,7 +17,7 @@
     'use strict';
 
     angular.module('admin-dhis2', [
-        'stock-card-summary'
+        'react-components'
     ]);
 
 })();

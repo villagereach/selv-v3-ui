@@ -18,6 +18,7 @@ import ReactDOM from 'react-dom';
 import Routing from './Routing';
 import 'react-toastify/dist/ReactToastify.css';
 import 'tippy.js/dist/tippy.css';
+import AdminDhis2Page from "./components/AdminDhis2Page";
 
 (function () {
     'use strict';
@@ -35,7 +36,12 @@ import 'tippy.js/dist/tippy.css';
             link: function () {
                 const app = document.getElementById('adminDhis2');
 
-                ReactDOM.render(<Routing />, app);
+                ReactDOM.render(
+                    <>
+                        <Routing />
+                        <AdminDhis2Page />
+                    </>
+                    , app);
             }
         };
     }
