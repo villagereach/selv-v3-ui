@@ -15,44 +15,52 @@
 
 import React, { useMemo } from 'react';
 
-import EditableTable from '../../../react-components/table/editable-table';
+import Table from '../../../react-components/table/table';
+import TrashButton from '../../../react-components/buttons/trash-button';
+import ResponsiveButton from '../../../react-components/buttons//responsive-button';
 
-const AdminDhis2Page = () => {
+const AdminDhis2Page = ({data}) => {
+    console.log(data)
+
     const columns = useMemo(
         () => [
             {
-                Header: 'Product Code',
+                Header: 'Name',
                 accessor: 'orderable.productCode'
             },
             {
-                Header: 'Product',
+                Header: 'URL',
                 accessor: 'orderable.fullProductName'
             },
             {
-                Header: 'SOH',
+                Header: 'Username',
                 accessor: 'soh',
-            },
-            {
-                Header: 'Quantity',
-                accessor: 'orderedQuantity',
             },
             {
                 Header: 'Actions',
                 accessor: 'id',
-            }
+                Cell: ({ row: { index }, deleteRow }) => (
+                     <div className='admin-dhis2-table-actions'>
+                         <ResponsiveButton>View</ResponsiveButton>
+                         <ResponsiveButton>Edit</ResponsiveButton>
+                         <TrashButton onClick={() => deleteRow(index)} />
+                    </div>
+                )
+            },
         ],
         []
     );
 
     return (
-        <div className="order-create-table-container">
+        <div className="order-table-container">
             <div className="order-create-table">
-                <div className="order-create-table-header">
-                    <button className="add">Add</button>
+                <div className="admin-dhis2-table-header">
+                    <h2>Servers</h2>
+                    <button className="add">Add Server</button>
                 </div>
-                <EditableTable
-                    columns={[columns]}
-                    data={[]}
+                <Table
+                    columns={columns}
+                    data={columns}
                 />
             </div>
         </div>

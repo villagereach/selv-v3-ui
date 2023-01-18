@@ -27,21 +27,20 @@ import AdminDhis2Page from "./components/AdminDhis2Page";
         .module('admin-dhis2')
         .directive('adminDhis2', adminDhis2);
 
-        adminDhis2.$inject = [];
+        adminDhis2.$inject = ['serverConfiguration'];
 
-    function adminDhis2() {
+    function adminDhis2(serverConfiguration) {
         return {
             template: '<div id="adminDhis2" class="admin-dhis2"></div>',
             replace: true,
             link: function () {
-                const app = document.getElementById('adminDhis2');
 
                 ReactDOM.render(
                     <>
                         <Routing />
-                        <AdminDhis2Page />
+                        <AdminDhis2Page data={serverConfiguration} />
                     </>
-                    , app);
+                );
             }
         };
     }
