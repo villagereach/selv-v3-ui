@@ -15,7 +15,7 @@
 
 import React from 'react';
 import Breadcrumbs from '../react-components/breadcrumbs/breadcrumbs';
-import AdminDhis2Page from './components/AdminDhis2Page';
+import AdminDhis2ServersPage from "./components/AdminDhis2ServersPage/AdminDhis2ServersPage";
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 const Routing = () => (
@@ -24,7 +24,7 @@ const Routing = () => (
             <Breadcrumbs routes={[ { path: "/administration/dhis2", breadcrumb: 'DHIS2' } ]} />
             <Switch>
                 <Route exact path="/administration/dhis2">
-                    <AdminDhis2Page />
+                    <AdminDhis2ServersPage />
                 </Route>
             </Switch>
         </Router>

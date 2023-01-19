@@ -13,4 +13,32 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-export { default } from './AdminDhis2Page';
+(function() {
+
+    'use strict';
+
+    /**
+     * @ngdoc service
+     * @name admin-dhis2.adminDhis2
+     *
+     * @description
+     * Communicates with the /api/serverConfiguration endpoint of the OpenLMIS server.
+     */
+    angular
+        .module('admin-dhis2')
+        .service('adminDhis2', service);
+
+    service.$inject = ['$resource', 'openlmisUrlFactory'];
+
+    function service($resource, openlmisUrlFactory) {
+
+        var resource = $resource(openlmisUrlFactory('/api/serverConfiguration'), {});
+
+        this.getServerConfig = getServerConfig;
+
+        function getServerConfig() {
+            return resource.get().$promise;
+        }
+
+    }
+})();

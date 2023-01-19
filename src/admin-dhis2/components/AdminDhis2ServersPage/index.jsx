@@ -13,10 +13,4 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React from 'react';
-
-const AdminDhis2Page = () => (
-    <div></div>
-);
-
-export default AdminDhis2Page;
+export { default } from './AdminDhis2ServersPage';
