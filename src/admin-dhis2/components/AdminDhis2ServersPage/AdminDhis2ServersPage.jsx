@@ -20,7 +20,7 @@ import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 
-const AdminDhis2Page = () => {
+const AdminDhis2ServersPage = () => {
     const [serversParams, setServersParams] = useState([]);
 
     const serversData = useMemo(
@@ -32,14 +32,14 @@ const AdminDhis2Page = () => {
 
     useEffect(
         () => {
-            serversData.get()
+            serversData.getServerConfig()
                 .then((fetchedServer) => {
                     const { content } = fetchedServer
 
                     const serversParams = content.map((server) => ({
                         serverId: server.id,
-                        Name: server.name,
-                        URL: server.url,
+                        serverName: server.name,
+                        serverUrl: server.url,
                         serverUsername: server.username
                     }))
                     setServersParams(serversParams);
@@ -52,11 +52,11 @@ const AdminDhis2Page = () => {
         () => [
             {
                 Header: 'Name',
-                accessor: 'Name'
+                accessor: 'serverName'
             },
             {
                 Header: 'URL',
-                accessor: 'URL'
+                accessor: 'serverUrl'
             },
             {
                 Header: 'Username',
@@ -64,7 +64,7 @@ const AdminDhis2Page = () => {
             },
             {
                 Header: 'Actions',
-                accessor: 'id',
+                accessor: 'serverId',
                 Cell: () => (
                      <div className='admin-dhis2-table-actions'>
                          <ResponsiveButton>View</ResponsiveButton>
@@ -91,4 +91,4 @@ const AdminDhis2Page = () => {
     )
 };
 
-export default AdminDhis2Page;
+export default AdminDhis2ServersPage;

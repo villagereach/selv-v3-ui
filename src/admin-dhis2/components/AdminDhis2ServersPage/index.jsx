@@ -13,4 +13,4 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-export { default } from './AdminDhis2Page';
+export { default } from './AdminDhis2ServersPage';

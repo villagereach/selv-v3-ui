@@ -26,7 +26,7 @@
         $stateProvider.state('openlmis.administration.dhis2', {
             url: '/dhis2',
             label: 'admin.dhis2.label',
-            isOffline: true,
+            isOffline: false,
             priority: 11,
             showInNavigation: true,
             views: {

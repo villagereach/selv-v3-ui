@@ -34,9 +34,9 @@
 
         var resource = $resource(openlmisUrlFactory('/api/serverConfiguration'), {});
 
-        this.get = get;
+        this.getServerConfig = getServerConfig;
 
-        function get() {
+        function getServerConfig() {
             return resource.get().$promise;
         }
 
