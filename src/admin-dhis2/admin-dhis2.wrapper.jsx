@@ -35,9 +35,7 @@ import 'tippy.js/dist/tippy.css';
             link: function () {
                 const app = document.getElementById('adminDhis2');
 
-                ReactDOM.render(
-                    <Routing />,
-                    app);
+                ReactDOM.render(<Routing />, app);
             }
         };
     }
