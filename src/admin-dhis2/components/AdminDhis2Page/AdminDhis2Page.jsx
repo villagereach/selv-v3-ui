@@ -13,37 +13,63 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 
+import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
-import ResponsiveButton from '../../../react-components/buttons//responsive-button';
+import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 
-const AdminDhis2Page = ({data}) => {
-    console.log(data)
+const AdminDhis2Page = () => {
+    const [serversParams, setServersParams] = useState([]);
+
+    const serversData = useMemo(
+        () => {
+            return getService('adminDhis2');
+        },
+        []
+    );
+
+    useEffect(
+        () => {
+            serversData.get()
+                .then((fetchedServer) => {
+                    const { content } = fetchedServer
+
+                    const serversParams = content.map((server) => ({
+                        serverId: server.id,
+                        Name: server.name,
+                        URL: server.url,
+                        serverUsername: server.username
+                    }))
+                    setServersParams(serversParams);
+                });
+        },
+        [serversData]
+    );
 
     const columns = useMemo(
         () => [
             {
                 Header: 'Name',
-                accessor: 'orderable.productCode'
+                accessor: 'Name'
             },
             {
                 Header: 'URL',
-                accessor: 'orderable.fullProductName'
+                accessor: 'URL'
             },
             {
                 Header: 'Username',
-                accessor: 'soh',
+                accessor: 'serverUsername',
             },
             {
                 Header: 'Actions',
                 accessor: 'id',
-                Cell: ({ row: { index }, deleteRow }) => (
+                Cell: () => (
                      <div className='admin-dhis2-table-actions'>
                          <ResponsiveButton>View</ResponsiveButton>
                          <ResponsiveButton>Edit</ResponsiveButton>
-                         <TrashButton onClick={() => deleteRow(index)} />
+                         <TrashButton/>
                     </div>
                 )
             },
@@ -52,18 +78,16 @@ const AdminDhis2Page = ({data}) => {
     );
 
     return (
-        <div className="order-table-container">
-            <div className="order-create-table">
-                <div className="admin-dhis2-table-header">
-                    <h2>Servers</h2>
-                    <button className="add">Add Server</button>
-                </div>
-                <Table
-                    columns={columns}
-                    data={columns}
-                />
+        <>
+            <div className="admin-dhis2-table-header">
+                <h2 className="admin-dhis2-table-title">Servers</h2>
+                <button className="add admin-dhis2-table-add-button">Add Server</button>
             </div>
-        </div>
+            <Table
+                columns={columns}
+                data={serversParams}
+            />
+        </>
     )
 };
 

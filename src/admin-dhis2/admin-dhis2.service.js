@@ -13,32 +13,32 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Routing from './Routing';
-import 'react-toastify/dist/ReactToastify.css';
-import 'tippy.js/dist/tippy.css';
+(function() {
 
-(function () {
     'use strict';
 
+    /**
+     * @ngdoc service
+     * @name admin-dhis2.adminDhis2
+     *
+     * @description
+     * Communicates with the /api/serverConfiguration endpoint of the OpenLMIS server.
+     */
     angular
         .module('admin-dhis2')
-        .directive('adminDhis2', adminDhis2);
+        .service('adminDhis2', service);
 
-        adminDhis2.$inject = [];
+    service.$inject = ['$resource', 'openlmisUrlFactory'];
 
-    function adminDhis2() {
-        return {
-            template: '<div id="adminDhis2" class="admin-dhis2"></div>',
-            replace: true,
-            link: function () {
-                const app = document.getElementById('adminDhis2');
+    function service($resource, openlmisUrlFactory) {
 
-                ReactDOM.render(
-                    <Routing />,
-                    app);
-            }
-        };
+        var resource = $resource(openlmisUrlFactory('/api/serverConfiguration'), {});
+
+        this.get = get;
+
+        function get() {
+            return resource.get().$promise;
+        }
+
     }
 })();

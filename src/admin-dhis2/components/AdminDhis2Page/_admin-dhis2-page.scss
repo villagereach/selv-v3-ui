@@ -1,9 +1,20 @@
 .admin-dhis2-table-actions {
   display: flex;
   flex-direction: row;
+  gap: 0 10px
 }
 
 .admin-dhis2-table-header {
   display: flex;
   justify-content: center;
+  margin-bottom: 5px
+}
+
+.admin-dhis2-table-title{
+ margin-left: auto
+}
+
+.admin-dhis2-table-add-button {
+  margin-right: 5px;
+  margin-left: auto
 }
