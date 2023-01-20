@@ -1,20 +1,44 @@
-.admin-dhis2-table-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 0 10px
-}
+.admin-dhis2 {  
+  
+  .page-responsive {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+    box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.75);
+    border: 0;
+    background: #ffffff;
+    padding: 16px;
+  }
 
-.admin-dhis2-table-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 5px
-}
+  .react-table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: auto;
+    width: 50%;
+  }
 
-.admin-dhis2-table-title{
- margin-left: auto
-}
+  .admin-dhis2-table-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0 10px
+  }
 
-.admin-dhis2-table-add-button {
-  margin-right: 5px;
-  margin-left: auto
+  .admin-dhis2-table-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+    width: 50%;
+  }
+
+  .admin-dhis2-table-title{
+    margin-left: auto;
+  }
+
+  .admin-dhis2-table-add-button {
+    margin-right: 5px;
+    margin-left: auto;
+  }
+
 }

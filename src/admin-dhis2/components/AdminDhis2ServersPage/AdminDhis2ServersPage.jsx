@@ -14,6 +14,7 @@
  */
 
 import React, { useMemo, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
@@ -22,6 +23,8 @@ import ResponsiveButton from '../../../react-components/buttons/responsive-butto
 import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 const AdminDhis2ServersPage = () => {
+    const history = useHistory();
+
     const [serversParams, setServersParams] = useState([]);
 
     const serverServices = useMemo(
@@ -49,12 +52,13 @@ const AdminDhis2ServersPage = () => {
     useEffect(() => fetchServersList(),[]);
 
     const removeServer = (server) => {
-        confirmDialogAlert({
-            onConfirm: serverServices.removeServer(server.serverId),
-            title: `Are you sure you want to remove server ${server.serverName}?`
-        })
-        fetchServersList()
+        serverServices.removeServer(server.serverId)
+          .then(() => {
+            fetchServersList();
+          });
     }
+
+    useEffect(() => {}, [serversParams]);
 
     const columns = useMemo(
         () => [
@@ -75,10 +79,16 @@ const AdminDhis2ServersPage = () => {
                 accessor: 'serverId',
                 Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
-                         <ResponsiveButton>View</ResponsiveButton>
-                         <ResponsiveButton>Edit
-                         </ResponsiveButton>
-                         <TrashButton onClick={() => removeServer(values)}/>
+                        <ResponsiveButton>View</ResponsiveButton>
+                        <ResponsiveButton>Edit
+                        </ResponsiveButton>
+
+                        <TrashButton
+                            onClick={() => confirmDialogAlert({
+                                title: `Are you sure you want to remove server ${values.serverName}?`,
+                                onConfirm: () => removeServer(values)
+                            })}
+                        />
                     </div>
                 )
             },
