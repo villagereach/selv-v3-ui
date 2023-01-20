@@ -14,7 +14,6 @@
  */
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
@@ -23,8 +22,6 @@ import ResponsiveButton from '../../../react-components/buttons/responsive-butto
 import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 const AdminDhis2ServersPage = () => {
-    const history = useHistory();
-
     const [serversParams, setServersParams] = useState([]);
 
     const serverServices = useMemo(
