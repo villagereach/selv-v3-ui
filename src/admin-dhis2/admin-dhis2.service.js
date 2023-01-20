@@ -32,13 +32,24 @@
 
     function service($resource, openlmisUrlFactory) {
 
-        var resource = $resource(openlmisUrlFactory('/api/serverConfiguration'), {});
+        var resource = $resource(openlmisUrlFactory('/api/serverConfiguration/'), {}, {
+            removeServer: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:id'),
+                method: 'DELETE'
+            }
+        });
 
         this.getServerConfig = getServerConfig;
+        this.removeServer = removeServer;
 
         function getServerConfig() {
             return resource.get().$promise;
         }
 
+        function removeServer(server) {
+            return resource.removeServer({
+                id: server
+            }, server).$promise;
+        }
     }
 })();

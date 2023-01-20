@@ -19,34 +19,42 @@ import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
+import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 const AdminDhis2ServersPage = () => {
     const [serversParams, setServersParams] = useState([]);
 
-    const serversData = useMemo(
+    const serverServices = useMemo(
         () => {
             return getService('adminDhis2');
         },
         []
     );
 
-    useEffect(
-        () => {
-            serversData.getServerConfig()
-                .then((fetchedServer) => {
-                    const { content } = fetchedServer
+    const fetchServersList = () => {
+        serverServices.getServerConfig()
+            .then((fetchedServer) => {
+                const { content } = fetchedServer
 
-                    const serversParams = content.map((server) => ({
-                        serverId: server.id,
-                        serverName: server.name,
-                        serverUrl: server.url,
-                        serverUsername: server.username
-                    }))
-                    setServersParams(serversParams);
-                });
-        },
-        [serversData]
-    );
+                const serversParams = content.map((server) => ({
+                    serverId: server.id,
+                    serverName: server.name,
+                    serverUrl: server.url,
+                    serverUsername: server.username
+                }))
+                setServersParams(serversParams);
+            });
+    }
+
+    useEffect(() => fetchServersList(),[]);
+
+    const removeServer = (server) => {
+        confirmDialogAlert({
+            onConfirm: serverServices.removeServer(server.serverId),
+            title: `Are you sure you want to remove server ${server.serverName}?`
+        })
+        fetchServersList()
+    }
 
     const columns = useMemo(
         () => [
@@ -65,16 +73,17 @@ const AdminDhis2ServersPage = () => {
             {
                 Header: 'Actions',
                 accessor: 'serverId',
-                Cell: () => (
+                Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
                          <ResponsiveButton>View</ResponsiveButton>
-                         <ResponsiveButton>Edit</ResponsiveButton>
-                         <TrashButton/>
+                         <ResponsiveButton>Edit
+                         </ResponsiveButton>
+                         <TrashButton onClick={() => removeServer(values)}/>
                     </div>
                 )
             },
         ],
-        []
+        [serversParams]
     );
 
     return (
