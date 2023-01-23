@@ -76,10 +76,12 @@ const AdminDhis2ServersPage = () => {
                 accessor: 'serverId',
                 Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
-                        <ResponsiveButton>View</ResponsiveButton>
-                        <ResponsiveButton>Edit
+                        <ResponsiveButton>
+                            View
                         </ResponsiveButton>
-
+                        <ResponsiveButton>
+                            Edit
+                        </ResponsiveButton>
                         <TrashButton
                             onClick={() => confirmDialogAlert({
                                 title: `Are you sure you want to remove server ${values.serverName}?`,
@@ -95,14 +97,18 @@ const AdminDhis2ServersPage = () => {
 
     return (
         <>
-            <div className="admin-dhis2-table-header">
-                <h2 className="admin-dhis2-table-title">Servers</h2>
-                <button className="add admin-dhis2-table-add-button">Add Server</button>
+            <h2 className="admin-dhis2-table-title">Servers</h2>
+            <div className="admin-dhis-row">
+                <div className="admin-dhis-main">
+                    <div className="admin-dhis2-table-header">
+                        <button className="add admin-dhis2-table-add-button">Add Server</button>
+                    </div>
+                    <Table
+                        columns={columns}
+                        data={serversParams}
+                    />
+                </div>
             </div>
-            <Table
-                columns={columns}
-                data={serversParams}
-            />
         </>
     )
 };

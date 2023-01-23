@@ -1,5 +1,28 @@
 .admin-dhis2 {  
   
+
+  .admin-dhis-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .admin-dhis-main {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-dhis2-table-title {
+    border-bottom: #bebebe 1px solid;
+    padding: 3.2px 0em;
+    margin-bottom: 1em;
+  } 
+
   .page-responsive {
     flex: 1 0 auto;
     display: flex;
@@ -8,7 +31,13 @@
     box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.75);
     border: 0;
     background: #ffffff;
-    padding: 16px;
+    padding: 1em 2em;
+
+    .breadcrumb {
+      padding-top: 1.5em;
+      padding-left: 0;
+      font-size: 14px;
+    }
   }
 
   .react-table-container {
@@ -16,24 +45,19 @@
     flex-direction: column;
     align-items: flex-start;
     overflow: auto;
-    width: 50%;
   }
 
   .admin-dhis2-table-actions {
     display: flex;
     flex-direction: row;
-    gap: 0 10px
+    gap: 0 10px;
   }
 
   .admin-dhis2-table-header {
     display: flex;
     justify-content: center;
     margin-bottom: 5px;
-    width: 50%;
-  }
-
-  .admin-dhis2-table-title{
-    margin-left: auto;
+    width: 100%;
   }
 
   .admin-dhis2-table-add-button {
