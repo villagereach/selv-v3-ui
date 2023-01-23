@@ -19,34 +19,43 @@ import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
+import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 const AdminDhis2ServersPage = () => {
     const [serversParams, setServersParams] = useState([]);
 
-    const serversData = useMemo(
+    const serverService = useMemo(
         () => {
             return getService('adminDhis2');
         },
         []
     );
 
-    useEffect(
-        () => {
-            serversData.getServerConfig()
-                .then((fetchedServer) => {
-                    const { content } = fetchedServer
+    const fetchServersList = () => {
+        serverService.getServerConfig()
+            .then((fetchedServer) => {
+                const { content } = fetchedServer
 
-                    const serversParams = content.map((server) => ({
-                        serverId: server.id,
-                        serverName: server.name,
-                        serverUrl: server.url,
-                        serverUsername: server.username
-                    }))
-                    setServersParams(serversParams);
-                });
-        },
-        [serversData]
-    );
+                const serversParams = content.map((server) => ({
+                    serverId: server.id,
+                    serverName: server.name,
+                    serverUrl: server.url,
+                    serverUsername: server.username
+                }))
+                setServersParams(serversParams);
+            });
+    }
+
+    useEffect(() => fetchServersList(),[]);
+
+    const removeServer = (server) => {
+        serverService.removeServer(server.serverId)
+          .then(() => {
+            fetchServersList();
+          });
+    }
+
+    useEffect(() => {}, [serversParams]);
 
     const columns = useMemo(
         () => [
@@ -65,28 +74,41 @@ const AdminDhis2ServersPage = () => {
             {
                 Header: 'Actions',
                 accessor: 'serverId',
-                Cell: () => (
+                Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
-                         <ResponsiveButton>View</ResponsiveButton>
-                         <ResponsiveButton>Edit</ResponsiveButton>
-                         <TrashButton/>
+                        <ResponsiveButton>
+                            View
+                        </ResponsiveButton>
+                        <ResponsiveButton>
+                            Edit
+                        </ResponsiveButton>
+                        <TrashButton
+                            onClick={() => confirmDialogAlert({
+                                title: `Are you sure you want to remove server ${values.serverName}?`,
+                                onConfirm: () => removeServer(values)
+                            })}
+                        />
                     </div>
                 )
             },
         ],
-        []
+        [serversParams]
     );
 
     return (
         <>
-            <div className="admin-dhis2-table-header">
-                <h2 className="admin-dhis2-table-title">Servers</h2>
-                <button className="add admin-dhis2-table-add-button">Add Server</button>
+            <h2 className="admin-dhis2-table-title">Servers</h2>
+            <div className="admin-dhis-row">
+                <div className="admin-dhis-main">
+                    <div className="admin-dhis2-table-header">
+                        <button className="add admin-dhis2-table-add-button">Add Server</button>
+                    </div>
+                    <Table
+                        columns={columns}
+                        data={serversParams}
+                    />
+                </div>
             </div>
-            <Table
-                columns={columns}
-                data={serversParams}
-            />
         </>
     )
 };
