@@ -24,7 +24,7 @@ import confirmDialogAlert from '../../../react-components/modals/confirm';
 const AdminDhis2ServersPage = () => {
     const [serversParams, setServersParams] = useState([]);
 
-    const serverServices = useMemo(
+    const serverService = useMemo(
         () => {
             return getService('adminDhis2');
         },
@@ -32,7 +32,7 @@ const AdminDhis2ServersPage = () => {
     );
 
     const fetchServersList = () => {
-        serverServices.getServerConfig()
+        serverService.getServerConfig()
             .then((fetchedServer) => {
                 const { content } = fetchedServer
 
@@ -49,7 +49,7 @@ const AdminDhis2ServersPage = () => {
     useEffect(() => fetchServersList(),[]);
 
     const removeServer = (server) => {
-        serverServices.removeServer(server.serverId)
+        serverService.removeServer(server.serverId)
           .then(() => {
             fetchServersList();
           });
