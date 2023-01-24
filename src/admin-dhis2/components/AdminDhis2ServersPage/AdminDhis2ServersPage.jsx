@@ -140,7 +140,7 @@ const AdminDhis2ServersPage = () => {
                         refetch={fetchServersList}
                     />
                 ]}
-      />
+            />
         </>
     )
 };
