@@ -13,33 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
-    'use strict';
+import React from 'react';
 
-    angular
-        .module('admin-dhis2')
-        .config(routes);
+const AdminDhis2DatasetPage = () => {
 
-    routes.$inject = ['$stateProvider'];
+    return (
+        <></>
+    );
+};
 
-    function routes($stateProvider) {
-        $stateProvider.state('openlmis.administration.dhis2', {
-            url: '/dhis2',
-            label: 'admin.dhis2.label',
-            isOffline: false,
-            priority: 11,
-            showInNavigation: true,
-            views: {
-                '@': {
-                    templateUrl: 'admin-dhis2/admin-dhis2.html'
-                }
-            }
-        })
-            .state('openlmis.administration.dhis2.dataset', {
-                url: '/dataset',
-                isOffline: false,
-                showInNavigation: false,
-                showInNavigationOnLowResolutions: false
-            });
-    }
-})();
+export default AdminDhis2DatasetPage;
