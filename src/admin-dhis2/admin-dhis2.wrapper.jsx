@@ -14,6 +14,7 @@
  */
 
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
 import ReactDOM from 'react-dom';
 import Routing from './Routing';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,7 +36,13 @@ import 'tippy.js/dist/tippy.css';
             link: function () {
                 const app = document.getElementById('adminDhis2');
 
-                ReactDOM.render(<Routing />, app);
+                ReactDOM.render(
+                    <>
+                        <Routing />, 
+                        <ToastContainer theme="colored" />
+                    </>,
+                    app
+                );
             }
         };
     }

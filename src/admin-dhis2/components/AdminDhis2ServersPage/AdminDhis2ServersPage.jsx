@@ -14,6 +14,7 @@
  */
 
 import React, { useMemo, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
@@ -21,8 +22,12 @@ import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 import confirmDialogAlert from '../../../react-components/modals/confirm';
 
+import Modal from '../Modal/Modal';
+import AdminDhis2ServersForm from '../AdminDhis2ServersForm/AdminDhis2ServersForm';
+
 const AdminDhis2ServersPage = () => {
     const [serversParams, setServersParams] = useState([]);
+    const [displayAddModal, setDisplayAddModal] = useState(false);
 
     const serverService = useMemo(
         () => {
@@ -48,10 +53,19 @@ const AdminDhis2ServersPage = () => {
 
     useEffect(() => fetchServersList(),[]);
 
+    const toggleAddModal = () => {
+        setDisplayAddModal(!displayAddModal);
+    };
+
+    const onSubmitAdd = () => {
+        toggleAddModal();
+    };
+
     const removeServer = (server) => {
         serverService.removeServer(server.serverId)
           .then(() => {
             fetchServersList();
+            toast.success('Server has been removed!');
           });
     }
 
@@ -101,7 +115,12 @@ const AdminDhis2ServersPage = () => {
             <div className="admin-dhis-row">
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
-                        <button className="add admin-dhis2-table-add-button">Add Server</button>
+                        <button 
+                            className="add admin-dhis2-table-add-button"
+                            onClick={toggleAddModal}
+                        >
+                            Add Server
+                        </button>
                     </div>
                     <Table
                         columns={columns}
@@ -109,6 +128,19 @@ const AdminDhis2ServersPage = () => {
                     />
                 </div>
             </div>
+            <Modal
+                isOpen={displayAddModal}
+                children={[
+                    <AdminDhis2ServersForm
+                        onSubmit={onSubmitAdd}
+                        onCancel={toggleAddModal} 
+                        title={displayAddModal ? 'Add Server' : 'Edit Server'}
+                        initialFormValue={[{}]} 
+                        mode={displayAddModal ? 'Add' : 'Edit'}
+                        refetch={fetchServersList}
+                    />
+                ]}
+      />
         </>
     )
 };

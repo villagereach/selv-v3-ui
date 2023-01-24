@@ -1,5 +1,8 @@
 .admin-dhis2 {  
   
+  .page-responsive .page-header-responsive {
+    padding: 0.5em 1em 0em;
+  }
 
   .admin-dhis-row {
     display: flex;
@@ -63,6 +66,69 @@
   .admin-dhis2-table-add-button {
     margin-right: 5px;
     margin-left: auto;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5em 0;
+    max-width: 100%;
+  }
+
+  .form-container .form-body {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0em 1em 1em;
+    margin-bottom: 6px;
+  }
+
+  .field-full-width {
+    width: 100%;
+
+    input {
+      width: 100%;
+      height: 36px;
+    }
+
+    select {
+      width: 100%;
+      height: 50px;
+      vertical-align: middle;
+    }
+  }
+
+  input.number {
+    text-align: left;
+  }
+
+  .required label:after {
+    color: #e32;
+    content: " *";
+    display:inline;
+  }
+
+  .navbar {
+    overflow: hidden;
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 4px;
+
+    #navbar-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button {
+      float: left;
+      height: 38px;
+      width: 100px;
+      margin-left: 14px;
+      margin-right: 14px;
+    }
   }
 
 }
