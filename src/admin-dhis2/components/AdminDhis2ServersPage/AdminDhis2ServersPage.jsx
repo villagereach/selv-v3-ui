@@ -31,6 +31,8 @@ const AdminDhis2ServersPage = () => {
     
     const [serversParams, setServersParams] = useState([]);
     const [displayAddModal, setDisplayAddModal] = useState(false);
+    const [displayEditModal, setDisplayEditModal] = useState(false);
+    const [objectToEdit, setObjectToEdit] = useState({ id: null });
 
     const serverService = useMemo(
         () => {
@@ -43,12 +45,14 @@ const AdminDhis2ServersPage = () => {
         serverService.getServerConfig()
             .then((fetchedServer) => {
                 const { content } = fetchedServer
-
+                
                 const serversParams = content.map((server) => ({
                     serverId: server.id,
                     serverName: server.name,
                     serverUrl: server.url,
-                    serverUsername: server.username
+                    serverUsername: server.username,
+                    // TODO - password - make double verification of password
+                    serverPassword: server.password
                 }))
                 setServersParams(serversParams);
             });
@@ -62,6 +66,27 @@ const AdminDhis2ServersPage = () => {
 
     const onSubmitAdd = () => {
         toggleAddModal();
+    };
+
+    const toggleEditModal = (record) => {
+        if (record && record.serverId !== undefined) {
+            const serverObject = serversParams.find(
+                (server) => server.serverId === record.serverId
+            );
+            setObjectToEdit((prevState) => ({
+                ...prevState,
+                id: serverObject.serverId,
+                name: serverObject.serverName,
+                username: serverObject.serverUsername,
+                url: serverObject.serverUrl,
+                password: serverObject.serverPassword,
+            }));
+        }
+        setDisplayEditModal(!displayEditModal);
+    };
+
+    const onSubmitEdit = (record) => {
+        toggleEditModal(record);
     };
 
     const removeServer = (server) => {
@@ -108,7 +133,9 @@ const AdminDhis2ServersPage = () => {
                         >
                             View
                         </ResponsiveButton>
-                        <ResponsiveButton>
+                        <ResponsiveButton
+                            onClick={() => toggleEditModal(values)}
+                        >
                             Edit
                         </ResponsiveButton>
                         <TrashButton
@@ -144,13 +171,13 @@ const AdminDhis2ServersPage = () => {
                 </div>
             </div>
             <Modal
-                isOpen={displayAddModal}
+                isOpen={displayAddModal || displayEditModal}
                 children={[
                     <AdminDhis2ServersForm
-                        onSubmit={onSubmitAdd}
-                        onCancel={toggleAddModal} 
+                        onSubmit={displayAddModal ? onSubmitAdd : onSubmitEdit}
+                        onCancel={displayAddModal ? toggleAddModal : toggleEditModal} 
                         title={displayAddModal ? 'Add Server' : 'Edit Server'}
-                        initialFormValue={[{}]} 
+                        initialFormValue={displayAddModal ? [{}] : [objectToEdit]} 
                         mode={displayAddModal ? 'Add' : 'Edit'}
                         refetch={fetchServersList}
                     />

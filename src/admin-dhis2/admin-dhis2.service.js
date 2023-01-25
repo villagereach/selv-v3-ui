@@ -37,6 +37,10 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/'),
                 method: 'POST'
             },
+            editServer: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:id'),
+                method: 'PUT'
+            },
             removeServer: {
                 url: openlmisUrlFactory('/api/serverConfiguration/:id'),
                 method: 'DELETE'
@@ -45,6 +49,7 @@
 
         this.getServerConfig = getServerConfig;
         this.addServer = addServer;
+        this.editServer = editServer;
         this.removeServer = removeServer;
 
         function getServerConfig() {
@@ -54,6 +59,12 @@
         function addServer(server) {
             var requestServerData = server.items[0];
             return resource.addServer(requestServerData).$promise;
+        }
+
+        function editServer(server, serverId) {
+            return resource.editServer({
+                id: serverId
+            }, server).$promise;
         }
 
         function removeServer(server) {
