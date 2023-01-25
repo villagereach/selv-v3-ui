@@ -36,7 +36,7 @@
             }
         })
             .state('openlmis.administration.dhis2.dataset', {
-                url: '/dataset',
+                url: '/:serverName',
                 isOffline: false,
                 showInNavigation: false,
                 showInNavigationOnLowResolutions: false

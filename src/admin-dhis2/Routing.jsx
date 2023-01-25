@@ -24,7 +24,7 @@ const Routing = () => (
         <Router basename="/" hashType="hashbang">
             <Breadcrumbs routes={[ { path: "/administration/dhis2", breadcrumb: 'DHIS2' } ]} />
             <Switch>
-                <Route exact path="/administration/dhis2/dataset">
+                <Route exact path="/administration/dhis2/:serverName">
                     <AdminDhis2DatasetPage />
                 </Route>
                 <Route exact path="/administration/dhis2">

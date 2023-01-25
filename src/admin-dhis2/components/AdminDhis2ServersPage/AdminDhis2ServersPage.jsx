@@ -77,7 +77,7 @@ const AdminDhis2ServersPage = () => {
             data: data,
         };
         history.push({
-            pathname: "/administration/dhis2/dataset",
+            pathname: `/administration/dhis2/${data.serverName}`,
             state: stateServer
         });
     }
