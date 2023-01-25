@@ -14,6 +14,7 @@
  */
 
 import React, { useMemo, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
@@ -26,6 +27,8 @@ import Modal from '../Modal/Modal';
 import AdminDhis2ServersForm from '../AdminDhis2ServersForm/AdminDhis2ServersForm';
 
 const AdminDhis2ServersPage = () => {
+    const history = useHistory();
+    
     const [serversParams, setServersParams] = useState([]);
     const [displayAddModal, setDisplayAddModal] = useState(false);
 
@@ -69,6 +72,16 @@ const AdminDhis2ServersPage = () => {
           });
     }
 
+    const goToDatasetPage = (data) => {
+        const stateServer = {
+            data: data,
+        };
+        history.push({
+            pathname: `/administration/dhis2/${data.serverName}`,
+            state: stateServer
+        });
+    }
+
     useEffect(() => {}, [serversParams]);
 
     const columns = useMemo(
@@ -90,7 +103,9 @@ const AdminDhis2ServersPage = () => {
                 accessor: 'serverId',
                 Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
-                        <ResponsiveButton>
+                        <ResponsiveButton
+                            onClick={() => goToDatasetPage(values)}
+                        >
                             View
                         </ResponsiveButton>
                         <ResponsiveButton>

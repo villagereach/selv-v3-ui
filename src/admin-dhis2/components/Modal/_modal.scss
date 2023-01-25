@@ -10,11 +10,12 @@
 .modal-main {
   position:fixed;
   background: white;
-  width: 50%;
   height: auto;
   top:50%;
   left:50%;
   transform: translate(-50%,-50%);
+  width: 600px;
+  margin: 30px auto;
 }
   
 .display-block {

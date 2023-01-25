@@ -14,25 +14,12 @@
  */
 
 import React from 'react';
-import Breadcrumbs from '../react-components/breadcrumbs/breadcrumbs';
-import AdminDhis2ServersPage from "./components/AdminDhis2ServersPage/AdminDhis2ServersPage";
-import AdminDhis2DatasetPage from './components/AdminDhis2DatasetPage';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
-const Routing = () => (
-    <div className="page-responsive">
-        <Router basename="/" hashType="hashbang">
-            <Breadcrumbs routes={[ { path: "/administration/dhis2", breadcrumb: 'DHIS2' } ]} />
-            <Switch>
-                <Route exact path="/administration/dhis2/:serverName">
-                    <AdminDhis2DatasetPage />
-                </Route>
-                <Route exact path="/administration/dhis2">
-                    <AdminDhis2ServersPage />
-                </Route>
-            </Switch>
-        </Router>
-    </div>
-);
+const AdminDhis2DatasetPage = () => {
 
-export default Routing;
+    return (
+        <></>
+    );
+};
+
+export default AdminDhis2DatasetPage;
