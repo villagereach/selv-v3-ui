@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import getService from '../../../react-components/utils/angular-utils';
 import InputField from '../../../react-components/form-fields/input-field';
 import AddButton from '../../../react-components/buttons/add-button';
-
+import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 
 function AdminDhis2ServersForm({
     onSubmit, onCancel, 
@@ -50,13 +50,28 @@ function AdminDhis2ServersForm({
   const addServer = (server) => {
       serverService.addServer(server).then(() => {
           onCancel();
-          toast.success("Server saved successfully!");
+          toast.success("Server added successfully!");
           refetch();
       })
       .catch((error) => {
           onCancel();
           toast.error(error);
       })
+  }
+
+  const editServer = (server) => {
+    const requestServerData = server.items[0];
+    const serverId = requestServerData.id;
+    delete requestServerData.id;
+    serverService.editServer(requestServerData, serverId).then(() => {
+        onCancel();
+        toast.success("Server saved successfully!");
+        refetch();
+    })
+    .catch((error) => {
+        onCancel();
+        toast.error(error);
+    })
   }
 
   return (
@@ -83,6 +98,7 @@ function AdminDhis2ServersForm({
                                         <div key={name}>
                                             <InputField
                                                 required
+                                                maxLength={50}
                                                 numeric={false}
                                                 name={`${name}.name`}
                                                 label="Name"
@@ -90,6 +106,7 @@ function AdminDhis2ServersForm({
                                             />
                                             <InputField
                                                 required
+                                                maxLength={100}
                                                 numeric={false}
                                                 name={`${name}.url`}
                                                 label="Url"
@@ -97,6 +114,7 @@ function AdminDhis2ServersForm({
                                             />
                                             <InputField
                                                 required
+                                                maxLength={50}
                                                 numeric={false}
                                                 name={`${name}.username`}
                                                 label="Username"
@@ -104,6 +122,7 @@ function AdminDhis2ServersForm({
                                             />
                                             <InputField
                                                 required
+                                                maxLength={50}
                                                 numeric={false}
                                                 type='password'
                                                 name={`${name}.password`}
@@ -117,22 +136,33 @@ function AdminDhis2ServersForm({
                                 <div className="navbar">
                                     <div id='navbar-wrap'>
                                         <div>
-                                            <button type="button" className="primary">
-                                                <span>Test</span>
+                                            <button 
+                                                type="button" 
+                                                className="secondary" 
+                                                onClick={onCancel}
+                                            >
+                                                <span>Cancel</span>
                                             </button>
                                         </div>
                                         
                                         <div>
-                                            <AddButton
-                                                className="primary"
-                                                disabled={invalid}
-                                                onClick={() => addServer(values)}
-                                            >
-                                                Add
-                                            </AddButton>
-                                            <button type="button" className="danger" onClick={onCancel}>
-                                                <span>Cancel</span>
-                                            </button>
+                                            { mode === 'Add' ?
+                                                <AddButton
+                                                    className="primary"
+                                                    disabled={invalid}
+                                                    onClick={() => addServer(values)}
+                                                >
+                                                    Add
+                                                </AddButton>
+                                            :
+                                                <ResponsiveButton
+                                                    className="primary" 
+                                                    disabled={invalid}
+                                                    onClick={() => editServer(values)}
+                                                >
+                                                    Edit
+                                                </ResponsiveButton>
+                                            }
                                         </div>
                                     </div>
                                 </div>
