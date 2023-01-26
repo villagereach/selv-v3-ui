@@ -160,7 +160,7 @@ function AdminDhis2ServersForm({
                                                     disabled={invalid}
                                                     onClick={() => editServer(values)}
                                                 >
-                                                    Edit
+                                                    Save
                                                 </ResponsiveButton>
                                             }
                                         </div>
