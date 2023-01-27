@@ -45,7 +45,7 @@ const AdminDhis2DatasetPage = () => {
             if (serverId) {
             datasetService.getServerDatasets(serverId)
                 .then((fetchedServerDatasets) => {
-                    const { content } = fetchedServerDatasets
+                    const { content } = fetchedServerDatasets;
                 
                     const datasets = content.map((dataset) => ({
                         datasetId: dataset.id,
@@ -53,7 +53,7 @@ const AdminDhis2DatasetPage = () => {
                         dhisDatasetId: dataset.dhisDatasetId,
                         cronExpression: dataset.cronExpression,
                         serverDto: dataset.serverDto
-                    }))
+                    }));
                     setDatasetsParams(datasets);
                 });
             }
