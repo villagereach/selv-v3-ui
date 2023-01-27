@@ -13,12 +13,110 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-import React from 'react';
+import React, { useMemo, useEffect, useState }  from 'react';
+import { useLocation } from 'react-router-dom';
+
+import getService from '../../../react-components/utils/angular-utils';
+import Table from '../../../react-components/table/table';
+import TrashButton from '../../../react-components/buttons/trash-button';
+import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 
 const AdminDhis2DatasetPage = () => {
+    const location = useLocation();
+
+    const [datasetsParams, setDatasetsParams] = useState([]);
+    const [serverId, setServerId] = useState(null);
+
+    const datasetService = useMemo(
+        () => {
+            return getService('adminDhis2');
+        },
+        []
+    );
+
+    useEffect(() => {
+        location.state = location?.state ?? JSON.parse(localStorage.getItem('stateLocation'));
+        if (location.state !== undefined) {
+            setServerId(location.state.data.serverId);
+        }
+    }, [location]);
+
+    const fetchServerDatasetsList = () => {
+            if (serverId) {
+            datasetService.getServerDatasets(serverId)
+                .then((fetchedServerDatasets) => {
+                    const { content } = fetchedServerDatasets
+                
+                    const datasets = content.map((dataset) => ({
+                        datasetId: dataset.id,
+                        datasetName: dataset.name,
+                        dhisDatasetId: dataset.dhisDatasetId,
+                        cronExpression: dataset.cronExpression,
+                        serverDto: dataset.serverDto
+                    }))
+                    setDatasetsParams(datasets);
+                });
+            }
+    }
+
+    useEffect(() => fetchServerDatasetsList(), [serverId]);
+
+    useEffect(() => {}, [datasetsParams]);
+
+    const columns = useMemo(
+        () => [
+            {
+                Header: 'Name',
+                accessor: 'datasetName'
+            },
+            {
+                Header: 'ID',
+                accessor: 'dhisDatasetId'
+            },
+            {
+                Header: 'Schedule',
+                accessor: 'cronExpression',
+            },
+            {
+                Header: 'Actions',
+                accessor: 'datasetId',
+                Cell: ({ row: { values } }) => (
+                     <div className='admin-dhis2-table-actions'>
+                        <ResponsiveButton
+                            onClick={() => {}}
+                        >
+                            View
+                        </ResponsiveButton>
+                        <TrashButton
+                            onClick={() => {}}
+                        />
+                    </div>
+                )
+            },
+        ],
+        [datasetsParams]
+    );
 
     return (
-        <></>
+        <>
+            <h2 className="admin-dhis2-table-title">Server Datasets</h2>
+            <div className="admin-dhis-row">
+                <div className="admin-dhis-main">
+                    <div className="admin-dhis2-table-header">
+                        <button 
+                            className="add admin-dhis2-table-add-button"
+                            onClick={() => {}}
+                        >
+                            Add Dataset
+                        </button>
+                    </div>
+                    <Table
+                        columns={columns}
+                        data={datasetsParams}
+                    />
+                </div>
+            </div>
+        </>
     );
 };
 

@@ -101,6 +101,7 @@ const AdminDhis2ServersPage = () => {
         const stateServer = {
             data: data,
         };
+        localStorage.setItem('stateLocation', JSON.stringify(stateServer));
         history.push({
             pathname: `/administration/dhis2/${data.serverName}`,
             state: stateServer
