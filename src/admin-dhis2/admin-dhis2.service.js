@@ -55,6 +55,7 @@
         this.addServer = addServer;
         this.editServer = editServer;
         this.removeServer = removeServer;
+
         this.getServerDatasets = getServerDatasets;
 
         function getServerConfig() {
