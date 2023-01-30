@@ -48,6 +48,10 @@
             getServerDatasets: {
                 url: openlmisUrlFactory('/api/serverConfiguration/:id/datasets'),
                 method: 'GET'
+            },
+            removeDataset: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId'),
+                method: 'DELETE'
             }
         });
 
@@ -55,6 +59,7 @@
         this.addServer = addServer;
         this.editServer = editServer;
         this.removeServer = removeServer;
+        this.removeDataset = removeDataset;
 
         this.getServerDatasets = getServerDatasets;
 
@@ -83,6 +88,13 @@
             return resource.getServerDatasets({
                 id: serverId
             }, serverId).$promise;
+        }
+
+        function removeDataset(serverId, datasetId) {
+            return resource.removeDataset({
+                serverId: serverId,
+                datasetId: datasetId
+            }, datasetId).$promise;
         }
     }
 })();
