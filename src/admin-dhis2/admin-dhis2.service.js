@@ -59,9 +59,9 @@
         this.addServer = addServer;
         this.editServer = editServer;
         this.removeServer = removeServer;
-        this.removeDataset = removeDataset;
 
         this.getServerDatasets = getServerDatasets;
+        this.removeDataset = removeDataset;
 
         function getServerConfig() {
             return resource.get().$promise;
