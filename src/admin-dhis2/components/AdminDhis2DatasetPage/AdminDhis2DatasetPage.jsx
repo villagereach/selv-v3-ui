@@ -15,11 +15,13 @@
 
 import React, { useMemo, useEffect, useState }  from 'react';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
+import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 import Modal from '../Modal/Modal';
 import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
@@ -50,7 +52,7 @@ const AdminDhis2DatasetPage = () => {
             datasetService.getServerDatasets(serverId)
                 .then((fetchedServerDatasets) => {
                     const { content } = fetchedServerDatasets;
-                
+
                     const datasets = content.map((dataset) => ({
                         datasetId: dataset.id,
                         datasetName: dataset.name,
@@ -64,6 +66,14 @@ const AdminDhis2DatasetPage = () => {
     }
 
     useEffect(() => fetchServerDatasetsList(), [serverId]);
+
+    const removeDataset = (dataset) => {
+        datasetService.removeDataset(serverId, dataset.datasetId)
+            .then(() => {
+                fetchServerDatasetsList();
+                toast.success('Dataset has been removed!');
+            });
+    }
 
     useEffect(() => {}, [datasetsParams]);
 
@@ -100,7 +110,10 @@ const AdminDhis2DatasetPage = () => {
                             View
                         </ResponsiveButton>
                         <TrashButton
-                            onClick={() => {}}
+                            onClick={() => confirmDialogAlert({
+                                title: `Are you sure you want to remove dataset ${values.datasetName}?`,
+                                onConfirm: () => removeDataset(values)
+                            })}
                         />
                     </div>
                 )
@@ -115,7 +128,7 @@ const AdminDhis2DatasetPage = () => {
             <div className="admin-dhis-row">
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
-                        <button 
+                        <button
                             className="add admin-dhis2-table-add-button"
                             onClick={toggleAddModal}
                         >
