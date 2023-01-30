@@ -21,11 +21,15 @@ import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 
+import Modal from '../Modal/Modal';
+import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
+
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
 
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
+    const [displayAddModal, setDisplayAddModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -62,6 +66,14 @@ const AdminDhis2DatasetPage = () => {
     useEffect(() => fetchServerDatasetsList(), [serverId]);
 
     useEffect(() => {}, [datasetsParams]);
+
+    const toggleAddModal = () => {
+        setDisplayAddModal(!displayAddModal);
+    };
+
+    const onSubmitAdd = () => {
+        toggleAddModal();
+    };
 
     const columns = useMemo(
         () => [
@@ -105,7 +117,7 @@ const AdminDhis2DatasetPage = () => {
                     <div className="admin-dhis2-table-header">
                         <button 
                             className="add admin-dhis2-table-add-button"
-                            onClick={() => {}}
+                            onClick={toggleAddModal}
                         >
                             Add Dataset
                         </button>
@@ -116,6 +128,19 @@ const AdminDhis2DatasetPage = () => {
                     />
                 </div>
             </div>
+            <Modal
+                isOpen={displayAddModal}
+                children={[
+                    <AdminDhis2DatasetForm
+                        onSubmit={onSubmitAdd}
+                        onCancel={toggleAddModal} 
+                        title={'Add Dataset'}
+                        initialFormValue={[{}]} 
+                        mode={'Add'}
+                        refetch={fetchServerDatasetsList}
+                    />
+                ]}
+            />
         </>
     );
 };
