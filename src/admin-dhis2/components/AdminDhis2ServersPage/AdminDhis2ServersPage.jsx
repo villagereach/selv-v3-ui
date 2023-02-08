@@ -28,7 +28,7 @@ import AdminDhis2ServersForm from '../AdminDhis2ServersForm/AdminDhis2ServersFor
 
 const AdminDhis2ServersPage = () => {
     const history = useHistory();
-    
+
     const [serversParams, setServersParams] = useState([]);
     const [displayAddModal, setDisplayAddModal] = useState(false);
     const [displayEditModal, setDisplayEditModal] = useState(false);
@@ -45,7 +45,7 @@ const AdminDhis2ServersPage = () => {
         serverService.getServerConfig()
             .then((fetchedServer) => {
                 const { content } = fetchedServer
-                
+
                 const serversParams = content.map((server) => ({
                     serverId: server.id,
                     serverName: server.name,
@@ -158,7 +158,12 @@ const AdminDhis2ServersPage = () => {
             <div className="admin-dhis-row">
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
-                        <button 
+                        <button
+                            onClick={() => serverService.syncServers()}
+                        >
+                            Sync
+                        </button>
+                        <button
                             className="add admin-dhis2-table-add-button"
                             onClick={toggleAddModal}
                         >
@@ -176,9 +181,9 @@ const AdminDhis2ServersPage = () => {
                 children={[
                     <AdminDhis2ServersForm
                         onSubmit={displayAddModal ? onSubmitAdd : onSubmitEdit}
-                        onCancel={displayAddModal ? toggleAddModal : toggleEditModal} 
+                        onCancel={displayAddModal ? toggleAddModal : toggleEditModal}
                         title={displayAddModal ? 'Add Server' : 'Edit Server'}
-                        initialFormValue={displayAddModal ? [{}] : [objectToEdit]} 
+                        initialFormValue={displayAddModal ? [{}] : [objectToEdit]}
                         mode={displayAddModal ? 'Add' : 'Edit'}
                         refetch={fetchServersList}
                     />
