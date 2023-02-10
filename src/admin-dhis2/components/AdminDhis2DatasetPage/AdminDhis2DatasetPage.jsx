@@ -14,7 +14,7 @@
  */
 
 import React, { useMemo, useEffect, useState }  from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
@@ -28,6 +28,7 @@ import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetFor
 
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
+    const history = useHistory();
 
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
@@ -85,6 +86,19 @@ const AdminDhis2DatasetPage = () => {
         toggleAddModal();
     };
 
+    const goToDataElementsPage = (data) => {
+        const datasetState = {
+            data: data,
+        };
+        const serverItem = JSON.parse(localStorage.getItem('stateLocation'));
+
+        localStorage.setItem('datasetState', JSON.stringify(datasetState));
+        history.push({
+            pathname: `/administration/dhis2/${serverItem.data.serverName}/${data.datasetName}`,
+            state: datasetState
+        });
+    }
+
     const columns = useMemo(
         () => [
             {
@@ -105,7 +119,7 @@ const AdminDhis2DatasetPage = () => {
                 Cell: ({ row: { values } }) => (
                      <div className='admin-dhis2-table-actions'>
                         <ResponsiveButton
-                            onClick={() => {}}
+                            onClick={() => goToDataElementsPage(values)}
                         >
                             View
                         </ResponsiveButton>
@@ -146,9 +160,9 @@ const AdminDhis2DatasetPage = () => {
                 children={[
                     <AdminDhis2DatasetForm
                         onSubmit={onSubmitAdd}
-                        onCancel={toggleAddModal} 
+                        onCancel={toggleAddModal}
                         title={'Add Dataset'}
-                        initialFormValue={[{}]} 
+                        initialFormValue={[{}]}
                         mode={'Add'}
                         refetch={fetchServerDatasetsList}
                     />
