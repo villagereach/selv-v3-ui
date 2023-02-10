@@ -15,11 +15,13 @@
 
 import React, { useMemo, useEffect, useState }  from 'react';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
 import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
+import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 const AdminDhis2DataElementsPage = () => {
     const location = useLocation();
@@ -66,6 +68,14 @@ const AdminDhis2DataElementsPage = () => {
 
     useEffect(() => fetchDataElementsList(), [datasetId]);
 
+    const removeDataElement = (dataElement) => {
+        datasetService.removeDataElement(serverId, datasetId, dataElement.dataElementId)
+            .then(() => {
+                fetchDataElementsList();
+                toast.success('Data Element has been removed!');
+            });
+    }
+
     useEffect(() => {}, [dataElementsParams]);
 
     const columns = useMemo(
@@ -93,7 +103,7 @@ const AdminDhis2DataElementsPage = () => {
             {
                 Header: 'Actions',
                 accessor: 'dataElementId',
-                Cell: () => (
+                Cell: ({ row: { values } }) => (
                     <div className='admin-dhis2-table-actions'>
                         <ResponsiveButton
                             onClick={() => {}}
@@ -101,7 +111,10 @@ const AdminDhis2DataElementsPage = () => {
                             View
                         </ResponsiveButton>
                         <TrashButton
-                            onClick={() => {}}
+                            onClick={() => confirmDialogAlert({
+                                title: `Are you sure you want to remove Data Element ${values.dataElementName}?`,
+                                onConfirm: () => removeDataElement(values)
+                            })}
                         />
                     </div>
                 )
