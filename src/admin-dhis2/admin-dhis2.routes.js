@@ -40,6 +40,12 @@
                 isOffline: false,
                 showInNavigation: false,
                 showInNavigationOnLowResolutions: false
+            })
+            .state('openlmis.administration.dhis2.dataset.element', {
+                url: '/:datasetName',
+                isOffline: false,
+                showInNavigation: false,
+                showInNavigationOnLowResolutions: false
             });
     }
 })();
