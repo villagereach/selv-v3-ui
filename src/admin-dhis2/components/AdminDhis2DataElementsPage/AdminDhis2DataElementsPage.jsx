@@ -41,7 +41,7 @@ const AdminDhis2DataElementsPage = () => {
 
         if (serverItem !== undefined || datasetItem !== undefined) {
             setServerId(serverItem.data.serverId);
-            setDatasetId(datasetItem.data.datasetId)
+            setDatasetId(datasetItem.data.datasetId);
         }
     }, [location]);
 

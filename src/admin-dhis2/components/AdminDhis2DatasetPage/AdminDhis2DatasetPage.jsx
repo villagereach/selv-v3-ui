@@ -90,7 +90,7 @@ const AdminDhis2DatasetPage = () => {
         const datasetState = {
             data: data,
         };
-        const serverItem = JSON.parse(localStorage.getItem('stateLocation'))
+        const serverItem = JSON.parse(localStorage.getItem('stateLocation'));
 
         localStorage.setItem('datasetState', JSON.stringify(datasetState));
         history.push({
