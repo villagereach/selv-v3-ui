@@ -61,9 +61,17 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elements/:elementId'),
                 method: 'DELETE'
             },
+            addDataElement: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elements'),
+                method: 'POST'
+            },
             syncServers: {
                 url: openlmisUrlFactory('/api/execute'),
                 method: 'POST'
+            },
+            getDataOrderables: {
+                url: openlmisUrlFactory('/api/orderables'),
+                method: 'GET'
             }
         });
 
@@ -77,7 +85,9 @@
 
         this.getDataElements = getDataElements;
         this.removeDataElement = removeDataElement;
+        this.addDataElement = addDataElement;
 
+        this.getDataOrderables = getDataOrderables;
         this.syncServers = syncServers;
 
         function getServerConfig() {
@@ -121,12 +131,23 @@
             }, datasetId).$promise;
         }
 
+        function addDataElement(serverId, datasetId) {
+            return resource.addDataElement({
+                serverId: serverId,
+                datasetId: datasetId
+            }, datasetId).$promise;
+        }
+
         function removeDataElement(serverId, datasetId, elementId) {
             return resource.removeDataElement({
                 serverId: serverId,
                 datasetId: datasetId,
                 elementId: elementId
             }, elementId).$promise;
+        }
+
+        function getDataOrderables() {
+            return resource.getDataOrderables().$promise;
         }
 
         function syncServers() {
