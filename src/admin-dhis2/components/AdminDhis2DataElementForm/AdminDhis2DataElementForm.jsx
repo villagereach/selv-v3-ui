@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import getService from '../../../react-components/utils/angular-utils';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
 
-function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datasetId}) {
+function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId }) {
 
     const indicatorTypeOptions = [
         {name: 'Stock Management', value: 'Stock Management'},
@@ -21,16 +21,16 @@ function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datas
 
     const [productOptions, setProductOptions] = useState([]);
 
-    const [providedName, setProvidedName] = useState("")
-    const [selectedProduct, setSelectedProduct] = useState("")
-    const [selectedIndicator, setSelectedIndicator] = useState("")
-    const [selectedIndicatorType, setSelectedIndicatorType] = useState("")
+    const [providedName, setProvidedName] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState("");
+    const [selectedIndicator, setSelectedIndicator] = useState("");
+    const [selectedIndicatorType, setSelectedIndicatorType] = useState("");
 
     const setInitialValues = () => {
-        setProvidedName('')
-        setSelectedProduct('')
-        setSelectedIndicator('')
-        setSelectedIndicatorType('')
+        setProvidedName('');
+        setSelectedProduct('');
+        setSelectedIndicator('');
+        setSelectedIndicatorType('');
     }
 
     const serverService = useMemo(
@@ -43,7 +43,7 @@ function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datas
     const fetchDataOrderables = () => {
         serverService.getDataOrderables()
             .then((fetchedOrderables) => {
-                const { content } = fetchedOrderables
+                const { content } = fetchedOrderables;
 
                 const elements = content.map((element) => ({
                     name: element.fullProductName,
@@ -55,7 +55,7 @@ function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datas
     }
 
     useEffect(() => {
-        fetchDataOrderables()
+        fetchDataOrderables();
     }, [])
 
     const submitDataElement = () => {
@@ -69,10 +69,10 @@ function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datas
 
         serverService.addDataElement(serverId, datasetId, element)
             .then(() => {
-                refetch()
-                onSubmit()
+                refetch();
+                onSubmit();
                 toast.success('Data Element has been added successfully!');
-                setInitialValues()
+                setInitialValues();
             });
     }
 
