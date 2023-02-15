@@ -17,7 +17,8 @@
     'use strict';
 
     angular.module('admin-dhis2', [
-        'react-components'
+        'react-components',
+        'requisition-order-create'
     ]);
 
 })();

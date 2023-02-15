@@ -22,6 +22,8 @@ import Table from '../../../react-components/table/table';
 import TrashButton from '../../../react-components/buttons/trash-button';
 import ResponsiveButton from '../../../react-components/buttons/responsive-button';
 import confirmDialogAlert from '../../../react-components/modals/confirm';
+import Modal from "../Modal/Modal";
+import AdminDhis2DataElementForm from "../AdminDhis2DataElementForm/AdminDhis2DataElementForm";
 
 const AdminDhis2DataElementsPage = () => {
     const location = useLocation();
@@ -29,6 +31,7 @@ const AdminDhis2DataElementsPage = () => {
     const [dataElementsParams, setDataElementsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
     const [datasetId, setDatasetId] = useState(null);
+    const [displayAddModal, setDisplayAddModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -77,6 +80,14 @@ const AdminDhis2DataElementsPage = () => {
     }
 
     useEffect(() => {}, [dataElementsParams]);
+
+    const toggleAddModal = () => {
+        setDisplayAddModal(!displayAddModal);
+    };
+
+    const onSubmitAdd = () => {
+        toggleAddModal();
+    };
 
     const columns = useMemo(
         () => [
@@ -131,6 +142,7 @@ const AdminDhis2DataElementsPage = () => {
                     <div className="admin-dhis2-table-header">
                         <button
                             className="add admin-dhis2-table-add-button"
+                            onClick={toggleAddModal}
                         >
                             Add Data Element Mapping
                         </button>
@@ -141,6 +153,18 @@ const AdminDhis2DataElementsPage = () => {
                     />
                 </div>
             </div>
+            <Modal
+                isOpen={displayAddModal}
+                children={[
+                    <AdminDhis2DataElementForm
+                        onSubmit={onSubmitAdd}
+                        onCancel={toggleAddModal}
+                        refetch={fetchDataElementsList}
+                        serverId={serverId}
+                        datasetId={datasetId}
+                    />
+                ]}
+            />
         </>
     );
 };
