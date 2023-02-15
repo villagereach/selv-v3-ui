@@ -1,0 +1,152 @@
+$accent-color: #49baeb;
+$light-grey: #bebebe;
+
+.element-create-form {
+  .section {
+    margin: 0.5em 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .select-search {
+    .input {
+      width: 100%;
+    }
+
+    .options {
+      width: 100%;
+    }
+  }
+}
+
+.bottom-bar {
+  overflow: hidden;
+  background-color: white;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.text-field{
+  box-shadow: inset 0 0 0.5em #bebebe;
+  border: 1px solid #bebebe;
+  background-color: inherit;
+  border-radius: 4px;
+  padding: 0.5em;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-color;
+    box-shadow: inset 0 0 0.5em $accent-color;
+  }
+}
+
+.select-search {
+  background: #fff;
+  display: inline-block;
+  max-height: 40vh;
+
+  .search {
+
+    .input-wrapper {
+      display:inline-block;
+      position: relative;
+      width: 100%;
+
+      &:before {
+        font-family: 'FONTAWESOME';
+        content: '\f0d7'; // fa-caret-down
+        position: absolute;
+        left: 1em;
+        color: $light-grey;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .input {
+        box-shadow: inset 0 0 0.5em $light-grey;
+        border: 1px solid $light-grey;
+        background-color: inherit;
+        border-radius: 4px;
+        padding: 0.5em 0.5em 0.5em 2em;
+
+        &:focus {
+          outline: none;
+          border-color: $accent-color;
+          box-shadow: inset 0 0 0.5em $accent-color;
+        }
+      }
+
+      .clear-icon {
+        margin-left: -2em;
+        color: $light-grey;
+
+        &:hover {
+          color: #a94442;
+        }
+      }
+    }
+  }
+
+  &.is-disabled {
+    .input {
+      box-shadow: 0 0 0 $light-grey;
+      cursor: not-allowed;
+    }
+  }
+
+  .select {
+    position: absolute;
+    z-index:100;
+    border: $light-grey 1px solid;
+    box-shadow: 0 0.25em 1em #e4e4e4;
+    background-color: #fff;
+    overflow-y: auto;
+    max-height: 40vh;
+    width: 572px;
+
+    .options {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        cursor: pointer;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
+
+        &:hover {
+          background-color: $accent-color;
+          color: #fff;
+        }
+
+        &.not-found {
+          padding: 0.5em;
+        }
+
+        .option {
+          background: none;
+          border: none;
+          color: inherit;
+          cursor: pointer;
+          font: inherit;
+          outline: inherit;
+          padding: 0.5em;
+          text-align: left;
+          width: 100%;
+
+          &.is-selected {
+            background-color: $accent-color;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+

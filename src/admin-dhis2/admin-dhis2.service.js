@@ -131,11 +131,12 @@
             }, datasetId).$promise;
         }
 
-        function addDataElement(serverId, datasetId) {
+        function addDataElement(serverId, datasetId, element) {
             return resource.addDataElement({
                 serverId: serverId,
-                datasetId: datasetId
-            }, datasetId).$promise;
+                datasetId: datasetId,
+                element: element
+            }, element).$promise;
         }
 
         function removeDataElement(serverId, datasetId, elementId) {

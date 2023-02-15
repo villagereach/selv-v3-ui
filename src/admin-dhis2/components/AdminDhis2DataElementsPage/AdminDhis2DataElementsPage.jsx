@@ -159,10 +159,9 @@ const AdminDhis2DataElementsPage = () => {
                     <AdminDhis2DataElementForm
                         onSubmit={onSubmitAdd}
                         onCancel={toggleAddModal}
-                        title={'Add Data Element Mapping'}
-                        initialFormValue={[{}]}
-                        mode={'Add'}
                         refetch={fetchDataElementsList}
+                        serverId={serverId}
+                        datasetId={datasetId}
                     />
                 ]}
             />

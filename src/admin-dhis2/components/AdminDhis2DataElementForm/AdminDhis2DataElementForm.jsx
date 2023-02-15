@@ -1,32 +1,37 @@
 import React, { useMemo, useEffect, useState } from 'react';
-
-import { Form } from 'react-final-form';
-import arrayMutators from 'final-form-arrays';
-import { FieldArray } from 'react-final-form-arrays';
+import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
-import InputField from '../../../react-components/form-fields/input-field';
-import SelectField from '../../../react-components/form-fields/select-field';
-import AddButton from '../../../react-components/buttons/add-button';
+import { SearchSelect } from '../../../requisition-order-create/search-select'
 
-function AdminDhis2DataElementForm({onSubmit, onCancel, title, initialFormValue, mode, refetch}) {
+function AdminDhis2DataElementForm({onSubmit, onCancel, refetch, serverId, datasetId}) {
 
     const indicatorTypeOptions = [
-        {name: 'Stock Management', values: 'Stock Management'},
-        {name: 'Requisition', values: 'Requisition'}
+        {name: 'Stock Management', value: 'Stock Management'},
+        {name: 'Requisition', value: 'Requisition'}
     ];
-    const indicatorOptions = [];
 
-    const [product, setProduct] = useState("")
-    const [productOptions, setProductOptions] = useState();
+    const indicatorOptions = [
+        {name: 'Opening Balance', value: 'Opening Balance'},
+        {name: 'Received', value: 'Received'},
+        {name: 'Closing Balance', value: 'Closing Balance'},
+        {name: 'Total Negative Adjustments', value: 'Total Negative Adjustments'},
+        {name: 'Total Positive Adjustments', value: 'Total Positive Adjustments'}
+    ];
 
-    const validate = values => {
-        const errors = { items: [] };
+    const [productOptions, setProductOptions] = useState([]);
 
-        console.log(values, errors)
+    const [providedName, setProvidedName] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState("")
+    const [selectedIndicator, setSelectedIndicator] = useState("")
+    const [selectedIndicatorType, setSelectedIndicatorType] = useState("")
 
-        return errors;
-    };
+    const setInitialValues = () => {
+        setProvidedName('')
+        setSelectedProduct('')
+        setSelectedIndicator('')
+        setSelectedIndicatorType('')
+    }
 
     const serverService = useMemo(
         () => {
@@ -42,106 +47,98 @@ function AdminDhis2DataElementForm({onSubmit, onCancel, title, initialFormValue,
 
                 const elements = content.map((element) => ({
                     name: element.fullProductName,
-                    value: element.id
+                    value: element.fullProductName
                 }));
                 setProductOptions(elements);
 
             });
     }
 
-    console.log(productOptions)
-
     useEffect(() => {
         fetchDataOrderables()
     }, [])
 
-    return (
-        <div style={{marginBottom: "40px"}}>
-            <Form
-                initialValues={{ items: initialFormValue }}
-                onSubmit={onSubmit}
-                validate={validate}
-                mutators={{ ...arrayMutators }}
-                render={({ handleSubmit, values, invalid }) => (
-                    <form className="form-container" onSubmit={handleSubmit}>
-                        <FieldArray name="items">
-                            {({ fields }) => (
-                                <div className="form-container">
-                                    <div className="page-header-responsive">
-                                        <div id="header-wrap" style={{marginBottom: "24px"}}>
-                                            <h2 id="product-add-header">
-                                                {title}
-                                            </h2>
-                                        </div>
-                                    </div>
-                                    <div className="form-body">
-                                        {fields.map((name, index) => (
-                                            <div key={name}>
-                                                {console.log(name, index)}
-                                                <InputField
-                                                    required
-                                                    maxLength={50}
-                                                    numeric={false}
-                                                    name={`${name}.name`}
-                                                    label="Name"
-                                                    containerClass='field-full-width required'
-                                                />
-                                                <SelectField
-                                                    required
-                                                    name={`${name}.indicatorType`}
-                                                    label="Indicator Type"
-                                                    options={indicatorTypeOptions}
-                                                    objectKey="indicatorType"
-                                                    containerClass='field-full-width required'
-                                                />
-                                                <SelectField
-                                                    required
-                                                    name={`${name}.indicator`}
-                                                    label="Indicator"
-                                                    options={indicatorOptions}
-                                                    objectKey="dataElementIndicator"
-                                                    containerClass='field-full-width required'
-                                                />
-                                                <SelectField
-                                                    required
-                                                    name={`${name}.product`}
-                                                    label="Product"
-                                                    options={productOptions}
-                                                    objectKey='product'
-                                                    containerClass='field-full-width required'
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
+    const submitDataElement = () => {
+        const element = {
+            name: providedName,
+            source: selectedIndicatorType,
+            indicator: selectedIndicator,
+            orderable: selectedProduct,
+            element: `${selectedIndicator} - ${selectedProduct}`
+        }
 
-                                    <div className="navbar">
-                                        <div id='navbar-wrap'>
-                                            <div>
-                                                <button
-                                                    type="button"
-                                                    className="secondary"
-                                                    onClick={onCancel}
-                                                >
-                                                    <span>Cancel</span>
-                                                </button>
-                                            </div>
-                                            <div>
-                                                <AddButton
-                                                    className="primary"
-                                                    disabled={invalid}
-                                                    onClick={() => console.log(values)}
-                                                >
-                                                    Add
-                                                </AddButton>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </FieldArray>
-                    </form>
-                )}
-            />
+        serverService.addDataElement(serverId, datasetId, element)
+            .then(() => {
+                refetch()
+                onSubmit()
+                toast.success('Data Element has been added successfully!');
+                setInitialValues()
+            });
+    }
+
+    return (
+        <div className="page-container">
+            <div className="page-header-responsive">
+                <h2>Add Data Element Mapping</h2>
+            </div>
+            <div className="page-content element-create-form">
+                <div className='section field-full-width'>
+                    <div><strong className="is-required">Name</strong></div>
+                    <input
+                        className='text-field'
+                        value={providedName}
+                        onInput={e => setProvidedName(e.target.value)}
+                    />
+                </div>
+                <div className='section field-full-width'>
+                    <div><strong className="is-required">Indicator Type</strong></div>
+                    <SearchSelect
+                        options={indicatorTypeOptions}
+                        value={selectedIndicatorType}
+                        onChange={value => setSelectedIndicatorType(value)}
+                        placeholder="Select indicator type"
+                    />
+                </div>
+                <div className='section'>
+                    <div><strong className="is-required">Indicator</strong></div>
+                    <SearchSelect
+                        options={indicatorOptions}
+                        value={selectedIndicator}
+                        onChange={value => setSelectedIndicator(value)}
+                        placeholder="Select indicator"
+                    />
+                </div>
+                <div className='section field-full-width'>
+                    <div><strong className="is-required">Product</strong></div>
+                    <SearchSelect
+                        options={productOptions}
+                        value={selectedProduct}
+                        onChange={value => setSelectedProduct(value)}
+                        placeholder="Select product"
+                    />
+                </div>
+                <div className="bottom-bar">
+                    <div>
+                        <button
+                        type="button"
+                        className="secondary"
+                        onClick={onCancel}
+                        >
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                        className="primary"
+                        type="button"
+                        disabled={!selectedProduct || !selectedIndicator || !selectedIndicatorType || !providedName}
+                        onClick={() => submitDataElement()}
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
