@@ -2,7 +2,7 @@ version: "2"
 
 services:
   selv-v3-ui:
-    image: openlmis/dev-ui:${OL_DEV_UI_VERSION}
+    image: openlmis/dev-ui:9.0.5-SNAPSHOT
     working_dir: /app
     volumes:
       - '.:/app'
