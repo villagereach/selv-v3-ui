@@ -8,6 +8,7 @@ fi
 
 echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 
+touch ~/.bash_profile
 curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
 
 /usr/local/bin/docker-compose pull
