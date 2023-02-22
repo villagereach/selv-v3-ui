@@ -2,7 +2,7 @@ version: "2"
 
 services:
   selv-v3-ui:
-    image: openlmis/dev-ui:9.0.5-SNAPSHOT
+    image: openlmis/dev-ui:${OL_DEV_UI_VERSION}
     working_dir: /app
     volumes:
       - '.:/app'
@@ -57,7 +57,7 @@ services:
     volumes:
       - '/openlmis-requisition-ui'
   stockmanagement-ui:
-    image:  openlmis/stockmanagement-ui:2.1.4-SNAPSHOT
+    image: openlmis/stockmanagement-ui:${OL_STOCKMANAGEMENT_UI_VERSION}
     volumes:
      - '/openlmis-stockmanagement-ui'
   cce-ui:

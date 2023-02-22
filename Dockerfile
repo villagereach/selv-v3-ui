@@ -15,4 +15,6 @@ RUN chmod +x run.sh \
   && mv consul/package.json package.json \
   && npm install
 
+RUN curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
+
 CMD ./run.sh
