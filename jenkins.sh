@@ -8,10 +8,6 @@ fi
 
 echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 
-rm -f tx
-touch ~/.bashrc
-curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
-
 /usr/local/bin/docker-compose pull
 /usr/local/bin/docker-compose down --volumes
 /usr/local/bin/docker-compose run --entrypoint ./build.sh selv-v3-ui
