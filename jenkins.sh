@@ -8,6 +8,7 @@ fi
 
 echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 
+rm -f tx
 touch ~/.bash_profile
 curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
 
