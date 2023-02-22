@@ -8,7 +8,9 @@ fi
 
 echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 
-echo "version of dev-ui module is $OL_DEV_UI_VERSION"
+echo "version of dev-ui module is"
+printenv OL_DEV_UI_VERSION
+echo "start pulling"
 
 /usr/local/bin/docker-compose pull
 /usr/local/bin/docker-compose down --volumes
