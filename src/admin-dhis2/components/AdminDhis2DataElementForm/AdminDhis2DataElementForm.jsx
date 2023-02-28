@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import getService from '../../../react-components/utils/angular-utils';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
 
-function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId }) {
+function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId, dataElementsParams }) {
 
     const indicatorTypeOptions = [
         {name: 'Stock Management', value: 'Stock Management'},
@@ -25,12 +25,14 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
     const [selectedProduct, setSelectedProduct] = useState("");
     const [selectedIndicator, setSelectedIndicator] = useState("");
     const [selectedIndicatorType, setSelectedIndicatorType] = useState("");
+    const [errors, setErrors] = useState([]);
 
     const setInitialValues = () => {
         setProvidedName('');
         setSelectedProduct('');
         setSelectedIndicator('');
         setSelectedIndicatorType('');
+        setErrors([]);
     }
 
     const serverService = useMemo(
@@ -76,6 +78,29 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
             });
     }
 
+    const nameValidation = (name) => {
+        const pattern = /^[^-\s]([0-9a-zA-Z\s]){2,50}\s*$/g;
+
+        if (name.length < 3) {
+            setErrors(errors => [...errors, 'Name should contain a minimum of 3 characters']);
+            return
+        }
+
+        if (name.length > 50) {
+            setErrors(errors => [...errors, 'name should contain a maximum of 50 characters']);
+            return
+        }
+
+        if (!pattern.test(name)) {
+            setErrors(errors => [...errors, 'Invalid name']);
+        }
+
+        if (dataElementsParams.find(element => element.dataElementName === name)) {
+            setErrors(errors => [...errors, 'Data element with given name already exist']);
+        }
+
+    }
+
     return (
         <div className="page-container">
             <div className="page-header-responsive">
@@ -88,7 +113,12 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                         className='text-field'
                         value={providedName}
                         onInput={e => setProvidedName(e.target.value)}
+                        onBlur={() => {
+                            setErrors([]);
+                            nameValidation(providedName);
+                        }}
                     />
+                    {errors.map((error, key) => <p key={key} className='invalid-name'>{error}</p>)}
                 </div>
                 <div className='section field-full-width'>
                     <div><strong className="is-required">Indicator Type</strong></div>
@@ -122,7 +152,10 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                         <button
                         type="button"
                         className="secondary"
-                        onClick={onCancel}
+                        onClick={() => {
+                            onCancel();
+                            setInitialValues();
+                        }}
                         >
                             <span>Cancel</span>
                         </button>
@@ -131,10 +164,16 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                         <button
                         className="primary"
                         type="button"
-                        disabled={!selectedProduct || !selectedIndicator || !selectedIndicatorType || !providedName}
+                        disabled={
+                            !selectedProduct ||
+                            !selectedIndicator ||
+                            !selectedIndicatorType ||
+                            !providedName ||
+                            errors.length
+                        }
                         onClick={() => submitDataElement()}
                         >
-                            Add
+                            Add Dataset Element
                         </button>
                     </div>
                 </div>

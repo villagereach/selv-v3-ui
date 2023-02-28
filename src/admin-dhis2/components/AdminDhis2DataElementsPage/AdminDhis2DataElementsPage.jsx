@@ -162,6 +162,7 @@ const AdminDhis2DataElementsPage = () => {
                         refetch={fetchDataElementsList}
                         serverId={serverId}
                         datasetId={datasetId}
+                        dataElementsParams={dataElementsParams}
                     />
                 ]}
             />
