@@ -25,15 +25,14 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
     const [selectedProduct, setSelectedProduct] = useState("");
     const [selectedIndicator, setSelectedIndicator] = useState("");
     const [selectedIndicatorType, setSelectedIndicatorType] = useState("");
-    const [invalidName, setInvalidName] = useState(false);
-    const [duplicatedName, setDuplicatedName] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     const setInitialValues = () => {
         setProvidedName('');
         setSelectedProduct('');
         setSelectedIndicator('');
         setSelectedIndicatorType('');
-        setInvalidName(false);
+        setErrors([]);
     }
 
     const serverService = useMemo(
@@ -82,18 +81,22 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
     const nameValidation = (name) => {
         const pattern = /^[^-\s]([0-9a-zA-Z\s]){2,50}\s*$/g;
 
-        if (pattern.test(name)) {
-            setInvalidName(false);
+        if (name.length < 3) {
+            setErrors(errors => [...errors, 'Name should contain a minimum of 3 characters']);
+            return
         }
-        else {
-           setInvalidName(true);
+
+        if (name.length > 50) {
+            setErrors(errors => [...errors, 'name should contain a maximum of 50 characters']);
+            return
+        }
+
+        if (!pattern.test(name)) {
+            setErrors(errors => [...errors, 'Invalid name']);
         }
 
         if (dataElementsParams.find(element => element.dataElementName === name)) {
-            setDuplicatedName(true)
-        }
-        else {
-            setDuplicatedName(false)
+            setErrors(errors => [...errors, 'Data element with given name already exist']);
         }
 
     }
@@ -109,14 +112,13 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                     <input
                         className='text-field'
                         value={providedName}
-                        onInput={e => {
-                            setProvidedName(e.target.value);
-                            setInvalidName(false);
+                        onInput={e => setProvidedName(e.target.value)}
+                        onBlur={() => {
+                            setErrors([]);
+                            nameValidation(providedName);
                         }}
-                        onBlur={() => nameValidation(providedName)}
                     />
-                    <p className='invalid-name'>{invalidName && 'Invalid name'}</p>
-                    <p className='invalid-name'>{duplicatedName && 'Data element with given name already exist'}</p>
+                    {errors.map((error, key) => <p key={key} className='invalid-name'>{error}</p>)}
                 </div>
                 <div className='section field-full-width'>
                     <div><strong className="is-required">Indicator Type</strong></div>
@@ -167,8 +169,7 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                             !selectedIndicator ||
                             !selectedIndicatorType ||
                             !providedName ||
-                            invalidName ||
-                            duplicatedName
+                            errors.length
                         }
                         onClick={() => submitDataElement()}
                         >
