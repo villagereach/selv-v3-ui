@@ -82,7 +82,9 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
         const pattern = /^[^-\s]([0-9a-zA-Z\s]){2,50}\s*$/g;
 
         if (name.length < 3) {
+
             setErrors(errors => [...errors, 'Name should contain at least 3 characters']);
+
             return
         }
 
