@@ -151,8 +151,34 @@ $light-grey: #bebebe;
 }
 
 .invalid-name {
-  color: #9d0208;
   margin: 0;
-  display: contents;
+  display: flex;
   width: 100%;
+  border-left: #a94442 0.25em solid;
+  padding-left: 0.5em;
+  font-weight: bold;
+  color: #a94442;
+}
+
+.invalid-field {
+  box-shadow: inset 0 0 0.5em #a94442;
+}
+
+.exclamation-mark {
+  display: block;
+
+  &::after {
+    color: $brand-danger;
+    content: "\f06a";
+    font-family: FontAwesome;
+    display: inline-block;
+    margin-left: -2em;
+    margin-top: 0.5em;
+    position: fixed;
+    text-align: right;
+  }
+}
+
+.disabled-button {
+  cursor: not-allowed !important;
 }

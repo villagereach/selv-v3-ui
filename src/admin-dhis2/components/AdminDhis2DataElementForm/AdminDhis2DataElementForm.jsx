@@ -82,12 +82,9 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
         const pattern = /^[^-\s]([0-9a-zA-Z\s]){2,50}\s*$/g;
 
         if (name.length < 3) {
-            setErrors(errors => [...errors, 'Name should contain a minimum of 3 characters']);
-            return
-        }
 
-        if (name.length > 50) {
-            setErrors(errors => [...errors, 'name should contain a maximum of 50 characters']);
+            setErrors(errors => [...errors, 'Name should contain at least 3 characters']);
+
             return
         }
 
@@ -101,6 +98,12 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
 
     }
 
+    const isSubmitButtonDisabled = !selectedProduct ||
+        !selectedIndicator ||
+        !selectedIndicatorType ||
+        !providedName ||
+        errors.length > 0
+
     return (
         <div className="page-container">
             <div className="page-header-responsive">
@@ -109,15 +112,20 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
             <div className="page-content element-create-form">
                 <div className='section field-full-width'>
                     <div><strong className="is-required">Name</strong></div>
-                    <input
-                        className='text-field'
-                        value={providedName}
-                        onInput={e => setProvidedName(e.target.value)}
-                        onBlur={() => {
-                            setErrors([]);
-                            nameValidation(providedName);
-                        }}
-                    />
+                    <div>
+                        <div className={`${errors.length > 0 && 'exclamation-mark'}`}>
+                            <input
+                                className={`text-field ${errors.length > 0 && 'invalid-field'}`}
+                                value={providedName}
+                                maxLength={50}
+                                onInput={e => setProvidedName(e.target.value)}
+                                onKeyUp={() => {
+                                    setErrors([]);
+                                    nameValidation(providedName);
+                                }}
+                            />
+                        </div>
+                    </div>
                     {errors.map((error, key) => <p key={key} className='invalid-name'>{error}</p>)}
                 </div>
                 <div className='section field-full-width'>
@@ -162,18 +170,12 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                     </div>
                     <div>
                         <button
-                        className="primary"
+                        className={`primary ${isSubmitButtonDisabled && 'disabled-button'}`}
                         type="button"
-                        disabled={
-                            !selectedProduct ||
-                            !selectedIndicator ||
-                            !selectedIndicatorType ||
-                            !providedName ||
-                            errors.length
-                        }
+                        disabled={isSubmitButtonDisabled}
                         onClick={() => submitDataElement()}
                         >
-                            Add Dataset Element
+                           + Add
                         </button>
                     </div>
                 </div>
