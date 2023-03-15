@@ -161,10 +161,8 @@ const AdminDhis2DatasetPage = () => {
                     <AdminDhis2DatasetForm
                         onSubmit={onSubmitAdd}
                         onCancel={toggleAddModal}
-                        title={'Add Dataset'}
-                        initialFormValue={[{}]}
-                        mode={'Add'}
                         refetch={fetchServerDatasetsList}
+                        serverId={serverId}
                     />
                 ]}
             />

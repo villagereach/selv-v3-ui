@@ -1,0 +1,44 @@
+.admin-dhis2 {
+
+  .element-create-form {
+
+    .date-section {
+      display: block;
+
+      .select-search {
+
+        .search .input-wrapper {
+          width: 180px;
+
+          .clear-icon {
+            visibility: hidden;
+          }
+        }
+
+        .select {
+          max-height: 30vh;
+          width: 180px;
+        }
+      }
+      .time-section {
+        display: inline;
+
+        .select-search {
+
+          .search .input-wrapper {
+            width: 70px;
+
+            .clear-icon {
+              visibility: hidden;
+            }
+          }
+        }
+
+        .select {
+          max-height: 30vh;
+          width: 70px;
+        }
+      }
+    }
+  }
+}
