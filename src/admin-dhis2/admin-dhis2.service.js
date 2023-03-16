@@ -73,6 +73,10 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elements'),
                 method: 'POST'
             },
+            getDhisElements: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/dhisElements'),
+                method: 'GET'
+            },
             syncServers: {
                 url: openlmisUrlFactory('/api/execute'),
                 method: 'POST'
@@ -97,6 +101,7 @@
         this.removeDataElement = removeDataElement;
         this.addDataElement = addDataElement;
 
+        this.getDhisElements = getDhisElements;
         this.getDataOrderables = getDataOrderables;
         this.syncServers = syncServers;
 
@@ -168,6 +173,13 @@
                 datasetId: datasetId,
                 elementId: elementId
             }, elementId).$promise;
+        }
+
+        function getDhisElements(serverId, datasetId) {
+            return resource.getDhisElements({
+                serverId: serverId,
+                datasetId: datasetId
+            }, datasetId).$promise;
         }
 
         function getDataOrderables() {

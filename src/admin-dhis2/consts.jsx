@@ -20,6 +20,6 @@ export const CRON_EXPRESSION_OPTIONS = [
 ];
 
 export const WEEKLY_OPTIONS = 7;
-export const DAY_OPTIONS = 31;
+export const DAY_OPTIONS = 30;
 export const HOUR_OPTIONS = 23;
 export const MINUTE_OPTIONS = 59;
