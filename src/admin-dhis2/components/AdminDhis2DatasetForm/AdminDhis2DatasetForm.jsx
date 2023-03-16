@@ -4,23 +4,13 @@ import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
+import {CRON_EXPRESSION_OPTIONS, WEEKLY_OPTIONS, DAY_OPTIONS, HOUR_OPTIONS, MINUTE_OPTIONS} from "../../consts";
 
 function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
 
-    const cronExpressionOptions = [
-        { name: 'MONTHLY', value: 'MONTHLY' },
-        { name: 'WEEKLY', value: 'WEEKLY' },
-        { name: 'DAILY', value: 'DAILY' }
-    ];
-
-    const weeklyOptions = 7;
-    const dayOptions = 31;
-    const hourOptions = 23;
-    const minuteOptions = 59;
-
     const [datasetOptions, setDatasetOptions] = useState([]);
 
-    const [dhisDataset, setDhisDataset] = useState('')
+    const [dhisDataset, setDhisDataset] = useState('');
     const [selectedDataset, setSelectedDataset] = useState("");
     const [selectedCronExpression, setSelectedCronExpression] = useState("");
     const [timeOffset, setTimeOffset] = useState(0);
@@ -58,7 +48,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
         const options = [];
         let n = countFrom;
 
-        for(n; n <= value ; n++) {
+        for (n; n <= value ; n++) {
             options.push({ name: `${n}`, value: n });
         }
 
@@ -67,25 +57,25 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
 
     const selectDate = () => (
         <>
-            {selectedCronExpression === 'MONTHLY' &&
+            {selectedCronExpression === CRON_EXPRESSION_OPTIONS[0].value &&
                 <>
                     <span> on day </span>
                     <SearchSelect
-                        options={selectNumber(dayOptions, 1)}
+                        options={selectNumber(DAY_OPTIONS, 1)}
                         value={day}
                         onChange={value => setDay(value)}
                         placeholder=''
                     />
                     <span> of month at </span>
                     <SearchSelect
-                        options={selectNumber(hourOptions)}
+                        options={selectNumber(HOUR_OPTIONS)}
                         value={hour}
                         onChange={value => setHour(value)}
                         placeholder=''
                     />
                     <span> : </span>
                     <SearchSelect
-                        options={selectNumber(minuteOptions)}
+                        options={selectNumber(MINUTE_OPTIONS)}
                         value={minutes}
                         onChange={value => setMinutes(value)}
                         placeholder=''
@@ -96,21 +86,21 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
                 <>
                     <span> on day </span>
                     <SearchSelect
-                        options={selectNumber(weeklyOptions, 1)}
+                        options={selectNumber(WEEKLY_OPTIONS, 1)}
                         value={day}
                         onChange={value => setDay(value)}
                         placeholder=''
                     />
                     <span> at </span>
                     <SearchSelect
-                        options={selectNumber(hourOptions)}
+                        options={selectNumber(HOUR_OPTIONS)}
                         value={hour}
                         onChange={value => setHour(value)}
                         placeholder=''
                     />
                     <span> : </span>
                     <SearchSelect
-                        options={selectNumber(minuteOptions)}
+                        options={selectNumber(MINUTE_OPTIONS)}
                         value={minutes}
                         onChange={value => setMinutes(value)}
                         placeholder=''
@@ -121,14 +111,14 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
                 <>
                     <span> at </span>
                     <SearchSelect
-                        options={selectNumber(hourOptions)}
+                        options={selectNumber(HOUR_OPTIONS)}
                         value={hour}
                         onChange={value => setHour(value)}
                         placeholder=''
                     />
                     <span> : </span>
                     <SearchSelect
-                        options={selectNumber(minuteOptions)}
+                        options={selectNumber(MINUTE_OPTIONS)}
                         value={minutes}
                         onChange={value => setMinutes(value)}
                         placeholder=''
@@ -139,13 +129,13 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
     )
 
     useEffect(() => {
-        setDhisDataset(datasetOptions.find(dataset => dataset.name === selectedDataset))
+        setDhisDataset(datasetOptions.find(dataset => dataset.name === selectedDataset));
     }, [selectedDataset])
 
     const resetSchedule = () => {
         setDay(1);
-        setHour(0)
-        setMinutes(0)
+        setHour(0);
+        setMinutes(0);
     }
 
     const setInitialValues = () => {
@@ -155,13 +145,14 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
     }
 
     useEffect(() => {
-        if (selectedCronExpression === "MONTHLY" || selectedCronExpression === "WEEKLY") {
+        if (selectedCronExpression === CRON_EXPRESSION_OPTIONS[0].value
+            || selectedCronExpression === CRON_EXPRESSION_OPTIONS[1].value) {
             const adjustedDay = day - 1;
             const onDay = 1440 * adjustedDay;
             const onTime = hour * 60 + minutes;
             setTimeOffset(onDay + onTime);
         }
-        else if (selectedCronExpression === "DAILY") {
+        else if (selectedCronExpression === CRON_EXPRESSION_OPTIONS[2].value) {
             setTimeOffset(hour * 60 + minutes);
         }
 
@@ -204,7 +195,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
               <div className='section field-full-width date-section'>
                   <div><strong className="is-required">Schedule</strong></div>
                   <SearchSelect
-                      options={cronExpressionOptions}
+                      options={CRON_EXPRESSION_OPTIONS}
                       value={selectedCronExpression}
                       onChange={value => {
                           setSelectedCronExpression(value);
