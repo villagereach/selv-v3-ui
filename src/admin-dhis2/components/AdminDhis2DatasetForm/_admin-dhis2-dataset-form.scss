@@ -8,18 +8,15 @@
       .select-search {
 
         .search .input-wrapper {
-          width: 180px;
-
-          .clear-icon {
-            visibility: hidden;
-          }
+          width: 160px;
         }
 
         .select {
           max-height: 30vh;
-          width: 180px;
+          width: 160px;
         }
       }
+
       .time-section {
         display: inline;
 
@@ -37,6 +34,26 @@
         .select {
           max-height: 30vh;
           width: 70px;
+        }
+
+        .date-section {
+          display: inline-block;
+
+          .select-search {
+
+            .search .input-wrapper {
+              width: 160px;
+
+              .clear-icon {
+                visibility: visible;
+              }
+            }
+
+            .select {
+              max-height: 30vh;
+              width: 160px;
+            }
+          }
         }
       }
     }

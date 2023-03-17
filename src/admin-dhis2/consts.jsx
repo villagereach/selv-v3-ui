@@ -19,7 +19,16 @@ export const CRON_EXPRESSION_OPTIONS = [
     { name: 'DAILY', value: 'DAILY' }
 ];
 
-export const WEEKLY_OPTIONS = 7;
+export const WEEKLY_OPTIONS = [
+    { name: 'MONDAY', value: '1'},
+    { name: 'TUESDAY', value: '2'},
+    { name: 'WEDNESDAY', value: '3'},
+    { name: 'THURSDAY', value: '4'},
+    { name: 'FRIDAY', value: '5'},
+    { name: 'SATURDAY', value: '6'},
+    { name: 'SUNDAY', value: '7'}
+];
+
 export const DAY_OPTIONS = 30;
 export const HOUR_OPTIONS = 23;
 export const MINUTE_OPTIONS = 59;

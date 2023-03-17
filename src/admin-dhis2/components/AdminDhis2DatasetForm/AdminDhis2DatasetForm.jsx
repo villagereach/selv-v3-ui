@@ -14,7 +14,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
     const [selectedDataset, setSelectedDataset] = useState("");
     const [selectedCronExpression, setSelectedCronExpression] = useState("");
     const [timeOffset, setTimeOffset] = useState(0);
-    const [day, setDay] = useState(1);
+    const [selectedDay, setSelectedDay] = useState('');
     const [hour, setHour] = useState(0);
     const [minutes, setMinutes] = useState(0);
 
@@ -62,8 +62,8 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
                     <span> on day </span>
                     <SearchSelect
                         options={selectNumber(DAY_OPTIONS, 1)}
-                        value={day}
-                        onChange={value => setDay(value)}
+                        value={selectedDay}
+                        onChange={value => setSelectedDay(value)}
                         placeholder=''
                     />
                     <span> of month at </span>
@@ -85,12 +85,14 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
             {selectedCronExpression === 'WEEKLY' &&
                 <>
                     <span> on day </span>
-                    <SearchSelect
-                        options={selectNumber(WEEKLY_OPTIONS, 1)}
-                        value={day}
-                        onChange={value => setDay(value)}
-                        placeholder=''
-                    />
+                    <div className='date-section'>
+                        <SearchSelect
+                            options={WEEKLY_OPTIONS}
+                            value={selectedDay}
+                            onChange={value => setSelectedDay(value)}
+                            placeholder='Select day'
+                        />
+                    </div>
                     <span> at </span>
                     <SearchSelect
                         options={selectNumber(HOUR_OPTIONS)}
@@ -133,7 +135,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
     }, [selectedDataset])
 
     const resetSchedule = () => {
-        setDay(1);
+        setSelectedDay('');
         setHour(0);
         setMinutes(0);
     }
@@ -147,7 +149,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
     useEffect(() => {
         if (selectedCronExpression === CRON_EXPRESSION_OPTIONS[0].value
             || selectedCronExpression === CRON_EXPRESSION_OPTIONS[1].value) {
-            const adjustedDay = day - 1;
+            const adjustedDay = selectedDay - 1;
             const onDay = 1440 * adjustedDay;
             const onTime = hour * 60 + minutes;
             setTimeOffset(onDay + onTime);
@@ -156,7 +158,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
             setTimeOffset(hour * 60 + minutes);
         }
 
-    }, [day, hour, minutes, timeOffset])
+    }, [selectedDay, hour, minutes, timeOffset])
 
     const submitDataElement = () => {
 
@@ -176,6 +178,8 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
                 setInitialValues();
             });
     }
+
+    const isSubmitButtonDisabled = !selectedDataset || !selectedCronExpression || !selectedDay
 
   return (
       <div className="page-container">
@@ -220,12 +224,12 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
                   </div>
                   <div>
                       <button
-                          className="primary"
+                          className={`primary ${isSubmitButtonDisabled && 'disabled-button'}`}
                           type="button"
-                          disabled={!selectedDataset || !selectedCronExpression}
+                          disabled={isSubmitButtonDisabled}
                           onClick={() => submitDataElement()}
                       >
-                          Add
+                         + Add
                       </button>
                   </div>
               </div>
