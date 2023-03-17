@@ -20,11 +20,13 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
     ];
 
     const [productOptions, setProductOptions] = useState([]);
+    const [dataElementsOptions, setDataElementsOptions] = useState([]);
 
     const [providedName, setProvidedName] = useState("");
     const [selectedProduct, setSelectedProduct] = useState("");
     const [selectedIndicator, setSelectedIndicator] = useState("");
     const [selectedIndicatorType, setSelectedIndicatorType] = useState("");
+    const [selectedDataElement, setSelectedDataElement] = useState("");
     const [errors, setErrors] = useState([]);
 
     const setInitialValues = () => {
@@ -56,9 +58,26 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
             });
     }
 
+    const fetchDataElements = () => {
+        if (datasetId) {
+            serverService.getDhisElements(serverId, datasetId)
+                .then((fetchedDhisElements) => {
+                    const {content} = fetchedDhisElements;
+
+                    const elements = content.map((element) => ({
+                        name: element.name,
+                        value: element.name
+                    }));
+                    setDataElementsOptions(elements);
+
+                });
+        }
+    }
+
     useEffect(() => {
         fetchDataOrderables();
-    }, [])
+        fetchDataElements();
+    }, [datasetId])
 
     const submitDataElement = () => {
         const element = {
@@ -66,7 +85,7 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
             source: selectedIndicatorType,
             indicator: selectedIndicator,
             orderable: selectedProduct,
-            element: `${selectedIndicator} - ${selectedProduct}`
+            element: selectedDataElement
         }
 
         serverService.addDataElement(serverId, datasetId, element)
@@ -153,6 +172,15 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
                         value={selectedProduct}
                         onChange={value => setSelectedProduct(value)}
                         placeholder="Select product"
+                    />
+                </div>
+                <div className='section field-full-width'>
+                    <div><strong className="is-required">Data Element</strong></div>
+                    <SearchSelect
+                        options={dataElementsOptions}
+                        value={selectedDataElement}
+                        onChange={value => setSelectedDataElement(value)}
+                        placeholder="Select data element"
                     />
                 </div>
                 <div className="bottom-bar">
