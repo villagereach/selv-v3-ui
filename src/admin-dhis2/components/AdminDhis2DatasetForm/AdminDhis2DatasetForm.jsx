@@ -84,7 +84,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
             }
             {selectedCronExpression === 'WEEKLY' &&
                 <>
-                    <span> on day </span>
+                    <span> on </span>
                     <div className='date-section'>
                         <SearchSelect
                             options={WEEKLY_OPTIONS}
