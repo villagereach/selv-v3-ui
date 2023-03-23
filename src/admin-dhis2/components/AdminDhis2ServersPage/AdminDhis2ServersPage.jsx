@@ -108,6 +108,13 @@ const AdminDhis2ServersPage = () => {
         });
     }
 
+    const syncServers = () => {
+        serverService.syncServers()
+            .then(() => {
+                toast.success('Data has been synchronized successfully!');
+        });
+    }
+
     useEffect(() => {}, [serversParams]);
 
     const columns = useMemo(
@@ -159,7 +166,7 @@ const AdminDhis2ServersPage = () => {
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
                         <button
-                            onClick={() => serverService.syncServers()}
+                            onClick={syncServers}
                         >
                             Sync
                         </button>
