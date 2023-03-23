@@ -15,8 +15,8 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
         {name: 'Opening Balance', value: 'Opening Balance'},
         {name: 'Received', value: 'Received'},
         {name: 'Closing Balance', value: 'Closing Balance'},
-        {name: 'Total Negative Adjustments', value: 'Total Negative Adjustments'},
-        {name: 'Total Positive Adjustments', value: 'Total Positive Adjustments'}
+        {name: 'Negative Adjustments', value: 'Negative Adjustments'},
+        {name: 'Positive Adjustments', value: 'Positive Adjustments'}
     ];
 
     const [productOptions, setProductOptions] = useState([]);
