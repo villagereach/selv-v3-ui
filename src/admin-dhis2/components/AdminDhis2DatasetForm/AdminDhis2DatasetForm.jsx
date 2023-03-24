@@ -179,7 +179,9 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
             });
     }
 
-    const isSubmitButtonDisabled = !selectedDataset || !selectedCronExpression || !selectedDay
+    const isDaySelectable = !(selectedCronExpression === CRON_EXPRESSION_OPTIONS[2].value || selectedDay)
+
+    const isSubmitButtonDisabled = !selectedDataset || !selectedCronExpression || isDaySelectable
 
   return (
       <div className="page-container">
@@ -190,7 +192,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
               <div className='section field-full-width'>
                   <div><strong className="is-required">Dataset</strong></div>
                   <SearchSelect
-                      options={datasetOptions}
+                      options={CRON_EXPRESSION_OPTIONS}
                       value={selectedDataset}
                       onChange={value => setSelectedDataset(value)}
                       placeholder="Select dataset"
