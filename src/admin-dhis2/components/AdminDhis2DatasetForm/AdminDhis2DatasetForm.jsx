@@ -192,7 +192,7 @@ function AdminDhis2DatasetForm({ onSubmit, onCancel, refetch, serverId }) {
               <div className='section field-full-width'>
                   <div><strong className="is-required">Dataset</strong></div>
                   <SearchSelect
-                      options={CRON_EXPRESSION_OPTIONS}
+                      options={datasetOptions}
                       value={selectedDataset}
                       onChange={value => setSelectedDataset(value)}
                       placeholder="Select dataset"
