@@ -29,6 +29,10 @@ export const WEEKLY_OPTIONS = [
     { name: 'SUNDAY', value: '7'}
 ];
 
+export const SOURCE_OPTIONS = [
+    { name: 'Requisition', value: 'REQUISITION'}
+];
+
 export const DAY_OPTIONS = 30;
 export const HOUR_OPTIONS = 23;
 export const MINUTE_OPTIONS = 59;

@@ -25,6 +25,7 @@ import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 import Modal from '../Modal/Modal';
 import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
+import AdminDhis2PeriodMappingForm from '../AdminDhis2PeriodMappingForm/AdminDhis2PeriodMappingForm';
 
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
@@ -33,6 +34,7 @@ const AdminDhis2DatasetPage = () => {
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
     const [displayAddModal, setDisplayAddModal] = useState(false);
+    const [displayMappingModal, setDisplayMappingModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -89,6 +91,10 @@ const AdminDhis2DatasetPage = () => {
         setDisplayAddModal(!displayAddModal);
     };
 
+    const toggleMappingModal = () => {
+        setDisplayMappingModal(!displayMappingModal);
+    };
+
     const onSubmitAdd = () => {
         toggleAddModal();
     };
@@ -130,6 +136,11 @@ const AdminDhis2DatasetPage = () => {
                         >
                             View
                         </ResponsiveButton>
+                        <ResponsiveButton
+                            onClick={toggleMappingModal}
+                        >
+                            Period Mapping
+                        </ResponsiveButton>
                         <TrashButton
                             onClick={() => confirmDialogAlert({
                                 title: `Are you sure you want to remove dataset ${values.datasetName}?`,
@@ -149,11 +160,6 @@ const AdminDhis2DatasetPage = () => {
             <div className="admin-dhis-row">
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
-                        <button
-                            onClick={syncServers}
-                        >
-                            Sync
-                        </button>
                         <button
                             className="add admin-dhis2-table-add-button"
                             onClick={toggleAddModal}
@@ -175,6 +181,14 @@ const AdminDhis2DatasetPage = () => {
                         onCancel={toggleAddModal}
                         refetch={fetchServerDatasetsList}
                         serverId={serverId}
+                    />
+                ]}
+            />
+            <Modal
+                isOpen={displayMappingModal}
+                children={[
+                    <AdminDhis2PeriodMappingForm
+                        onCancel={toggleMappingModal}
                     />
                 ]}
             />
