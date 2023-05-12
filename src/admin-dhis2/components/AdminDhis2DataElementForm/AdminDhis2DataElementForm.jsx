@@ -60,7 +60,7 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
 
     const fetchDataElements = () => {
         if (datasetId) {
-            serverService.getDhisElements(serverId, datasetId)
+            serverService.getDhisElementCombos(serverId, datasetId)
                 .then((fetchedDhisElements) => {
                     const {content} = fetchedDhisElements;
 
