@@ -25,6 +25,7 @@ import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 import Modal from '../Modal/Modal';
 import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
+import AdminDhis2DatasetSyncForm from '../AdminDhis2DatasetSyncForm/AdminDhis2DatasetSyncForm';
 
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
@@ -33,6 +34,7 @@ const AdminDhis2DatasetPage = () => {
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
     const [displayAddModal, setDisplayAddModal] = useState(false);
+    const [displaySyncModal, setDisplaySyncModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -89,6 +91,10 @@ const AdminDhis2DatasetPage = () => {
         setDisplayAddModal(!displayAddModal);
     };
 
+    const toggleSyncModal = () => {
+        setDisplaySyncModal(!displaySyncModal);
+    };
+
     const onSubmitAdd = () => {
         toggleAddModal();
     };
@@ -131,7 +137,7 @@ const AdminDhis2DatasetPage = () => {
                             View
                         </ResponsiveButton>
                         <button
-                            onClick={syncServers}
+                            onClick={toggleSyncModal}
                         >
                             Sync
                         </button>
@@ -175,6 +181,14 @@ const AdminDhis2DatasetPage = () => {
                         onCancel={toggleAddModal}
                         refetch={fetchServerDatasetsList}
                         serverId={serverId}
+                    />
+                ]}
+            />
+            <Modal
+                isOpen={displaySyncModal}
+                children={[
+                    <AdminDhis2DatasetSyncForm
+                        onCancel={toggleSyncModal}
                     />
                 ]}
             />
