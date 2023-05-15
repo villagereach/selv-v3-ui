@@ -128,7 +128,7 @@ const AdminDhis2DatasetPage = () => {
                         <ResponsiveButton
                             onClick={() => goToDataElementsPage(values)}
                         >
-                            View
+                            Map Data Elements
                         </ResponsiveButton>
                         <TrashButton
                             onClick={() => confirmDialogAlert({

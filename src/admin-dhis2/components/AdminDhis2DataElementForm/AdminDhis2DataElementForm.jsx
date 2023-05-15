@@ -7,7 +7,6 @@ import { SearchSelect } from '../../../requisition-order-create/search-select'
 function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId, dataElementsParams }) {
 
     const indicatorTypeOptions = [
-        {name: 'Stock Management', value: 'Stock Management'},
         {name: 'Requisition', value: 'Requisition'}
     ];
 
