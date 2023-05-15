@@ -130,6 +130,11 @@ const AdminDhis2DatasetPage = () => {
                         >
                             View
                         </ResponsiveButton>
+                        <button
+                            onClick={syncServers}
+                        >
+                            Sync
+                        </button>
                         <TrashButton
                             onClick={() => confirmDialogAlert({
                                 title: `Are you sure you want to remove dataset ${values.datasetName}?`,
@@ -149,11 +154,6 @@ const AdminDhis2DatasetPage = () => {
             <div className="admin-dhis-row">
                 <div className="admin-dhis-main">
                     <div className="admin-dhis2-table-header">
-                        <button
-                            onClick={syncServers}
-                        >
-                            Sync
-                        </button>
                         <button
                             className="add admin-dhis2-table-add-button"
                             onClick={toggleAddModal}
