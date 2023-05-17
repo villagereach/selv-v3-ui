@@ -59,13 +59,14 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
 
     const fetchDataElements = () => {
         if (datasetId) {
-            serverService.getDhisElements(serverId, datasetId)
+            serverService.getDhisElementCombos(serverId, datasetId)
                 .then((fetchedDhisElements) => {
                     const {content} = fetchedDhisElements;
 
                     const elements = content.map((element) => ({
-                        name: element.name,
-                        value: element.name
+                        name: element.fullComboName,
+                        value: element.fullComboName,
+                        element: element
                     }));
                     setDataElementsOptions(elements);
 
@@ -78,13 +79,17 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
         fetchDataElements();
     }, [datasetId])
 
+    const getDataElementObject = (dataElementFullComboName) => {
+        return dataElementsOptions.find((dataElement) => dataElement.name === dataElementFullComboName).element;
+    }
+
     const submitDataElement = () => {
         const element = {
             name: providedName,
             source: selectedIndicatorType,
             indicator: selectedIndicator,
             orderable: selectedProduct,
-            element: selectedDataElement
+            ...getDataElementObject(selectedDataElement)
         }
 
         serverService.addDataElement(serverId, datasetId, element)
