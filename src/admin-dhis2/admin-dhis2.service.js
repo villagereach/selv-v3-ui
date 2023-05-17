@@ -77,6 +77,10 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/dhisElements'),
                 method: 'GET'
             },
+            getDhisElementCombos: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elementsAndCombos'),
+                method: 'GET'
+            },
             syncServers: {
                 url: openlmisUrlFactory('/api/execute'),
                 method: 'POST'
@@ -102,6 +106,7 @@
         this.addDataElement = addDataElement;
 
         this.getDhisElements = getDhisElements;
+        this.getDhisElementCombos = getDhisElementCombos;
         this.getDataOrderables = getDataOrderables;
         this.syncServers = syncServers;
 
@@ -177,6 +182,13 @@
 
         function getDhisElements(serverId, datasetId) {
             return resource.getDhisElements({
+                serverId: serverId,
+                datasetId: datasetId
+            }, datasetId).$promise;
+        }
+
+        function getDhisElementCombos(serverId, datasetId) {
+            return resource.getDhisElementCombos({
                 serverId: serverId,
                 datasetId: datasetId
             }, datasetId).$promise;
