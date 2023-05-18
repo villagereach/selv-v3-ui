@@ -200,7 +200,7 @@
 
         function combineResponses(shipment, order, canFulfillForMeMap) {
             shipment.order = order;
-            // SELV3-666:
+            // SELV3-666: Fix bug related to 'User cannot fulfill the order
             shipment.lineItems = filterNotNullOrderable(shipment.lineItems);
             // SELV3-666: Ends here
 
@@ -234,7 +234,7 @@
             return object ? object.id : undefined;
         }
 
-        // SELV3-666:
+        // SELV3-666: Fix bug related to 'User cannot fulfill the order
         function filterNotNullOrderable(lineItems) {
             return lineItems.filter(function(lineItem) {
                 return lineItem.orderable !== null;
