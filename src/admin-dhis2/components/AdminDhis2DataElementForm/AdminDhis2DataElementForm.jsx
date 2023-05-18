@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import getService from '../../../react-components/utils/angular-utils';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
 
-function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId, dataElementsParams }) {
+function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, datasetId, dataElementsParams, deletedDataElement }) {
 
     const indicatorTypeOptions = [
         {name: 'Requisition', value: 'Requisition'}
@@ -79,6 +79,11 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
         fetchDataElements();
     }, [datasetId])
 
+    
+    useEffect(() => {
+        fetchDataElements();
+    }, [deletedDataElement])
+
     const getDataElementObject = (dataElementFullComboName) => {
         return dataElementsOptions.find((dataElement) => dataElement.name === dataElementFullComboName).element;
     }
@@ -94,6 +99,7 @@ function AdminDhis2DataElementForm({ onSubmit, onCancel, refetch, serverId, data
 
         serverService.addDataElement(serverId, datasetId, element)
             .then(() => {
+                fetchDataElements();
                 refetch();
                 onSubmit();
                 toast.success('Data Element has been added successfully!');
