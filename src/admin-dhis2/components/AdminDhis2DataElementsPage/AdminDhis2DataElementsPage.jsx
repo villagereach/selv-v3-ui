@@ -63,6 +63,7 @@ const AdminDhis2DataElementsPage = () => {
                         dataElementIndicator: element.indicator,
                         dataElementSource: element.source,
                         dataElementOrderable: element.orderable,
+                        dataElementCategoryCombo: element.categoryCombo,
                         dataElement: element.element,
                     }));
                     setDataElementsParams(elements);
@@ -111,6 +112,10 @@ const AdminDhis2DataElementsPage = () => {
             {
                 Header: 'Data Element',
                 accessor: 'dataElement',
+                Cell: props => 
+                    <div>
+                        {props.row.original.dataElement} - {props.row.original.dataElementCategoryCombo}
+                    </div>
             },
             {
                 Header: 'Actions',
