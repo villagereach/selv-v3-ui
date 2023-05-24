@@ -28,6 +28,7 @@ import AdminDhis2DataElementForm from "../AdminDhis2DataElementForm/AdminDhis2Da
 const AdminDhis2DataElementsPage = () => {
     const location = useLocation();
 
+    const [deletedDataElement, setDeletedDataElement] = useState(''); 
     const [dataElementsParams, setDataElementsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
     const [datasetId, setDatasetId] = useState(null);
@@ -62,6 +63,7 @@ const AdminDhis2DataElementsPage = () => {
                         dataElementIndicator: element.indicator,
                         dataElementSource: element.source,
                         dataElementOrderable: element.orderable,
+                        dataElementCategoryCombo: element.categoryCombo,
                         dataElement: element.element,
                     }));
                     setDataElementsParams(elements);
@@ -110,6 +112,10 @@ const AdminDhis2DataElementsPage = () => {
             {
                 Header: 'Data Element',
                 accessor: 'dataElement',
+                Cell: props => 
+                    <div>
+                        {props.row.original.dataElement} - {props.row.original.dataElementCategoryCombo}
+                    </div>
             },
             {
                 Header: 'Actions',
@@ -124,7 +130,10 @@ const AdminDhis2DataElementsPage = () => {
                         <TrashButton
                             onClick={() => confirmDialogAlert({
                                 title: `Are you sure you want to remove Data Element ${values.dataElementName}?`,
-                                onConfirm: () => removeDataElement(values)
+                                onConfirm: () => {
+                                    setDeletedDataElement(values.dataElementId); 
+                                    removeDataElement(values);
+                                }
                             })}
                         />
                     </div>
@@ -163,6 +172,7 @@ const AdminDhis2DataElementsPage = () => {
                         serverId={serverId}
                         datasetId={datasetId}
                         dataElementsParams={dataElementsParams}
+                        deletedDataElement={deletedDataElement}
                     />
                 ]}
             />
