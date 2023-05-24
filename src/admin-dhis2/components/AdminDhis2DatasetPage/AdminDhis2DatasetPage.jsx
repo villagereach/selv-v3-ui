@@ -41,8 +41,8 @@ const AdminDhis2DatasetPage = () => {
         []
     );
 
-    const syncServers = () => {
-        datasetService.syncServers()
+    const syncServer = (serverId, datasetId) => {
+        datasetService.syncServer(serverId, datasetId)
             .then(() => {
                 toast.success('Data has been synchronized successfully!');
         });
@@ -131,7 +131,7 @@ const AdminDhis2DatasetPage = () => {
                             Map Data Elements
                         </ResponsiveButton>
                         <button
-                            onClick={syncServers}
+                            onClick={() => syncServer(serverId, values.datasetId)}
                         >
                             Sync
                         </button>
