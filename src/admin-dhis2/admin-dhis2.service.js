@@ -81,9 +81,11 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elementsAndCombos'),
                 method: 'GET'
             },
-            syncServers: {
-                url: openlmisUrlFactory('/api/execute'),
-                method: 'POST'
+            syncServer: function(serverId, datasetId) {
+                return {
+                    url: openlmisUrlFactory('/api/execute?serverId=' + serverId + '&datasetId=' + datasetId),
+                    method: 'POST'
+                };
             },
             getDataOrderables: {
                 url: openlmisUrlFactory('/api/orderables'),
@@ -108,7 +110,7 @@
         this.getDhisElements = getDhisElements;
         this.getDhisElementCombos = getDhisElementCombos;
         this.getDataOrderables = getDataOrderables;
-        this.syncServers = syncServers;
+        this.syncServer = syncServer;
 
         function getServerConfig() {
             return resource.get().$promise;
@@ -198,8 +200,11 @@
             return resource.getDataOrderables().$promise;
         }
 
-        function syncServers() {
-            return resource.syncServers().$promise;
+        function syncServer(serverId, datasetId) {
+            return resource.syncServer({
+                serverId: serverId,
+                datasetId: datasetId
+            }).$promise;
         }
     }
 })();
