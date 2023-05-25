@@ -103,10 +103,6 @@
             getDataOrderables: {
                 url: openlmisUrlFactory('/api/orderables'),
                 method: 'GET'
-            },
-            getProcessingSchedules: {
-                url: openlmisUrlFactory('/api/processingPeriods'),
-                method: 'GET'
             }
         });
 
