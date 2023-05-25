@@ -237,7 +237,7 @@
         function syncServers() {
             return resource.syncServers().$promise;
         }
-        
+
         function syncServer(serverId, datasetId) {
             return resource.syncServer({
                 serverId: serverId,
