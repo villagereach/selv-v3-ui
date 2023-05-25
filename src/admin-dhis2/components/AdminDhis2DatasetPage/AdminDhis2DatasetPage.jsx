@@ -25,6 +25,7 @@ import confirmDialogAlert from '../../../react-components/modals/confirm';
 
 import Modal from '../Modal/Modal';
 import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
+import AdminDhis2PeriodMappingForm from '../AdminDhis2PeriodMappingForm/AdminDhis2PeriodMappingForm';
 
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
@@ -33,6 +34,7 @@ const AdminDhis2DatasetPage = () => {
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [serverId, setServerId] = useState(null);
     const [displayAddModal, setDisplayAddModal] = useState(false);
+    const [displayMappingModal, setDisplayMappingModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -89,9 +91,17 @@ const AdminDhis2DatasetPage = () => {
         setDisplayAddModal(!displayAddModal);
     };
 
+    const toggleMappingModal = () => {
+        setDisplayMappingModal(!displayMappingModal);
+    };
+
     const onSubmitAdd = () => {
         toggleAddModal();
     };
+
+    const onSubmitMappingModal = () => {
+        toggleMappingModal();
+    }
 
     const goToDataElementsPage = (data) => {
         const datasetState = {
@@ -129,6 +139,11 @@ const AdminDhis2DatasetPage = () => {
                             onClick={() => goToDataElementsPage(values)}
                         >
                             Map Data Elements
+                        </ResponsiveButton>
+                        <ResponsiveButton
+                            onClick={toggleMappingModal}
+                        >
+                            Map Periods
                         </ResponsiveButton>
                         <button
                             onClick={syncServers}
@@ -174,6 +189,16 @@ const AdminDhis2DatasetPage = () => {
                         onSubmit={onSubmitAdd}
                         onCancel={toggleAddModal}
                         refetch={fetchServerDatasetsList}
+                        serverId={serverId}
+                    />
+                ]}
+            />
+            <Modal
+                isOpen={displayMappingModal}
+                children={[
+                    <AdminDhis2PeriodMappingForm
+                        onSubmit={onSubmitMappingModal}
+                        onCancel={toggleMappingModal}
                         serverId={serverId}
                     />
                 ]}

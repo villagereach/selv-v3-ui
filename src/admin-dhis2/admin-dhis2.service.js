@@ -85,6 +85,19 @@
                 url: openlmisUrlFactory('/api/execute'),
                 method: 'POST'
             },
+            getProcessingSchedules: {
+                url: openlmisUrlFactory('/api/processingPeriods'),
+                method: 'GET'
+            },
+            getDhisPeriodTypes: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/dhisPeriodTypes'),
+                method: 'GET',
+                isArray: true
+            },
+            addPeriodMapping: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/periodMappings'),
+                method: 'POST'
+            },
             getDataOrderables: {
                 url: openlmisUrlFactory('/api/orderables'),
                 method: 'GET'
@@ -108,7 +121,11 @@
         this.getDhisElements = getDhisElements;
         this.getDhisElementCombos = getDhisElementCombos;
         this.getDataOrderables = getDataOrderables;
+        this.getProcessingSchedules = getProcessingSchedules;
+        this.getDhisPeriodTypes = getDhisPeriodTypes;
         this.syncServers = syncServers;
+
+        this.addPeriodMapping = addPeriodMapping;
 
         function getServerConfig() {
             return resource.get().$promise;
@@ -196,6 +213,22 @@
 
         function getDataOrderables() {
             return resource.getDataOrderables().$promise;
+        }
+
+        function getProcessingSchedules() {
+            return resource.getProcessingSchedules().$promise;
+        }
+
+        function getDhisPeriodTypes(serverId) {
+            return resource.getDhisPeriodTypes({
+                serverId: serverId
+            }).$promise;
+        }
+
+        function addPeriodMapping(serverId, periodMapping) {
+            return resource.addPeriodMapping({
+                serverId: serverId
+            }, periodMapping).$promise;
         }
 
         function syncServers() {
