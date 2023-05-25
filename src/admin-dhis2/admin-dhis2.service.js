@@ -103,6 +103,10 @@
             getDataOrderables: {
                 url: openlmisUrlFactory('/api/orderables'),
                 method: 'GET'
+            },
+            getProcessingSchedules: {
+                url: openlmisUrlFactory('/api/processingPeriods'),
+                method: 'GET'
             }
         });
 
@@ -129,6 +133,8 @@
         this.syncServer = syncServer;
 
         this.addPeriodMapping = addPeriodMapping;
+
+        this.getProcessingSchedules = getProcessingSchedules;
 
         function getServerConfig() {
             return resource.get().$promise;
