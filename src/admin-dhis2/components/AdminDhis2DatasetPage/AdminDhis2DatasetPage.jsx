@@ -26,6 +26,7 @@ import confirmDialogAlert from '../../../react-components/modals/confirm';
 import Modal from '../Modal/Modal';
 import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetForm';
 import AdminDhis2DatasetSyncForm from '../AdminDhis2DatasetSyncForm/AdminDhis2DatasetSyncForm';
+import AdminDhis2PeriodMappingForm from '../AdminDhis2PeriodMappingForm/AdminDhis2PeriodMappingForm';
 
 const AdminDhis2DatasetPage = () => {
     const location = useLocation();
@@ -35,6 +36,7 @@ const AdminDhis2DatasetPage = () => {
     const [serverId, setServerId] = useState(null);
     const [displayAddModal, setDisplayAddModal] = useState(false);
     const [displaySyncModal, setDisplaySyncModal] = useState(false);
+    const [displayMappingModal, setDisplayMappingModal] = useState(false);
 
     const datasetService = useMemo(
         () => {
@@ -43,8 +45,8 @@ const AdminDhis2DatasetPage = () => {
         []
     );
 
-    const syncServers = () => {
-        datasetService.syncServers()
+    const syncServer = (serverId, datasetId) => {
+        datasetService.syncServer(serverId, datasetId)
             .then(() => {
                 toast.success('Data has been synchronized successfully!');
         });
@@ -93,11 +95,19 @@ const AdminDhis2DatasetPage = () => {
 
     const toggleSyncModal = () => {
         setDisplaySyncModal(!displaySyncModal);
+    }
+
+    const toggleMappingModal = () => {
+        setDisplayMappingModal(!displayMappingModal);
     };
 
     const onSubmitAdd = () => {
         toggleAddModal();
     };
+
+    const onSubmitMappingModal = () => {
+        toggleMappingModal();
+    }
 
     const goToDataElementsPage = (data) => {
         const datasetState = {
@@ -135,6 +145,11 @@ const AdminDhis2DatasetPage = () => {
                             onClick={() => goToDataElementsPage(values)}
                         >
                             Map Data Elements
+                        </ResponsiveButton>
+                        <ResponsiveButton
+                            onClick={toggleMappingModal}
+                        >
+                            Map Periods
                         </ResponsiveButton>
                         <button
                             onClick={toggleSyncModal}
@@ -189,6 +204,17 @@ const AdminDhis2DatasetPage = () => {
                 children={[
                     <AdminDhis2DatasetSyncForm
                         onCancel={toggleSyncModal}
+                        onSubmit={() => syncServer(serverId, values.datasetId)}
+                    />
+                ]}
+            />
+            <Modal
+                isOpen={displayMappingModal}
+                children={[
+                    <AdminDhis2PeriodMappingForm
+                        onSubmit={onSubmitMappingModal}
+                        onCancel={toggleMappingModal}
+                        serverId={serverId}
                     />
                 ]}
             />
