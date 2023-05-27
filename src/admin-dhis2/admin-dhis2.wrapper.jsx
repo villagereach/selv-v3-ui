@@ -27,9 +27,9 @@ import 'tippy.js/dist/tippy.css';
         .module('admin-dhis2')
         .directive('adminDhis2', adminDhis2);
 
-        adminDhis2.$inject = [];
+        adminDhis2.$inject = ['$q', 'authorizationService', 'permissionService', 'facilityService'];
 
-    function adminDhis2() {
+    function adminDhis2($q, authorizationService, permissionService, facilityService) {
         return {
             template: '<div id="adminDhis2" class="admin-dhis2"></div>',
             replace: true,
@@ -38,7 +38,12 @@ import 'tippy.js/dist/tippy.css';
 
                 ReactDOM.render(
                     <>
-                        <Routing />, 
+                        <Routing 
+                            asynchronousService={$q}
+                            authorizationService={authorizationService}
+                            permissionService={permissionService}
+                            facilityService={facilityService}
+                        />, 
                         <ToastContainer theme="colored" />
                     </>,
                     app

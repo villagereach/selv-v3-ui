@@ -81,9 +81,10 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elementsAndCombos'),
                 method: 'GET'
             },
-            syncServer: function(serverId, datasetId) {
+            syncServer: function(serverId, datasetId, periodMappingId) {
                 return {
-                    url: openlmisUrlFactory('/api/execute?serverId=' + serverId + '&datasetId=' + datasetId),
+                    url: openlmisUrlFactory('/api/execute?serverId=' + serverId + '&datasetId=' + datasetId +
+                        '&periodMappingId=' + periodMappingId),
                     method: 'POST'
                 };
             },
@@ -95,6 +96,10 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/dhisPeriodTypes'),
                 method: 'GET',
                 isArray: true
+            },
+            getPeriodMappings: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/periodMappings'),
+                method: 'GET'
             },
             addPeriodMapping: {
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/periodMappings'),
@@ -128,6 +133,7 @@
         this.syncServers = syncServers;
         this.syncServer = syncServer;
 
+        this.getPeriodMappings = getPeriodMappings;
         this.addPeriodMapping = addPeriodMapping;
 
         this.getProcessingSchedules = getProcessingSchedules;
@@ -230,6 +236,12 @@
             }).$promise;
         }
 
+        function getPeriodMappings(serverId) {
+            return resource.getPeriodMappings({
+                serverId: serverId
+            }).$promise;
+        }
+
         function addPeriodMapping(serverId, periodMapping) {
             return resource.addPeriodMapping({
                 serverId: serverId
@@ -240,11 +252,13 @@
             return resource.syncServers().$promise;
         }
 
-        function syncServer(serverId, datasetId) {
+        function syncServer(serverId, datasetId, periodMappingId, facilityCodes) {
+            console.log(serverId, datasetId, periodMappingId, facilityCodes);
             return resource.syncServer({
                 serverId: serverId,
-                datasetId: datasetId
-            }).$promise;
+                datasetId: datasetId,
+                periodMappingId: periodMappingId
+            }, facilityCodes).$promise;
         }
     }
 })();

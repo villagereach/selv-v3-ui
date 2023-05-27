@@ -20,7 +20,13 @@ import AdminDhis2DatasetPage from './components/AdminDhis2DatasetPage';
 import AdminDhis2DataElementsPage from "./components/AdminDhis2DataElementsPage";
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
-const Routing = () => (
+const Routing = ({
+    asynchronousService,
+    authorizationService,
+    permissionService,
+    facilityService
+}) => {
+    return (
     <div className="page-responsive">
         <Router basename="/" hashType="hashbang">
             <Breadcrumbs routes={[ { path: "/administration/dhis2", breadcrumb: 'DHIS2' } ]} />
@@ -29,7 +35,12 @@ const Routing = () => (
                     <AdminDhis2DataElementsPage />
                 </Route>
                 <Route exact path="/administration/dhis2/:serverName">
-                    <AdminDhis2DatasetPage />
+                    <AdminDhis2DatasetPage 
+                        asynchronousService={asynchronousService}
+                        authorizationService={authorizationService}
+                        permissionService={permissionService}
+                        facilityService={facilityService}
+                    />
                 </Route>
                 <Route exact path="/administration/dhis2">
                     <AdminDhis2ServersPage />
@@ -37,6 +48,6 @@ const Routing = () => (
             </Switch>
         </Router>
     </div>
-);
+)};
 
 export default Routing;
