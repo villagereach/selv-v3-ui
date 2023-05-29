@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 import getService from '../../../react-components/utils/angular-utils';
+import { SYNC_OPTIONS } from '../../consts';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
 
 function AdminDhis2DatasetSyncForm({ 
@@ -15,7 +16,7 @@ function AdminDhis2DatasetSyncForm({
     facilityService 
     }) {
 
-    const [dhisPermissionsFacilitiesOptions, setDhisPermissionsFacilitiesOptions] = useState([]);
+    const [dhisPermissionsFacilitiesOptions, setDhisPermissionsFacilitiesOptions] = useState(SYNC_OPTIONS);
     const [dhisPeriodMappingsOptions, setDdhisPeriodMappingsOptions] = useState([]);
 
     const [selectedFacility, setSelectedFacility] = useState('');
@@ -51,8 +52,13 @@ function AdminDhis2DatasetSyncForm({
 
     const fetchDhisFacilities = () => {
         const userId = authorizationService.getUser().user_id;
+        const params = {
+            size: -1,
+            sort: 'name,asc'
+        };
+
         asynchronousService.all([
-            facilityService.getAllMinimal(),
+            facilityService.search(params, params),
             permissionService.load(userId),
         ])
             .then((responses) => {
@@ -61,18 +67,19 @@ function AdminDhis2DatasetSyncForm({
                 const dhisPermissionsFacilities = permissions
                     .filter((permission) => permission.right === 'MANAGE_DHIS2_SUPERVISORY_NODES')
                     .map((permission) => {
+                        const permissionFacility = facilities.content.find((facility) => facility.id === permission.facilityId);
                         return {
-                            id: permission.facilityId,
-                            name: facilities.find((facility) => facility.id === permission.facilityId).name
+                            name: permissionFacility.name,
+                            code: permissionFacility.code
                         }
                     });
 
                 const dhisFacilitiesOptions = dhisPermissionsFacilities.map((dhisFacility) => ({
                     name: dhisFacility.name,
-                    value: dhisFacility.id
+                    value: dhisFacility.code
                 }))
 
-                setDhisPermissionsFacilitiesOptions(dhisFacilitiesOptions);
+                setDhisPermissionsFacilitiesOptions([...dhisPermissionsFacilitiesOptions, ...dhisFacilitiesOptions]);
             });
     }
 
@@ -84,10 +91,22 @@ function AdminDhis2DatasetSyncForm({
     useEffect(() => {}, [datasetId])
 
     const submitDatasetSync = () => {
+
+        let facilityCodes = [];
+
+        if (selectedFacility === 'Select All') {
+
+            const allFacilities = dhisPermissionsFacilitiesOptions
+            .filter((facilityOption) => facilityOption.value !== 'Select All')
+            .map((facilityOption) => facilityOption.value)
+
+            facilityCodes = allFacilities;
+        }
+
         const syncPayload = {
-            facilityCodes: [
+            facilityCodes: facilityCodes.length === 0 ?  [
                 selectedFacility
-            ]
+            ] : facilityCodes
         }
 
         serverService.syncServer(serverId, datasetId, selectedPeriodMapping, syncPayload)
@@ -142,7 +161,7 @@ function AdminDhis2DatasetSyncForm({
                           className={`primary ${isSubmitButtonDisabled && 'disabled-button'}`}
                           type='button'
                           disabled={isSubmitButtonDisabled}
-                          onClick={submitDatasetSync}
+                          onClick={() => submitDatasetSync()}
                       >
                          Sync
                       </button>

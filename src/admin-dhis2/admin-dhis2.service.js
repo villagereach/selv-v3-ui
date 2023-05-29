@@ -81,12 +81,9 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/elementsAndCombos'),
                 method: 'GET'
             },
-            syncServer: function(serverId, datasetId, periodMappingId) {
-                return {
-                    url: openlmisUrlFactory('/api/execute?serverId=' + serverId + '&datasetId=' + datasetId +
-                        '&periodMappingId=' + periodMappingId),
-                    method: 'POST'
-                };
+            syncServer: {
+                url: openlmisUrlFactory('/api/execute'),
+                method: 'POST'
             },
             getProcessingSchedules: {
                 url: openlmisUrlFactory('/api/processingPeriods'),
@@ -253,7 +250,6 @@
         }
 
         function syncServer(serverId, datasetId, periodMappingId, facilityCodes) {
-            console.log(serverId, datasetId, periodMappingId, facilityCodes);
             return resource.syncServer({
                 serverId: serverId,
                 datasetId: datasetId,
