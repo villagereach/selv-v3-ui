@@ -20,15 +20,16 @@
         .module('admin-dhis2')
         .config(routes);
 
-    routes.$inject = ['$stateProvider'];
+    routes.$inject = ['$stateProvider', 'ADMINISTRATION_RIGHTS'];
 
-    function routes($stateProvider) {
+    function routes($stateProvider, ADMINISTRATION_RIGHTS) {
         $stateProvider.state('openlmis.administration.dhis2', {
             url: '/dhis2',
             label: 'admin.dhis2.label',
             isOffline: false,
             priority: 11,
             showInNavigation: true,
+            accessRights: [ADMINISTRATION_RIGHTS.MANAGE_DHIS2],
             views: {
                 '@': {
                     templateUrl: 'admin-dhis2/admin-dhis2.html'

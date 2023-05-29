@@ -35,9 +35,12 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
     const [datasetsParams, setDatasetsParams] = useState([]);
     const [datasetToSyncId, setDatasetToSyncId] = useState(null);
     const [serverId, setServerId] = useState(null);
+    const [hasRightForMapping, setHasRightForMapping] = useState(false);
     const [displayAddModal, setDisplayAddModal] = useState(false);
     const [displaySyncModal, setDisplaySyncModal] = useState(false);
     const [displayMappingModal, setDisplayMappingModal] = useState(false);
+
+    const MANAGE_DHIS2_PERIODS = 'MANAGE_DHIS2_PERIODS';
 
     const datasetService = useMemo(
         () => {
@@ -51,6 +54,10 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
         if (location.state !== undefined) {
             setServerId(location.state.data.serverId);
         }
+
+        const roleAssignments = JSON.parse(localStorage.getItem('openlmis.ROLE_ASSIGNMENTS'));
+        const hasRightForMapping = roleAssignments.filter((roleAssignment) => roleAssignment.name === MANAGE_DHIS2_PERIODS);
+        setHasRightForMapping(hasRightForMapping);
     }, [location]);
 
     const fetchServerDatasetsList = () => {
@@ -149,11 +156,13 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
                         >
                             Map Data Elements
                         </ResponsiveButton>
-                        <ResponsiveButton
-                            onClick={toggleMappingModal}
-                        >
-                            Map Periods
-                        </ResponsiveButton>
+                        {hasRightForMapping &&
+                            <ResponsiveButton
+                                onClick={toggleMappingModal}
+                            >
+                                Map Periods
+                            </ResponsiveButton>
+                        }
                         <button
                             onClick={() => selectDatasetToSync(values)}
                         >

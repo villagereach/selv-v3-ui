@@ -50,7 +50,10 @@
             // SELV3-469: Add possibility to add valid destinations
             STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE',
             // SELV3-469: Ends here
-            ORDER_CREATE: 'ORDER_CREATE'
+            ORDER_CREATE: 'ORDER_CREATE',
+            // SELV3-670: Secure DHIS2 page 
+            MANAGE_DHIS2: 'MANAGE_DHIS2'
+            // SELV3-670: Ends here
         };
     }
 
