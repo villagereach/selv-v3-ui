@@ -33,6 +33,10 @@ export const SOURCE_OPTIONS = [
     { name: 'Requisition', value: 'Requisition'}
 ];
 
+export const SYNC_OPTIONS = [
+    { name: 'Select All', value: 'Select All'}
+];
+
 export const DAY_OPTIONS = 30;
 export const HOUR_OPTIONS = 23;
 export const MINUTE_OPTIONS = 59;
