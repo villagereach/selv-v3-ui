@@ -56,7 +56,7 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
         }
 
         const roleAssignments = JSON.parse(localStorage.getItem('openlmis.ROLE_ASSIGNMENTS'));
-        const hasRightForMapping = roleAssignments.filter((roleAssignment) => roleAssignment.name === MANAGE_DHIS2_PERIODS);
+        const hasRightForMapping = roleAssignments.filter((roleAssignment) => roleAssignment.name === MANAGE_DHIS2_PERIODS).length > 0;
         setHasRightForMapping(hasRightForMapping);
     }, [location]);
 
