@@ -16,7 +16,7 @@ function AdminDhis2DatasetSyncForm({
     facilityService 
     }) {
 
-    const [dhisPermissionsFacilitiesOptions, setDhisPermissionsFacilitiesOptions] = useState(SYNC_OPTIONS);
+    const [dhisPermissionsFacilitiesOptions, setDhisPermissionsFacilitiesOptions] = useState([]);
     const [dhisPeriodMappingsOptions, setDdhisPeriodMappingsOptions] = useState([]);
 
     const [selectedFacility, setSelectedFacility] = useState('');
@@ -79,7 +79,8 @@ function AdminDhis2DatasetSyncForm({
                     value: dhisFacility.code
                 }))
 
-                setDhisPermissionsFacilitiesOptions([...dhisPermissionsFacilitiesOptions, ...dhisFacilitiesOptions]);
+                dhisFacilitiesOptions.length > 0 && 
+                    setDhisPermissionsFacilitiesOptions([...SYNC_OPTIONS, ...dhisFacilitiesOptions]);
             });
     }
 
