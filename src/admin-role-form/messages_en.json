@@ -1,4 +1,5 @@
 {
     "adminRoleForm.manageDhis2": "Manage DHIS2",
-    "adminRoleForm.manageDhis2Periods": "Manage DHIS2 Periods"
+    "adminRoleForm.manageDhis2Periods": "Manage DHIS2 periods",
+    "adminRoleForm.manageDhis2SupervisoryNodes": "Manage DHIS2 supervisory nodes"
 }
