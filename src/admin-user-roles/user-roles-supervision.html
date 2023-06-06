@@ -1,0 +1,64 @@
+<form class="form-inline" ng-if="vm.editable" ng-submit="vm.addRole()" reload-form>
+    <div class="form-group">
+        <label for="program">{{'adminUserRoles.program' | message}}</label>
+        <select id="program" ng-model="vm.selectedProgram"
+            ng-options="program as program.name for program in vm.programs"
+            required>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="supervisoryNode">{{'adminUserRoles.supervisoryNode' | message}}</label>
+        <select id="supervisoryNode" ng-model="vm.selectedSupervisoryNode"
+            ng-options="supervisoryNode as (supervisoryNode | supervisoryNode) for supervisoryNode in vm.supervisoryNodes"
+            no-auto-select="true">
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="role">{{'adminUserRoles.role' | message}}</label>
+        <select id="role" ng-model="vm.selectedRole"
+            ng-options="role as role.name for role in vm.filteredRoles" required>
+        </select>
+    </div>
+    <button type="submit" class="add">{{'adminUserRoles.addRole' | message}}</button>
+</form>
+<section class="openlmis-table-container">
+    <table>
+        <caption ng-if="!vm.roleAssignments || vm.roleAssignments.length === 0">
+            {{'adminUserRoles.noRolesAssigned' | message}}
+        </caption>
+        <thead>
+            <tr>
+                <th ng-if="vm.showErrorColumn"></th>
+                <th>{{'adminUserRoles.program' | message}}</th>
+                <th>{{'adminUserRoles.supervisoryNode' | message}}</th>
+                <!-- SELV3-674: Fix issues related to new Chrome popover functionality -->
+                <th openlmis-popover="{{'adminUserRoles.hoveringOverRolesWillRevealRightsAssignedToThen' | message}}">
+                    {{'adminUserRoles.role' | message}}
+                </th>
+                <!-- SELV3-674: Ends here -->
+                <th ng-if="vm.editable">{{'adminUserRoles.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="roleAssignment in vm.items | orderBy : '$name'">
+                <td ng-if="vm.showErrorColumn && roleAssignment.errors.length"
+                    class="role-assignment-invalid"
+                    popover-template="admin-user-roles/role-assignment-errors-popover.html">
+                </td>
+                <td ng-if="vm.showErrorColumn && !roleAssignment.errors.length"></td>
+                <td>{{roleAssignment.programName}}</td>
+                <td>{{roleAssignment.supervisoryNodeName}}</td>
+                <td popover-template="admin-user-roles/user-role-right-popover.html"
+                    popover-title="{{'adminUserRoles.assignedRights' | message}}">
+                    {{roleAssignment.roleName}}
+                </td>
+                <td ng-if="vm.editable">
+                    <button class="danger" ng-click="vm.removeRole(roleAssignment)">{{'adminUserRoles.removeRole.label' | message}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination
+        list="vm.roleAssignments"
+        paged-list="vm.items"/>
+</section>
