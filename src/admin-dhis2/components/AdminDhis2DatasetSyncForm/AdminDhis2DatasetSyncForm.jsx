@@ -13,7 +13,8 @@ function AdminDhis2DatasetSyncForm({
     asynchronousService,
     authorizationService,
     permissionService,
-    facilityService 
+    facilityService,
+    loadingModalService
     }) {
 
     const [dhisPermissionsFacilitiesOptions, setDhisPermissionsFacilitiesOptions] = useState([]);
@@ -110,12 +111,13 @@ function AdminDhis2DatasetSyncForm({
             ] : facilityCodes
         }
 
+        loadingModalService.open();
         serverService.syncServer(serverId, datasetId, selectedPeriodMapping, syncPayload)
             .then(() => {
                 onSubmit();
                 toast.success('Data has been synchronized successfully!');
                 setInitialValues();
-            });
+            }).finally(() => loadingModalService.close());
     }
 
     const isSubmitButtonDisabled = !selectedFacility || !selectedPeriodMapping;
