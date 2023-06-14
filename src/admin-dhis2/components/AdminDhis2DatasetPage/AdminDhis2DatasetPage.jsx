@@ -28,7 +28,8 @@ import AdminDhis2DatasetForm from '../AdminDhis2DatasetForm/AdminDhis2DatasetFor
 import AdminDhis2DatasetSyncForm from '../AdminDhis2DatasetSyncForm/AdminDhis2DatasetSyncForm';
 import AdminDhis2PeriodMappingForm from '../AdminDhis2PeriodMappingForm/AdminDhis2PeriodMappingForm';
 
-const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, permissionService, facilityService }) => {
+const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, permissionService, facilityService,
+        loadingModalService }) => {
     const location = useLocation();
     const history = useHistory();
 
@@ -223,6 +224,7 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
                         authorizationService={authorizationService}
                         permissionService={permissionService}
                         facilityService={facilityService}
+                        loadingModalService={loadingModalService}
                     />
                 ]}
             />

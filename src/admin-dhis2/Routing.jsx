@@ -24,7 +24,8 @@ const Routing = ({
     asynchronousService,
     authorizationService,
     permissionService,
-    facilityService
+    facilityService,
+    loadingModalService
 }) => {
     return (
     <div className="page-responsive">
@@ -40,6 +41,7 @@ const Routing = ({
                         authorizationService={authorizationService}
                         permissionService={permissionService}
                         facilityService={facilityService}
+                        loadingModalService={loadingModalService}
                     />
                 </Route>
                 <Route exact path="/administration/dhis2">
