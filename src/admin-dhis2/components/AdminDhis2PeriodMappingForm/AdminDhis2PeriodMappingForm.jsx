@@ -18,6 +18,8 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }
     const [selectedProcessingSchedule, setSelectedProcessingSchedule] = useState(undefined);
     const [errors, setErrors] = useState([]);
 
+    const numberOfPeriodsToDisplay = 4;
+
     const serverService = useMemo(
         () => {
             return getService('adminDhis2');
@@ -72,7 +74,7 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }
                 endDate: processingPeriod.endDate,
                 processingScheduleId: processingPeriod.processingSchedule.id
             }))
-            .slice(0,4);
+            .slice(0,numberOfPeriodsToDisplay);
 
         setProcessingPeriodsOptions(processingPeriodsWithScheduleId);
     }
