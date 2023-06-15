@@ -34,7 +34,7 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
     const history = useHistory();
 
     const [datasetsParams, setDatasetsParams] = useState([]);
-    const [datasetToSyncId, setDatasetToSyncId] = useState(null);
+    const [datasetId, setdatasetId] = useState(null);
     const [serverId, setServerId] = useState(null);
     const [hasRightForMapping, setHasRightForMapping] = useState(false);
     const [displayAddModal, setDisplayAddModal] = useState(false);
@@ -103,9 +103,8 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
         setDisplayMappingModal(!displayMappingModal);
     };
 
-    const selectDatasetToSync = (value) => {
-        setDatasetToSyncId(value.datasetId);
-        toggleSyncModal();
+    const selectDatasetId = (value) => {
+        setdatasetId(value.datasetId);
     } 
 
     const onSubmitAdd = () => {
@@ -159,13 +158,19 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
                         </ResponsiveButton>
                         {hasRightForMapping &&
                             <ResponsiveButton
-                                onClick={toggleMappingModal}
+                                onClick={() => {
+                                    selectDatasetId(values)
+                                    toggleMappingModal();
+                                }}
                             >
                                 Map Periods
                             </ResponsiveButton>
                         }
                         <button
-                            onClick={() => selectDatasetToSync(values)}
+                            onClick={() => {
+                                selectDatasetId(values);
+                                toggleSyncModal();
+                            }}
                         >
                             Sync
                         </button>
@@ -219,7 +224,7 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
                         onSubmit={onSubmitSyncModal}
                         onCancel={toggleSyncModal}
                         serverId={serverId}
-                        datasetId={datasetToSyncId}
+                        datasetId={datasetId}
                         asynchronousService={asynchronousService}
                         authorizationService={authorizationService}
                         permissionService={permissionService}
@@ -235,6 +240,7 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
                         onSubmit={onSubmitMappingModal}
                         onCancel={toggleMappingModal}
                         serverId={serverId}
+                        datasetId={datasetId}
                     />
                 ]}
             />

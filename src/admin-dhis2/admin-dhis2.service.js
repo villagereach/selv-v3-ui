@@ -49,6 +49,9 @@
                 url: openlmisUrlFactory('/api/serverConfiguration/:id/datasets'),
                 method: 'GET'
             },
+            getServerDataset: {
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/dhisDatasets/:datasetId')
+            },
             getServerDatasetsList: {
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/dhisDatasets'),
                 method: 'GET'
@@ -86,8 +89,11 @@
                 method: 'POST'
             },
             getProcessingSchedules: {
-                url: openlmisUrlFactory('/api/processingPeriods'),
+                url: openlmisUrlFactory('/api/processingSchedules'),
                 method: 'GET'
+            },
+            getProcessingPeriods: {
+                url: openlmisUrlFactory('/api/processingPeriods?sort=startDate,desc')
             },
             getDhisPeriodTypes: {
                 url: openlmisUrlFactory('/api/serverConfiguration/:serverId/dhisPeriodTypes'),
@@ -114,6 +120,7 @@
         this.removeServer = removeServer;
 
         this.getServerDatasets = getServerDatasets;
+        this.getServerDataset = getServerDataset;
         this.getServerDatasetsList = getServerDatasetsList;
         this.addDataset = addDataset;
         this.removeDataset = removeDataset;
@@ -126,6 +133,7 @@
         this.getDhisElementCombos = getDhisElementCombos;
         this.getDataOrderables = getDataOrderables;
         this.getProcessingSchedules = getProcessingSchedules;
+        this.getProcessingPeriods = getProcessingPeriods;
         this.getDhisPeriodTypes = getDhisPeriodTypes;
         this.syncServers = syncServers;
         this.syncServer = syncServer;
@@ -160,6 +168,13 @@
             return resource.getServerDatasets({
                 id: serverId
             }, serverId).$promise;
+        }
+
+        function getServerDataset(serverId, datasetId) {
+            return resource.getServerDataset({
+                serverId: serverId,
+                datasetId: datasetId
+            }).$promise;
         }
 
         function getServerDatasetsList(serverId) {
@@ -225,6 +240,10 @@
 
         function getProcessingSchedules() {
             return resource.getProcessingSchedules().$promise;
+        }
+
+        function getProcessingPeriods() {
+            return resource.getProcessingPeriods().$promise;
         }
 
         function getDhisPeriodTypes(serverId) {
