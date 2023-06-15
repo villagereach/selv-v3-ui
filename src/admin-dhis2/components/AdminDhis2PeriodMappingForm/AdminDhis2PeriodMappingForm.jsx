@@ -5,14 +5,16 @@ import getService from '../../../react-components/utils/angular-utils';
 import { SearchSelect } from '../../../requisition-order-create/search-select'
 import {SOURCE_OPTIONS} from '../../consts';
 
-function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
+function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }) {
 
+    const [processingPeriods, setProcessingPeriods] = useState([]);
+    const [processingPeriodsOptions, setProcessingPeriodsOptions] = useState([]);
     const [processingSchedulesOptions, setProcessingSchedulesOptions] = useState([]);
-    const [dhisPeriodTypesOptions, setDhisPeriodTypesOptions] = useState([]);
 
     const [providedName, setProvidedName] = useState('');
     const [selectedSource, setSelectedSource] = useState('');
-    const [selectedDhisPeriodType, setSelectedDhisPeriodType] = useState('');
+    const [dhisPeriod, setDhisPeriod] = useState('');
+    const [selectedProcessingPeriod, setSelectedProcessingPeriod] = useState(undefined);
     const [selectedProcessingSchedule, setSelectedProcessingSchedule] = useState(undefined);
     const [errors, setErrors] = useState([]);
 
@@ -26,48 +28,63 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
     const setInitialValues = () => {
         setProvidedName('');
         setSelectedSource('');
-        setSelectedDhisPeriodType('');
+        setSelectedProcessingPeriod(undefined);
         setSelectedProcessingSchedule(undefined);
         setErrors([]);
     };
 
-    const fetchProcessingPeriods = () => {
-        serverService.getProcessingSchedules()
-            .then((fetchedProcessingPeriods) => {
-                const { content } = fetchedProcessingPeriods;
+    const fetchServerDataset = () => {
+        serverService.getServerDataset(serverId, datasetId)
+            .then((fetchedServerDataset) => {
+                setDhisPeriod(fetchedServerDataset.periodType);
+            })
+    }
 
+    const fetchProcessingSchedules = () => {
+        serverService.getProcessingSchedules()
+            .then((fetchedProcessingSchedules) => {
+                const { content } = fetchedProcessingSchedules;
+                
                 const elements = content.map((element) => ({
                     name: element.name,
-                    value: element.id,
-                    startDate: element.startDate,
-                    endDate: element.endDate
+                    value: element.id
                 }));
+
                 setProcessingSchedulesOptions(elements);
             });
     }
 
-    const fetchDhisPeriodTypes = () => {
-        if (serverId) {
-            serverService?.getDhisPeriodTypes(serverId)
-            .then((fetchedDhisPeriodTypes) => {
-
-                const dhisPeriodTypes = fetchedDhisPeriodTypes.map((dhisPeriodType) => ({
-                    name: dhisPeriodType.name,
-                    value: dhisPeriodType.name,
-                }));
-                setDhisPeriodTypesOptions(dhisPeriodTypes);
+    const fetchProcessingPeriods = () => {
+        serverService.getProcessingPeriods()
+            .then((fetchedProcessingPeriods) => {
+                const { content } = fetchedProcessingPeriods;
+                setProcessingPeriods(content);
             });
-        }
+    }
+
+    const filterProcessingPeriodsBySchedule = (scheduleId) => {
+        const processingPeriodsWithScheduleId = processingPeriods
+            .filter((processingPeriod) => processingPeriod.processingSchedule.id === scheduleId)
+            .map((processingPeriod) => ({
+                name: processingPeriod.name,
+                value: processingPeriod.id,
+                startDate: processingPeriod.startDate,
+                endDate: processingPeriod.endDate,
+                processingScheduleId: processingPeriod.processingSchedule.id
+            }))
+            .slice(0,4);
+
+        setProcessingPeriodsOptions(processingPeriodsWithScheduleId);
     }
 
     const submitPeriodMapping = () => {
         const periodMapping = {
             name: providedName,
-            dhisPeriod: selectedDhisPeriodType,
+            dhisPeriod: dhisPeriod,
             source: selectedSource,
-            processingPeriodId: selectedProcessingSchedule.value,
-            startDate: selectedProcessingSchedule.startDate,
-            endDate: selectedProcessingSchedule.endDate,
+            processingPeriodId: selectedProcessingPeriod.value,
+            startDate: selectedProcessingPeriod.startDate,
+            endDate: selectedProcessingPeriod.endDate,
             serverDto: {
                 id: serverId
             }
@@ -81,11 +98,12 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
             });
     }
 
-    useEffect(() => fetchDhisPeriodTypes(), [serverId]);
+    useEffect(() => fetchServerDataset(), [datasetId]);
 
     useEffect(() => {
         fetchProcessingPeriods();
-        fetchDhisPeriodTypes();
+        fetchServerDataset();
+        fetchProcessingSchedules();
     }, []);
     
     const nameValidation = (name) => {
@@ -105,8 +123,8 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
     }
 
     const isSubmitButtonDisabled = !selectedSource ||
-     !selectedDhisPeriodType || 
-     !selectedProcessingSchedule ||
+     !dhisPeriod || 
+     !selectedProcessingPeriod ||
      !providedName ||
      errors.length > 0;
 
@@ -134,25 +152,39 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
                 </div>
                 {errors.map((error, key) => <p key={key} className='invalid-name'>{error}</p>)}
                 <div><strong className='is-required'>Source</strong></div>
-                  <SearchSelect
-                      options={SOURCE_OPTIONS}
-                      value={selectedSource}
-                      onChange={value => setSelectedSource(value)}
-                      placeholder='Select source'
-                  />
-                <div><strong className='is-required'>DHIS2 Period</strong></div>
                 <SearchSelect
-                    options={dhisPeriodTypesOptions}
-                    value={selectedDhisPeriodType}
-                    onChange={value => setSelectedDhisPeriodType(value)}
-                    placeholder='Select period'
+                    options={SOURCE_OPTIONS}
+                    value={selectedSource}
+                    onChange={value => setSelectedSource(value)}
+                    placeholder='Select source'
                 />
+                <div><strong className='is-required'>DHIS2 Period</strong></div>
+                <div className='field-full-width'>
+                    <div>
+                        <input
+                            value={dhisPeriod}
+                            disabled
+                        />
+                    </div>
+                </div>
                 <div><strong className='is-required'>Processing Schedule</strong></div>
                 <SearchSelect
                     options={processingSchedulesOptions}
                     value={selectedProcessingSchedule}
-                    onChange={value => setSelectedProcessingSchedule(processingSchedulesOptions.find((processingSchedule) => processingSchedule.value === value))}
+                    onChange={(value) => {
+                        setSelectedProcessingSchedule(value);
+                        filterProcessingPeriodsBySchedule(value);
+                        setSelectedProcessingPeriod(undefined);
+                    }}
                     placeholder='Select processing schedule'
+                />
+                <div><strong className='is-required'>Processing Period</strong></div>
+                <SearchSelect
+                    disabled={!selectedProcessingSchedule}
+                    options={processingPeriodsOptions}
+                    value={selectedProcessingPeriod}
+                    onChange={value => setSelectedProcessingPeriod(processingPeriodsOptions.find((processingPeriod) => processingPeriod.value === value))}
+                    placeholder='Select processing period'
                 />
                 <div><strong>Start Date</strong></div>
                 <div className='input-control openlmis-datepicker'>
@@ -160,7 +192,7 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
                     type='text'
                     name='startDate'
                     disabled
-                    value={selectedProcessingSchedule !== undefined ? selectedProcessingSchedule.startDate : ''}
+                    value={selectedProcessingPeriod !== undefined ? selectedProcessingPeriod.startDate : ''}
                 />
                 </div>
                 <div><strong>End Date</strong></div>
@@ -169,7 +201,7 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId }) {
                     type='text'
                     name='endDate'
                     disabled
-                    value={selectedProcessingSchedule !== undefined ? selectedProcessingSchedule.endDate : ''}
+                    value={selectedProcessingPeriod !== undefined ? selectedProcessingPeriod.endDate : ''}
                 />
                 </div>
             </div>
