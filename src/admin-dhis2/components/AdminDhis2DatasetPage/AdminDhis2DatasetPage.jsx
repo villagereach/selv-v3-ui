@@ -112,10 +112,12 @@ const AdminDhis2DatasetPage = ({ asynchronousService, authorizationService, perm
     };
 
     const onSubmitMappingModal = () => {
+        setdatasetId(null);
         toggleMappingModal();
     }
 
     const onSubmitSyncModal = () => {
+        setdatasetId(null);
         toggleSyncModal();
     }
 

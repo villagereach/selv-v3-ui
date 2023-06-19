@@ -36,8 +36,8 @@ function AdminDhis2DatasetSyncForm({
     }
 
     const fetchDhisPeriodMappings = () => {
-        if (serverId) {
-            serverService?.getPeriodMappings(serverId)
+        if (serverId && datasetId) {
+            serverService?.getPeriodMappings(serverId, datasetId)
             .then((fetchedDhisPeriodMappings) => {
                 const { content } = fetchedDhisPeriodMappings;
 
@@ -86,11 +86,12 @@ function AdminDhis2DatasetSyncForm({
     }
 
     useEffect(() => {
-        fetchDhisPeriodMappings();
         fetchDhisFacilities();
     }, [serverId]);
 
-    useEffect(() => {}, [datasetId])
+    useEffect(() => {
+        fetchDhisPeriodMappings();
+    }, [datasetId])
 
     const submitDatasetSync = () => {
 
