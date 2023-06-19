@@ -35,6 +35,22 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }
         setErrors([]);
     };
 
+    const fetchDhisPeriodMappings = () => {
+        if (serverId) {
+            serverService?.getPeriodMappings(serverId, datasetId)
+            .then((fetchedDhisPeriodMappings) => {
+                const { content } = fetchedDhisPeriodMappings;
+
+                const dhisPeriodMappings = content.map((dhisPeriodMapping) => ({
+                    name: dhisPeriodMapping.name,
+                    value: dhisPeriodMapping.id,
+                }));
+
+                setDdhisPeriodMappingsOptions(dhisPeriodMappings);
+            });
+        }
+    }
+
     const fetchServerDataset = () => {
         serverService.getServerDataset(serverId, datasetId)
             .then((fetchedServerDataset) => {
@@ -87,13 +103,17 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }
             processingPeriodId: selectedProcessingPeriod.value,
             startDate: selectedProcessingPeriod.startDate,
             endDate: selectedProcessingPeriod.endDate,
-            serverDto: {
-                id: serverId
+            datasetDto: {
+                id: datasetId,
+                serverDto: {
+                    id: serverId
+                }
             }
         }
 
-        serverService.addPeriodMapping(serverId, periodMapping)
+        serverService.addPeriodMapping(serverId, datasetId, periodMapping)
             .then(() => {
+                fetchDhisPeriodMappings();
                 onSubmit();
                 toast.success('Period Mapping has been added successfully!');
                 setInitialValues();

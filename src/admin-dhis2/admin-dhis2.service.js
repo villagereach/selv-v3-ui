@@ -101,11 +101,11 @@
                 isArray: true
             },
             getPeriodMappings: {
-                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/periodMappings'),
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/periodMappings'),
                 method: 'GET'
             },
             addPeriodMapping: {
-                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/periodMappings'),
+                url: openlmisUrlFactory('/api/serverConfiguration/:serverId/datasets/:datasetId/periodMappings'),
                 method: 'POST'
             },
             getDataOrderables: {
@@ -252,15 +252,17 @@
             }).$promise;
         }
 
-        function getPeriodMappings(serverId) {
+        function getPeriodMappings(serverId, datasetId) {
             return resource.getPeriodMappings({
-                serverId: serverId
-            }).$promise;
+                serverId: serverId,
+                datasetId: datasetId
+            }, datasetId).$promise;
         }
 
-        function addPeriodMapping(serverId, periodMapping) {
+        function addPeriodMapping(serverId, datasetId, periodMapping) {
             return resource.addPeriodMapping({
-                serverId: serverId
+                serverId: serverId,
+                datasetId: datasetId
             }, periodMapping).$promise;
         }
 
