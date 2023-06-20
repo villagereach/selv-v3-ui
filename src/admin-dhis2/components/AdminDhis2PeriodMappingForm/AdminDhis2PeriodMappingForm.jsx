@@ -52,10 +52,12 @@ function AdminDhis2PeriodMappingForm({ onSubmit, onCancel, serverId, datasetId }
     }
 
     const fetchServerDataset = () => {
+        if (serverId && datasetId) {
         serverService.getServerDataset(serverId, datasetId)
             .then((fetchedServerDataset) => {
                 setDhisPeriod(fetchedServerDataset.periodType);
-            })
+            });
+        }
     }
 
     const fetchProcessingSchedules = () => {
