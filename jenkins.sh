@@ -8,6 +8,9 @@ fi
 
 echo "" >> .env && cat ./credentials/shared/versions.env >> .env
 
+export DOCKER_CLIENT_TIMEOUT=120
+export COMPOSE_HTTP_TIMEOUT=120
+
 /usr/local/bin/docker-compose pull
 /usr/local/bin/docker-compose down --volumes
 /usr/local/bin/docker-compose run --entrypoint ./build.sh selv-v3-ui
