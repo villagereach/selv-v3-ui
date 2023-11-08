@@ -40,7 +40,9 @@
 
         vm.$onInit = onInit;
         vm.loadOrders = loadOrders;
+        // SELV3-229: Translate Requisition and Order Status
         vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
+        // SELV3-229: Ends here
 
         /**
          * @ngdoc property
