@@ -30,11 +30,12 @@
 
     ProofOfDeliveryViewController.$inject = [
         'proofOfDelivery', 'order', 'reasons', 'messageService', 'VVM_STATUS', 'orderLineItems', 'canEdit', '$q',
-        'accessTokenFactory', '$window', 'openlmisUrlFactory'
+        'accessTokenFactory', '$window', 'openlmisUrlFactory', 'ORDER_STATUSES'
     ];
 
     function ProofOfDeliveryViewController(proofOfDelivery, order, reasons, messageService, VVM_STATUS, orderLineItems,
-                                           canEdit, $q, accessTokenFactory, $window, openlmisUrlFactory) {
+                                           canEdit, $q, accessTokenFactory, $window, openlmisUrlFactory,
+                                           ORDER_STATUSES) {
 
         var vm = this;
 
@@ -42,6 +43,9 @@
         vm.getStatusDisplayName = getStatusDisplayName;
         vm.getReasonName = getReasonName;
         vm.printProofOfDelivery = printProofOfDelivery;
+        // SELV3-229: Translate Requisition and Order Status
+        vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
+        // SELV3-229: Ends here
 
         /**
          * @ngdoc property
@@ -119,6 +123,9 @@
          */
         function onInit() {
             vm.order = order;
+            // SELV3-229: Translate Requisition and Order Status
+            vm.order.displayStatus = vm.getOrderStatus(order.status);
+            // SELV3-229: Ends here
             vm.reasons = reasons;
             vm.proofOfDelivery = proofOfDelivery;
             vm.orderLineItems = orderLineItems;

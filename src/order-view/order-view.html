@@ -54,7 +54,9 @@
                 <td>{{order.processingPeriod.name}}</td>
                 <td>{{order.processingPeriod.startDate | openlmisDate}}</td>
                 <td>{{order.processingPeriod.endDate | openlmisDate}}</td>
-                <td>{{order.status}}</td>
+                <!-- SELV3-229: Translate Requisition and Order Status -->
+                <td>{{vm.getOrderStatus(order.status)}}</td>
+                <!-- SELV3-229: Ends here -->
                 <td class="col-emergency">
                     <i ng-class="{'icon-ok': order.emergency}"></i>
                 </td>
