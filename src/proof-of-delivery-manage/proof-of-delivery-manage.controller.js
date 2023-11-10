@@ -31,18 +31,21 @@
     controller.$inject = [
         'proofOfDeliveryManageService', '$state', 'loadingModalService', 'notificationService', 'pods',
         '$stateParams', 'programs', 'requestingFacilities', 'supplyingFacilities',
-        'accessTokenFactory', 'openlmisUrlFactory', '$window'
+        'accessTokenFactory', 'openlmisUrlFactory', '$window', 'ORDER_STATUSES'
     ];
 
     function controller(proofOfDeliveryManageService, $state, loadingModalService, notificationService,
                         pods, $stateParams, programs, requestingFacilities, supplyingFacilities,
-                        accessTokenFactory, openlmisUrlFactory, $window) {
+                        accessTokenFactory, openlmisUrlFactory, $window, ORDER_STATUSES) {
         var vm = this;
 
         vm.$onInit = onInit;
         vm.openPod = openPod;
         vm.loadOrders = loadOrders;
         vm.printProofOfDelivery = printProofOfDelivery;
+        // SELV3-229: Translate Requisition and Order Status
+        vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
+        // SELV3-229: Ends here
 
         /**
          * @ngdoc property

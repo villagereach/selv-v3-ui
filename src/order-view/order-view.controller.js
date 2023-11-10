@@ -33,13 +33,13 @@
         'supplyingFacilities', 'requestingFacilities', 'programs', 'requestingFacilityFactory',
         'loadingModalService', 'notificationService', 'fulfillmentUrlFactory', 'orders',
         'orderService', 'orderStatusFactory', 'canRetryTransfer', '$stateParams', '$filter', '$state', '$scope',
-        'accessTokenFactory', 'openlmisUrlFactory', 'proofOfDeliveryManageService', '$window'
+        'accessTokenFactory', 'openlmisUrlFactory', 'proofOfDeliveryManageService', '$window', 'ORDER_STATUSES'
     ];
 
     function controller(supplyingFacilities, requestingFacilities, programs, requestingFacilityFactory,
                         loadingModalService, notificationService, fulfillmentUrlFactory, orders, orderService,
                         orderStatusFactory, canRetryTransfer, $stateParams, $filter, $state, $scope,
-                        accessTokenFactory, openlmisUrlFactory, proofOfDeliveryManageService, $window) {
+                        accessTokenFactory, openlmisUrlFactory, proofOfDeliveryManageService, $window, ORDER_STATUSES) {
 
         var vm = this;
 
@@ -49,6 +49,9 @@
         vm.getDownloadUrl = getDownloadUrl;
         vm.retryTransfer = retryTransfer;
         vm.redirectToOrderEdit = redirectToOrderEdit;
+        // SELV3-229: Translate Requisition and Order Status
+        vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
+        // SELV3-229: Ends here
 
         /**
          * @ngdoc property

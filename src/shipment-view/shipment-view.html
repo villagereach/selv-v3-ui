@@ -6,7 +6,9 @@
     <ul>
         <li>
             <strong>{{'shipmentView.status' | message}}</strong>
-            {{vm.order.status}}
+            <!-- SELV3-229: Translate Requisition and Order Status -->
+            {{vm.order.displayStatus}}
+            <!-- SELV3-229: Ends here -->
         </li>
         <li>
             <strong>{{'shipmentView.dateCreated' | message}}</strong>
@@ -50,7 +52,7 @@
                 <td>{{tableLineItem.productName}}</td>
                 <td ng-if="!tableLineItem.isLot"></td>
                 <td ng-if="tableLineItem.isLot">{{tableLineItem.lot | lotCode}}</td>
-                <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>F
+                <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>
                 <td>{{tableLineItem.lot.expirationDate | openlmisDate}}</td>
                 <td>{{tableLineItem.getOrderQuantity(vm.showInDoses())}}</td>
                 <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity()}}</td>

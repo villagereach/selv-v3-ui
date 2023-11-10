@@ -31,13 +31,13 @@
     ShipmentViewController.$inject = [
         'shipment', 'loadingModalService', '$state', '$window', 'fulfillmentUrlFactory',
         'messageService', 'accessTokenFactory', 'updatedOrder', 'QUANTITY_UNIT', 'tableLineItems',
-        'VVM_STATUS', 'confirmService', 'drafts', 'shipmentViewService'
+        'VVM_STATUS', 'confirmService', 'drafts', 'shipmentViewService', 'ORDER_STATUSES'
     ];
 
     function ShipmentViewController(shipment, loadingModalService, $state, $window,
                                     fulfillmentUrlFactory, messageService, accessTokenFactory,
                                     updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS,
-                                    confirmService, drafts, shipmentViewService) {
+                                    confirmService, drafts, shipmentViewService, ORDER_STATUSES) {
 
         var vm = this;
 
@@ -51,6 +51,9 @@
         // SELV3-507: Allow user to enter Shipment Date
         vm.drafts = drafts;
         // SELV3-507: ends here
+        // SELV3-229: Translate Requisition and Order Status
+        vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
+        // SELV3-229: Ends here
 
         /**
          * @ngdoc property
@@ -118,6 +121,9 @@
          */
         function onInit() {
             vm.order = updatedOrder;
+            // SELV3-229: Translate Requisition and Order Status
+            vm.order.displayStatus = vm.getOrderStatus(vm.order.status);
+            // SELV3-229: Ends here
             vm.shipment = shipment;
             vm.tableLineItems = tableLineItems;
             // SELV3-507: Allow user to enter Shipment Date
