@@ -1,0 +1,26 @@
+<h2>{{'adminSupplyLineAdd.addSupplyLine' | message}}</h2>
+<form id="addSupplyLine">
+    <fieldset class="form-group">
+        <label for="program">{{'adminSupplyLineAdd.program' | message}}</label>
+        <select id="program" class="form-control" ng-model="vm.supplyLine.program"
+                ng-options="program.name for program in vm.programs track by program.id" required></select>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="supervisoryNode">{{'adminSupplyLineAdd.supervisoryNode' | message}}</label>
+        <select id="supervisoryNode" class="form-control" ng-model="vm.supplyLine.supervisoryNode"
+                ng-options="supervisoryNode.code for supervisoryNode in vm.supervisoryNodes track by supervisoryNode.id" required></select>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="supplyingFacility">{{'adminSupplyLineAdd.supplyingFacility' | message}}</label>
+        <select id="supplyingFacility" class="form-control" ng-model="vm.supplyLine.supplyingFacility"
+                ng-options="facility.name for facility in vm.facilities track by facility.id" required></select>
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="description">{{'adminSupplyLineAdd.description' | message}}</label>
+        <textarea id="description" class="form-control" ng-model="vm.supplyLine.description"></textarea>
+    </fieldset>
+</form>
+<div class="openlmis-toolbar">
+    <button ui-sref="openlmis.administration.supplyLines" ui-sref-opts="{reload: true}">{{'adminSupplyLineAdd.cancel' | message}}</button>
+    <button class="primary" ng-click="vm.add(program, supervisoryNode, supplyingFacility, description)">{{'adminSupplyLineAdd.add' | message}}</button>
+</div>
