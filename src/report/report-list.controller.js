@@ -56,10 +56,6 @@
             jasper: getJasperReports('REQUISITION'),
             superSet: getSuperSetReports('REQUISITION')
         };
-        var shipmentReports = {
-            jasper: getJasperReports('SHIPMENT'),
-            superSet: getSuperSetReports('SHIPMENT')
-        };
         var administrationReports = {
             jasper: getJasperReports('ADMINISTRATION'),
             superSet: getSuperSetReports('ADMINISTRATION')
@@ -90,17 +86,6 @@
          * The list of all available requisition reports.
          */
         vm.requisitionReports = requisitionReports;
-
-        /**
-         * @ngdoc property
-         * @propertyOf report.controller:ReportListController
-         * @name shipmentReports
-         * @type {Array}
-         *
-         * @description
-         * The list of all available order reports.
-         */
-        vm.shipmentReports = shipmentReports;
 
         /**
          * @ngdoc property
