@@ -21,5 +21,9 @@
   "report.superset.stock": "Stock: Disponibilidade, Movimentos, Perdas e Ajustes",
   "report.superset.visaoGeral": "Visao Geral: Reporte, Desempenho e Qualidade de Dados",
   "report.superset.qualidadeDados": "Reporte e Qualidade de Dados",
-  "report.superset.niveisDeStock": "Niveis de Stock"
+  "report.superset.niveisDeStock": "Niveis de Stock",
+  "report.stockReports": "Stock",
+  "report.requisitionReports": "Requisition",
+  "report.administrationReports": "Administration",
+  "report.CCEReports": "CCE"
 }
