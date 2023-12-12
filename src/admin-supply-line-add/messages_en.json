@@ -6,7 +6,7 @@
     "adminSupplyLineAdd.description": "Description",
     "adminSupplyLineAdd.catchmentPopulation": "Catchment Population",
     "adminSupplyLineAdd.cancel": "Cancel",
-    "adminSupplyLineAdd.add": "+ Add",
+    "adminSupplyLineAdd.add": "Add",
     "adminSupplyLineAdd.update": "Save",
     "adminSupplyLineAdd.update.confirm": "Do you really want to add the Supply Line?",
     "adminSupplyLineAdd.supplyLineUpdatedSuccessfully": "Supply Line has been added successfully.",
