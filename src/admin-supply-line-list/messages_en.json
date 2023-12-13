@@ -6,7 +6,7 @@
     "adminSupplyLineList.supervisoryNode": "Supervisory Node",
     "adminSupplyLineList.program": "Program",
     "adminSupplyLineList.edit": "Edit",
-    "adminSupplyLineList.add": "+ Add Supply Line",
+    "adminSupplyLineList.add": "Add Supply Line",
     "adminSupplyLineList.actions": "Action",
     "adminSupplyLineList.servedFacilities": "Served Facilities",
     "adminSupplyLineList.delete": "Delete",

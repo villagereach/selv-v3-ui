@@ -16,7 +16,7 @@
         <input type="submit" value="{{'adminSupplyLineList.search' | message}}"/>
     </form>
     <!-- SELV3-475 START HERE -->
-    <button style="float: right" ui-sref="openlmis.administration.supplyLines.add()">{{'adminSupplyLineList.add' | message}}</button>
+    <button class="add" style="float: right" ui-sref="openlmis.administration.supplyLines.add()">{{'adminSupplyLineList.add' | message}}</button>
     <!-- SELV3-475 END HERE -->
     <table>
         <caption ng-if="!vm.supplyLines || vm.supplyLines.length === 0">
