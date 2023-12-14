@@ -188,6 +188,7 @@
 
             if ($stateParams.status) {
                 vm.status = vm.orderStatuses.filter(function(status) {
+                    console.log(status, $stateParams.status);
                     return $stateParams.status === status.value;
                 })[0];
             }
