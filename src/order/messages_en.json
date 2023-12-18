@@ -4,5 +4,8 @@
     "order.status.received": "RECEIVED",
     "order.status.shipped": "SHIPPED",
     "order.status.fulfilling": "FULFILLING",
-    "order.status.transfer_failed": "TRANSFER FAILED"
+    "order.status.transfer_failed": "TRANSFER FAILED",
+    "order.status.creating": "CREATING",
+
+    "orderStatus.CREATING": "Creating"
 }

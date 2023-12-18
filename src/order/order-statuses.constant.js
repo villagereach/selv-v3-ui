@@ -41,6 +41,7 @@
                 SHIPPED: 'SHIPPED',
                 FULFILLING: 'FULFILLING',
                 TRANSFER_FAILED: 'TRANSFER_FAILED',
+                CREATING: 'CREATING',
                 getLabel: getLabel,
                 getStatusMessage: getStatusMessage,
                 getStatuses: getStatuses
@@ -50,7 +51,8 @@
                 RECEIVED: 'order.status.received',
                 SHIPPED: 'order.status.shipped',
                 FULFILLING: 'order.status.fulfilling',
-                TRANSFER_FAILED: 'order.status.transfer_failed'
+                TRANSFER_FAILED: 'order.status.transfer_failed',
+                CREATING: 'order.status.creating'
             };
 
         return ORDER_STATUSES;
@@ -113,7 +115,8 @@
                 ORDER_STATUSES.RECEIVED,
                 ORDER_STATUSES.SHIPPED,
                 ORDER_STATUSES.FULFILLING,
-                ORDER_STATUSES.TRANSFER_FAILED
+                ORDER_STATUSES.TRANSFER_FAILED,
+                ORDER_STATUSES.CREATING
             ];
         }
     }
