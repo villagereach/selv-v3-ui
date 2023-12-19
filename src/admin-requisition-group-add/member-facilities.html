@@ -1,0 +1,57 @@
+<section class="requisition-group-facilities">
+    <form class="form-inline" ng-submit="vm.addFacility()" reload-form>
+        <div class="form-group">
+            <label for="facility-select">{{'adminRequisitionGroupAdd.facility' | message}}</label>
+            <select id="facility-select"
+                    ng-options="facility as facility.name for facility in vm.facilities"
+                    required
+                    ng-model="vm.selectedFacility">
+            </select>
+        </div>
+
+        <button type="submit" class="add">{{'adminRequisitionGroupAdd.add' | message}}</button>
+    </form>
+</section>
+<hr/>
+<section class="openlmis-table-container">
+    <!--    <form ng-submit="vm.searchForFacilities()">-->
+    <!--        <fieldset class="form-group">-->
+    <!--            <label for="facilityName">{{'adminRequisitionGroupAdd.facilityName' | message}}</label>-->
+    <!--            <input type="text" id="facilityName" ng-model="vm.facilityName"/>-->
+    <!--        </fieldset>-->
+    <!--        <button class="primary" type="submit">{{'adminRequisitionGroupAdd.search' | message}}</button>-->
+    <!--    </form>-->
+    <table>
+        <caption ng-if="!vm.requisitionGroup.memberFacilities ||
+                vm.requisitionGroup.memberFacilities.length === 0">
+            {{'adminRequisitionGroupAdd.noAssociatedFacilities' | message}}
+        </caption>
+        <thead>
+        <tr>
+            <th>{{'adminRequisitionGroupAdd.facilityName' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.geographicZone' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.facilityType' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.facilityEnabled' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.actions' | message}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="facility in vm.requisitionGroup.memberFacilities">
+            <td>{{facility.name}}</td>
+            <td>{{facility.geographicZone.name}}</td>
+            <td>{{facility.type.name}}</td>
+            <td><i ng-class="{'icon-ok': facility.enabled, 'icon-remove': !facility.enabled}"></i></td>
+            <td>
+                <button class="danger"
+                        ng-click="vm.removeFacility(facility)">
+                    {{'adminRequisitionGroupAdd.remove' | message}}
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!--    <openlmis-pagination-->
+    <!--            list="vm.requisitionGroup.memberFacilities"-->
+    <!--            paged-list="vm.memberFacilitiesPage"-->
+    <!--            pagination-id="'memberFacilities'"/>-->
+</section>

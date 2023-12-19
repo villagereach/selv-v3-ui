@@ -1,0 +1,71 @@
+<section class="requisition-group-program-schedule">
+    <form class="form-inline" ng-submit="vm.addProgramSchedule()" reload-form>
+        <div class="form-group">
+            <label for="program-select">{{'adminRequisitionGroupAdd.program' | message}}</label>
+            <select id="program-select"
+                    ng-options="program as program.name for program in vm.programs"
+                    required
+                    ng-model="vm.selectedProgramSchedule.program">
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="processing-schedule-select">{{'adminRequisitionGroupAdd.processingSchedule' | message}}</label>
+            <select id="processing-schedule-select"
+                    ng-options="schedule as schedule.name for schedule in vm.processingSchedules"
+                    required
+                    ng-model="vm.selectedProgramSchedule.processingSchedule">
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="drop-off-facility-select">{{'adminRequisitionGroupAdd.dropOffFacility' | message}}</label>
+            <select id="drop-off-facility-select"
+                    ng-options="facility as facility.name for facility in vm.facilities"
+                    ng-model="vm.selectedProgramSchedule.dropOffFacility">
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="direct-delivery-select">{{'adminRequisitionGroupAdd.directDelivery' | message}}</label>
+            <input id="direct-delivery-select" type="checkbox"
+                   ng-model="vm.selectedProgramSchedule.directDelivery"/>
+        </div>
+
+        <button type="submit" class="add">{{'adminRequisitionGroupAdd.add' | message}}</button>
+    </form>
+</section>
+<hr/>
+<section class="openlmis-table-container">
+    <table>
+        <caption ng-if="!vm.requisitionGroup.requisitionGroupProgramSchedules ||
+                vm.requisitionGroup.requisitionGroupProgramSchedules.length === 0">
+            {{'adminRequisitionGroupAdd.noAssociatedProgramAndSchedules' | message}}
+        </caption>
+        <thead>
+        <tr>
+            <th>{{'adminRequisitionGroupAdd.program' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.schedule' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.dropOffFacility' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.directDelivery' | message}}</th>
+            <th>{{'adminRequisitionGroupAdd.actions' | message}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="programSchedule in vm.requisitionGroup.requisitionGroupProgramSchedules">
+            <td>{{programSchedule.program.name}}</td>
+            <td>{{programSchedule.processingSchedule.name}}</td>
+            <td>{{programSchedule.dropOffFacility.name}}</td>
+            <td>
+                <i ng-class="{
+                'icon-ok': programSchedule.directDelivery,
+                 'icon-remove': !programSchedule.directDelivery}">
+                </i>
+            </td>
+            <td>
+                <button class="danger"
+                        ng-click="vm.removeProgramSchedule(programSchedule)">
+                    {{'adminRequisitionGroupAdd.remove' | message}}
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
