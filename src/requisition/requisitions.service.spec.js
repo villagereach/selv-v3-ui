@@ -34,6 +34,7 @@ describe('requisitionService', function() {
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             context.onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
+            context.stateStorage = jasmine.createSpyObj('stateStorage', ['put', 'clearAll', 'getAll']);
 
             $provide.service('localStorageFactory', function() {
                 return jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
@@ -45,6 +46,9 @@ describe('requisitionService', function() {
                     }
                     if (resourceName === 'statusMessages') {
                         return context.statusMessagesStorage;
+                    }
+                    if (resourceName === 'initiateRequisitionData') {
+                        return context.stateStorage;
                     }
                 });
             });
@@ -273,10 +277,7 @@ describe('requisitionService', function() {
                 .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
                 .respond(200, [this.statusMessage]);
 
-            var data = {
-                id: 'requisition-id-1',
-                eTag: 'W/1'
-            };
+            var data = {};
             this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
@@ -284,6 +285,7 @@ describe('requisitionService', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
+            expect(this.stateStorage.clearAll).toHaveBeenCalled();
             expect(data.id).toBe(this.requisition.id);
             expect(data.eTag).toBe(headers['eTag']);
             expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalled();
@@ -298,9 +300,7 @@ describe('requisitionService', function() {
                 .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
                 .respond(200, [this.statusMessage]);
 
-            var data = {
-                id: 'requisition-id-1'
-            };
+            var data = {};
             this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
@@ -341,9 +341,7 @@ describe('requisitionService', function() {
             this.offlineService.isOffline.andReturn(true);
             this.requisitionCacheService.getRequisition.andReturn(this.requisition);
 
-            var data = {
-                id: 'requisition-id-1'
-            };
+            var data = {};
             this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
@@ -364,9 +362,7 @@ describe('requisitionService', function() {
                 .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
                 .respond(200, [this.statusMessage]);
 
-            var data = {
-                id: 'requisition-id-1'
-            };
+            var data = {};
             this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
@@ -375,6 +371,7 @@ describe('requisitionService', function() {
             this.$rootScope.$apply();
 
             expect(data.id).toBe(this.requisition.id);
+            expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
         });
 
         it('should try to fetch requisition from the backend if it is not stored in the local storage', function() {
@@ -400,9 +397,7 @@ describe('requisitionService', function() {
             this.requisitionCacheService.getRequisition.andReturn(this.requisition);
             this.statusMessagesStorage.search.andReturn([this.statusMessage]);
 
-            var result = {
-                id: 'requisition-id-1'
-            };
+            var result;
             this.requisitionService.get(this.requisition.id)
                 .then(function(response) {
                     result = response;
@@ -442,9 +437,7 @@ describe('requisitionService', function() {
 
             this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
-            var result = {
-                outdated: true
-            };
+            var result;
             this.requisitionService.get(this.requisition.id)
                 .then(function(requisition) {
                     result = requisition;
@@ -452,7 +445,7 @@ describe('requisitionService', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
-            expect(result.outdated).toBe(true);
+            expect(result.$outdated).toBe(true);
         });
 
         it('should mark requisition as outdated if it does not have modified date', function() {
@@ -466,9 +459,7 @@ describe('requisitionService', function() {
 
             this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
-            var result = {
-                outdated: true
-            };
+            var result;
             this.requisitionService.get(this.requisition.id)
                 .then(function(requisition) {
                     result = requisition;
@@ -476,8 +467,38 @@ describe('requisitionService', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
-            expect(result.outdated).toBe(true);
+            expect(result.$outdated).toBe(true);
         });
+    });
+
+    it('should initiate requisition', function() {
+        var data;
+
+        this.$httpBackend
+            .whenPOST(this.requisitionUrlFactory(
+                '/api/v2/requisitions/initiate'
+                + '?emergency=' + this.emergency
+                + '&facility=' + this.facility.id
+                + '&program=' + this.program.id
+                + '&suggestedPeriod=' + this.period.id
+            ))
+            .respond(200, this.requisition);
+
+        this.requisitionService
+            .initiate(this.facility.id, this.program.id, this.period.id, this.emergency)
+            .then(function(response) {
+                data = response;
+            });
+
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
+
+        this.requisition.$modified = true;
+        this.requisition.$availableOffline = true;
+
+        expect(angular.toJson(data.id)).toEqual(angular.toJson(this.requisition.id));
+        expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalled();
+        expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
     });
 
     it('should get requisitions for convert', function() {
