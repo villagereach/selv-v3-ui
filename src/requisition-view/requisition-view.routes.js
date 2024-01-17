@@ -58,7 +58,9 @@
                         return requisition;
                     }
 
-                    return requisitionService.get($stateParams.rnr);
+                    if (requisitionData.length === 0) {
+                        return requisitionService.get($stateParams.rnr);
+                    }
 
                 },
                 program: function(programService, requisition) {
