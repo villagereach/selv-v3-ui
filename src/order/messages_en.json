@@ -7,5 +7,6 @@
     "order.status.transfer_failed": "TRANSFER FAILED",
     "order.status.creating": "CREATING",
 
-    "orderStatus.CREATING": "Creating"
+    "orderStatus.CREATING": "Creating",
+    "orderStatus.ORDERED": "Ordered"
 }
