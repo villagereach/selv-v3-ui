@@ -8,5 +8,8 @@
     "order.status.creating": "CREATING",
 
     "orderStatus.CREATING": "Creating",
-    "orderStatus.ORDERED": "Ordered"
+    "orderStatus.ORDERED": "Ordered",
+    "orderStatus.FULFILLING": "Fulfilling",
+    "orderStatus.SHIPPED": "Shipped",
+    "orderStatus.TRANSFER_FAILED": "Transfer Failed"
 }
