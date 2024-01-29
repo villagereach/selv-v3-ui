@@ -15,6 +15,7 @@
   "adminRequisitionGroupAdd.facilityEnabled": "Facility Enabled",
   "adminRequisitionGroupAdd.facilities": "Facilities",
   "adminRequisitionGroupAdd.add": "Add",
+  "adminRequisitionGroupAdd.label": "Add Requisition Group",
   "adminRequisitionGroupAdd.remove": "Remove",
   "adminRequisitionGroupAdd.save": "Save",
   "adminRequisitionGroupAdd.cancel": "Cancel",
