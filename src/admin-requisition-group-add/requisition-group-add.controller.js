@@ -46,6 +46,7 @@
         vm.addProgramSchedule = addProgramSchedule;
         vm.removeProgramSchedule = removeProgramSchedule;
         vm.save = save;
+        vm.onCancel = onCancel;
 
         /**
          * @ngdoc property
@@ -256,6 +257,10 @@
                 notificationService.error('adminRequisitionGroupAdd.requisitionGroupFailedToSave');
                 loadingModalService.close();
             });
+        }
+
+        function onCancel() {
+            $state.go('openlmis.administration.requisitionGroupList');
         }
 
     }
