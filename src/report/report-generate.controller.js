@@ -30,11 +30,11 @@
 
     controller.$inject = [
         '$state', '$scope', '$window', 'report', 'reportFactory',
-        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory',  '$q'
+        'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory',  '$q', 'messageService'
     ];
 
     function controller($state, $scope, $window, report, reportFactory,
-                        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q) {
+                        reportParamsOptions, reportUrlFactory, accessTokenFactory, $q, messageService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -47,12 +47,24 @@
         };
 
         // SELVSUP-6: Create Stock on Hand Report on reports page
+
+        /**
+         * @ngdoc property
+         * @propertyOf report.controller:ReportGenerateController
+         * @name messageService
+         * @type {Object}
+         *
+         * @description
+         * The object representing the message service.
+         */
+        vm.messageService = messageService;
+
         vm.booleanOptions = [{
-            name: 'Yes',
+            name: messageService.get('report.boolean.yes'),
             value: 'true'
         },
         {
-            name: 'No',
+            name: messageService.get('report.boolean.no'),
             value: 'false'
         }];
         // SELVSUP-6: Ends here
@@ -221,6 +233,16 @@
         }
 
         // SELVSUP-6: Create Stock on Hand Report on reports page
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name changeCommasToSemicolons
+         *
+         * @description
+         * Converts commas to semicolons in a given array of strings.
+         * @param {Array} text The array of strings to be processed.
+         * @returns {String|null} The processed string with commas replaced by semicolons.
+         */
         function changeCommasToSemicolons(text) {
             if (text === null) {
                 return text;
