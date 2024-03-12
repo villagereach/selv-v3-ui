@@ -25,5 +25,7 @@
   "report.stockReports": "Stock",
   "report.requisitionReports": "Requisition",
   "report.administrationReports": "Administration",
-  "report.CCEReports": "CCE"
+  "report.CCEReports": "CCE",
+  "report.boolean.yes": "Yes",
+  "report.boolean.no": "No"
 }

@@ -5,8 +5,14 @@
     <!-- AO-58: ends here -->
     <label for="{{parameter.name}}" ng-repeat-start="parameter in vm.report.templateParameters">{{parameter.displayName}}</label>
 
+    <!-- SELVSUP-6: Create Stock on Hand Report on reports page -->
+    <input id="{{parameter.name}}"
+    ng-if="parameter.description == 'datepickers' &&  parameter.description != 'booleanSelect'"
+    type="date" ng-model="vm.selectedParamsOptions[parameter.name]"
+    ng-required="{{parameter.required}}"/>
+
     <select id="{{parameter.name}}"
-            ng-if="vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0"
+            ng-if="parameter.description != 'datepickers' &&  parameter.description != 'booleanSelect' && (vm.paramsOptions[parameter.name].length > 0 || parameter.dependencies.length > 0) "
             ng-model="vm.selectedParamsOptions[parameter.name]"
             ng-disabled="vm.paramsOptions[parameter.name].length == 0"
             ng-options="option.value as option.name for option in vm.paramsOptions[parameter.name]"
@@ -14,7 +20,15 @@
             aria-labelledby="infolabelForSelect">
     </select>
 
-    <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0"
+    <select id="{{parameter.name}}"
+    ng-if="parameter.description == 'booleanSelect' && parameter.description != 'datepickers' && parameter.description != 'multipleselect' && vm.paramsOptions[parameter.name].length == 0"
+    ng-model="vm.selectedParamsOptions[parameter.name]"
+    ng-options="option.value as option.name for option in vm.booleanOptions"
+    ng-required="{{parameter.required}}"
+    aria-labelledby="infolabelForSelect">
+    </select>
+
+    <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0 && parameter.description != 'datepickers' &&  parameter.description != 'booleanSelect'"
           ng-switch="parameter.dataType"
           ng-repeat-end>
         <input ng-switch-when="java.lang.Integer"
@@ -28,6 +42,7 @@
         <p class="param-info" ng-if="vm.paramsInfo[parameter.name]" id="infoLabelForInteger">
             {{vm.paramsInfo[parameter.name] | message}}</p>
     </span>
+    <!-- SELVSUP-6: Ends here -->
 
     <p class="param-info" ng-if="vm.paramsInfo[parameter.name] && parameter.selectExpression != null" id="infolabelForSelect">
         {{vm.paramsInfo[parameter.name] | message}}
