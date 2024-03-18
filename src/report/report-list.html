@@ -4,11 +4,11 @@
     <div class="openlmis-table-container">
         <table>
             <caption class="error" ng-show="!vm.requisitionReports.jasper.length && !vm.requisitionReports.superSet.length">
-                {{'report.noReports' | message}}
+                {{:: 'report.noReports' | message}}
             </caption>
             <thead>
             <tr>
-                <th>{{'report.requisitionReports' | message}}</th>
+                <th>{{:: 'report.requisitionReports' | message}}</th>
             </tr>
             </thead>
             <tbody>
@@ -28,11 +28,11 @@
     <div class="openlmis-table-container">
         <table>
             <caption class="error" ng-show="!vm.shipmentReports.jasper.length && !vm.shipmentReports.superSet.length">
-                {{'report.noReports' | message}}
+                {{:: 'report.noReports' | message}}
             </caption>
             <thead>
             <tr>
-                <th>{{'report.shipmentReports' | message}}</th>
+                <th>{{:: 'report.shipmentReports' | message}}</th>
             </tr>
             </thead>
             <tbody>
@@ -52,11 +52,11 @@
     <div class="openlmis-table-container">
         <table>
             <caption class="error" ng-show="!vm.stockReports.jasper.length && !vm.stockReports.superSet.length">
-                {{'report.noReports' | message}}
+                {{:: 'report.noReports' | message}}
             </caption>
             <thead>
             <tr>
-                <th>{{'report.stockReports' | message}}</th>
+                <th>{{:: 'report.stockReports' | message}}</th>
             </tr>
             </thead>
             <tbody>
@@ -76,11 +76,11 @@
     <div class="openlmis-table-container">
         <table>
             <caption class="error" ng-show="!vm.administrationReports.jasper.length && !vm.administrationReports.superSet.length">
-                {{'report.noReports' | message}}
+                {{:: 'report.noReports' | message}}
             </caption>
             <thead>
             <tr>
-                <th>{{'report.administrationReports' | message}}</th>
+                <th>{{:: 'report.administrationReports' | message}}</th>
             </tr>
             </thead>
             <tbody>
@@ -109,7 +109,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="report in vm.CCEReports.jasper | orderBy:'name'">
-                <td ng-if="vm.hasRight(report.right)">
+                <td>
                     <a ui-sref=".generate({module: report.$module, report: report.id})">{{report.name}}</a>
                 </td>
             </tr>
