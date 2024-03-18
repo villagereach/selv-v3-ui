@@ -49,35 +49,59 @@ describe('reportService', function() {
 
         it('should add reporting pages', function() {
             this.supersetReports.addReporingPages(this.$stateProvider);
-
+            // SELV-695: Modify reports page
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.covid', jasmine.any(Object)
+                'openlmis.reports.list.superset.desempenhoEQualidadeDeDados', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.aviamentos', jasmine.any(Object)
+                'openlmis.reports.list.superset.dpvEAl', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stock', jasmine.any(Object)
+                'openlmis.reports.list.superset.entregaIntegral', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.visaoGeral', jasmine.any(Object)
+                'openlmis.reports.list.superset.consumo', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.qualidadeDados', jasmine.any(Object)
+                'openlmis.reports.list.superset.entradas', jasmine.any(Object)
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.niveisDeStock', jasmine.any(Object)
+                'openlmis.reports.list.superset.saidas', jasmine.any(Object)
             );
 
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.despericiosEAjustes', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.datasDeExpiracao', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.movimentos', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.stockFisico', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.disponibilidadeDeStock', jasmine.any(Object)
+            );
+
+            expect(this.$stateProvider.state).toHaveBeenCalledWith(
+                'openlmis.reports.list.superset.dasboardCce', jasmine.any(Object)
+            );
+            // SELV-695: Ends here
         });
 
     });

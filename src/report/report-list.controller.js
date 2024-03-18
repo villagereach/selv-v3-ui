@@ -34,6 +34,7 @@
                         REPORT_RIGHTS) {
         var vm = this;
 
+        vm.$onInit = onInit;
         vm.hasRight = hasRight;
 
         /**
@@ -48,23 +49,6 @@
         vm.reports = reports;
 
         // SELV-695: Modify reports page
-        var stockReports = {
-            jasper: getJasperReports('STOCK'),
-            superSet: getSuperSetReports('STOCK')
-        };
-        var requisitionReports = {
-            jasper: getJasperReports('REQUISITION'),
-            superSet: getSuperSetReports('REQUISITION')
-        };
-        var administrationReports = {
-            jasper: getJasperReports('ADMINISTRATION'),
-            superSet: getSuperSetReports('ADMINISTRATION')
-        };
-        var CCEReports = {
-            jasper: getJasperReports('CCE'),
-            superSet: getSuperSetReports('CCE')
-        };
-
         /**
          * @ngdoc property
          * @propertyOf report.controller:ReportListController
@@ -74,7 +58,7 @@
          * @description
          * The list of all available stock reports.
          */
-        vm.stockReports = stockReports;
+        vm.stockReports = undefined;
 
         /**
          * @ngdoc property
@@ -85,7 +69,7 @@
          * @description
          * The list of all available requisition reports.
          */
-        vm.requisitionReports = requisitionReports;
+        vm.requisitionReports = undefined;
 
         /**
          * @ngdoc property
@@ -96,7 +80,7 @@
          * @description
          * The list of all available administration reports.
          */
-        vm.administrationReports = administrationReports;
+        vm.administrationReports = undefined;
 
         /**
          * @ngdoc property
@@ -105,9 +89,20 @@
          * @type {Array}
          *
          * @description
-         * The list of all available dashboard reports.
+         * The list of all available cce reports.
          */
-        vm.CCEReports = CCEReports;
+        vm.CCEReports = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf report.controller:ReportListController
+         * @name shipmentReports
+         * @type {Array}
+         *
+         * @description
+         * The list of all available shipment reports.
+         */
+        vm.shipmentReports = undefined;
         // SELV-695: Ends here
 
         /**
@@ -149,9 +144,7 @@
 
         // ANGOLASUP-797: Catalogue and organize reports
         function getJasperReports(category) {
-            console.log(category);
             return reports.filter(function(report) {
-                console.log(report);
                 return report.category === category;
             });
         }
@@ -163,5 +156,40 @@
             });
         }
         // ANGOLASUP-797: Ends here
+
+        // SELV-695: Modify reports page
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportListController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method called after the controller has been created. Responsible for
+         * setting data to be available on the view.
+         */
+        function onInit() {
+            vm.stockReports =  {
+                jasper: getJasperReports('stock'),
+                superSet: getSuperSetReports('stock')
+            };
+            vm.requisitionReports = {
+                jasper: getJasperReports('requisition'),
+                superSet: getSuperSetReports('requisition')
+            };
+            vm.administrationReports = {
+                jasper: getJasperReports('administration'),
+                superSet: getSuperSetReports('administration')
+            };
+            vm.CCEReports = {
+                jasper: getJasperReports('cce'),
+                superSet: getSuperSetReports('cce')
+            };
+            vm.shipmentReports = {
+                jasper: getJasperReports('shipment'),
+                superSet: getSuperSetReports('shipment')
+            };
+        }
+        // SELV-695: Ends here
+
     }
 })();

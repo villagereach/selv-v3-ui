@@ -30,35 +30,95 @@
 
     function supersetReports() {
         var reports = {};
+        // SELV-695: Modify reports page
         reports = {
 
-            AVIAMENTOS: createReport('aviamentos',
-                'https://app.powerbi.com/view?r=eyJrIjoiNWQyZWVmNTgtMTRlNy00ZWJkLWE3ZWQtNmY3NmR' +
-                'hNjBmY2ZlIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                ''),
-            STOCK: createReport('stock',
-                'https://app.powerbi.com/view?r=eyJrIjoiNTY1ZDU2YmMtYjg0OS00MTA5LTliMzAtMDM4MDU' +
-                'xZDVlNGFjIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                ''),
-            COVID: createReport('covid',
-                'https://app.powerbi.com/view?r=eyJrIjoiZDUwNDk5OGUtODQwYy00N2NhLTk0M2QtOTgxMzV' +
-                'lZDY0YzFjIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9&' +
-                'pageName=ReportSectiond6a5b92e4f3af6752354',
-                ''),
-            VISAO_GERAL: createReport('visaoGeral',
-                'https://app.powerbi.com/view?r=eyJrIjoiYzMzZjQ1ZjctM2NkYy00NTdjLTk2NjktZWZlZDU' +
-                '0OTQ4NDg5IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                ''),
-            QUALIDADE_DADOS: createReport('qualidadeDados',
-                'https://app.powerbi.com/view?r=eyJrIjoiMDg4MjllYzUtMzUzNi00ODFiLTgyNWUtMWQzODU5N' +
-                'TIzNjQ4IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                ''),
-            NIVEIS_DE_STOCK: createReport('niveisDeStock',
-                'https://app.powerbi.com/view?r=eyJrIjoiYmRhNjRhOTgtN2E4Yi00NmE0LWFjMzgtMDk2N2FmO' +
-                'TAwZWFmIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                '')
+            DESEMPENHO_E_QUALIDADE_DE_DADOS: createReport(
+                'desempenhoEQualidadeDeDados',
+                'https://app.powerbi.com/view?r=eyJrIjoiN2Q0MmNlMDEtZDc0My00YTAxLTg3YWItNjJkZm' +
+                'IwOTk5Y2FjIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'requisition'
+            ),
+            REPORTE_DPV_E_AL: createReport(
+                'dpvEAl',
+                'https://app.powerbi.com/view?r=eyJrIjoiOTM2NzA0NjMtOGE3MC00MDUwLWFkYWQtYjMwZjc2OTQyNTFhIiwidCI6IjAw' +
+                'NTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9&pageName=ReportSection06d666f11fa1b443cc66',
+                '',
+                'requisition'
+            ),
+            ENTREGA_INTEGRAL: createReport(
+                'entregaIntegral',
+                'https://app.powerbi.com/view?r=eyJrIjoiNTRmMTEzN2QtYjg1NS00MWMyLWE1YTMtMDYwOWE4' +
+                'ZjhkYzliIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'requisition'
+            ),
+            CONSUMO: createReport(
+                'consumo',
+                'https://app.powerbi.com/view?r=eyJrIjoiODljNDAwZWYtZjAwYS00MDNhLWI1YzMtOGViODcxZm' +
+                'Y1ZGNkIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'requisition'
+            ),
+            ENTRADAS: createReport(
+                'entradas',
+                'https://app.powerbi.com/view?r=eyJrIjoiN2U4M2Y4MGEtOTNjYS00NThlLWEzOGQtNGQ1Mzc2N2Vi' +
+                'NDQ0IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'shipment'
+            ),
+            SAIDAS: createReport(
+                'saidas',
+                'https://app.powerbi.com/view?r=eyJrIjoiYWU4MzMyMmYtNTc3NC00YmJjLWI5NTgtMWE1MjVmZWFhN' +
+                'DBjIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'shipment'
+            ),
+            DESPERICIOS_E_AJUSTES: createReport(
+                'despericiosEAjustes',
+                'https://app.powerbi.com/view?r=eyJrIjoiY2IyMDViZmUtNzRmNS00Y2E3LThmMjQtMDNjMzYzNzdjM2R' +
+                'lIiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'stock'
+            ),
+            DATAS_DE_EXPIRACAO: createReport(
+                'datasDeExpiracao',
+                'https://app.powerbi.com/view?r=eyJrIjoiN2QyODI5NTUtZDIxMS00YzAzLWE2ZmYtNDBhZmI1YTQwNjE0' +
+                'IiwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'stock'
+            ),
+            MOVIMENTOS: createReport(
+                'movimentos',
+                'https://app.powerbi.com/view?r=eyJrIjoiYzI4ZTNlNTctZWVlNy00ZDU4LWE1MDAtOTkwOTM0YjM4YzcwI' +
+                'iwidCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'stock'
+            ),
+            STOCK_FISICO: createReport(
+                'stockFisico',
+                'https://app.powerbi.com/view?r=eyJrIjoiZjlhMTU5YjEtZjU5OS00ZmY0LWJjODQtYzBlNGJjZjcxMjJiIiw' +
+                'idCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'stock'
+            ),
+            DISPONIBILDADE_DE_STOCK: createReport(
+                'disponibilidadeDeStock',
+                'https://app.powerbi.com/view?r=eyJrIjoiYWJkZTNhNjUtZDVlMC00OWEzLTlhMzAtMzQ2OTgzM2YwYzFjIiw' +
+                'idCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'stock'
+            ),
+            DASBOARD_CCE: createReport(
+                'dasboardCce',
+                'https://app.powerbi.com/view?r=eyJrIjoiZGU0ZDU5OGUtZDU2MS00MmNhLTk0NTItOTM1ODMyNGM5NWE5Iiwi' +
+                'dCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
+                '',
+                'cce'
+            )
         };
-
+        // SELV-695: Ends here
         return {
             getReports: getReports,
             addReporingPages: addReporingPages
@@ -107,15 +167,17 @@
         function getReports() {
             return reports;
         }
-
-        function createReport(code, url, right) {
+        // SELV-695: Modify reports page
+        function createReport(code, url, right, category) {
 
             return {
                 code: code,
                 url: url,
-                right: right
+                right: right,
+                category: category
             };
         }
+        // SELV-695: Ends here
 
     }
 
