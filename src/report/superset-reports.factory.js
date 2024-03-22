@@ -96,13 +96,6 @@
                 '',
                 'stock'
             ),
-            STOCK_FISICO: createReport(
-                'stockFisico',
-                'https://app.powerbi.com/view?r=eyJrIjoiZjlhMTU5YjEtZjU5OS00ZmY0LWJjODQtYzBlNGJjZjcxMjJiIiw' +
-                'idCI6IjAwNTMxNzRhLTkxMDAtNGU4ZS05NzlhLTQ0MzZkYTAxYjBlZSIsImMiOjZ9',
-                '',
-                'stock'
-            ),
             DISPONIBILDADE_DE_STOCK: createReport(
                 'disponibilidadeDeStock',
                 'https://app.powerbi.com/view?r=eyJrIjoiYWJkZTNhNjUtZDVlMC00OWEzLTlhMzAtMzQ2OTgzM2YwYzFjIiw' +

@@ -91,10 +91,6 @@ describe('reportService', function() {
             );
 
             expect(this.$stateProvider.state).toHaveBeenCalledWith(
-                'openlmis.reports.list.superset.stockFisico', jasmine.any(Object)
-            );
-
-            expect(this.$stateProvider.state).toHaveBeenCalledWith(
                 'openlmis.reports.list.superset.disponibilidadeDeStock', jasmine.any(Object)
             );
 
