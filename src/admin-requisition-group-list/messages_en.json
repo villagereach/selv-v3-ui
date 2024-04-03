@@ -10,6 +10,5 @@
     "adminRequisitionGroupList.actions": "Actions",
     "adminRequisitionGroupList.edit": "Edit",
     "adminRequisitionGroupList.noRequisitionGroups": "No requisition groups found.",
-    "adminRequisitionGroupList.programs": "${number} Programs",
-    "adminRequisitionGroupList.addRequisitionGroup": "Add"
+    "adminRequisitionGroupList.programs": "${number} Programs"
 }

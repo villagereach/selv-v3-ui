@@ -1,10 +1,5 @@
 <h2>{{'adminRequisitionGroupList.requisitionGroups' | message}}</h2>
 <section class="openlmis-table-container">
-    <!-- SELV3-476: Added the ability to add new requisition group -->
-    <button id="add-requisition-group" class="add" ng-click="vm.goToAddRequisitionGroup()">
-        {{'adminRequisitionGroupList.addRequisitionGroup' | message}}
-    </button>
-    <!-- SELV3-476: ends here -->
     <form ng-submit="vm.search()">
         <fieldset class="form-group">
             <label for="name">{{'adminRequisitionGroupList.requisitionGroupName' | message}}</label>
@@ -55,7 +50,7 @@
                 <td>{{requisitionGroup.memberFacilities.length}}</td>
                 <td>
                     <!-- SELV3-337: Added the ability to add facility to the requisition group -->
-                    <button class="primary" ui-sref="openlmis.administration.requisitionGroupList.edit({id: requisitionGroup.id})">{{'adminRequisitionGroupList.edit' | message}}</button>
+                    <button class="primary" ui-sref="openlmis.administration.requisitionGroupView({id: requisitionGroup.id})">{{'adminRequisitionGroupList.edit' | message}}</button>
                     <!-- SELV3-337: ends here -->
                 </td>
             </tr>

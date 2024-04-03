@@ -53,7 +53,6 @@
             get: get,
             getAll: getAll,
             search: search,
-            create: create,
             update: update
         };
 
@@ -129,23 +128,6 @@
                 });
         }
         // SELV3-337: ends here
-
-        // SELV-476: Added the ability to add new requisition group
-        /**
-         * @ngdoc method
-         * @methodOf referencedata-requisition-group.requisitionGroupService
-         * @name create
-         *
-         * @description
-         * Creates new requisitionGroup.
-         *
-         * @param  {Object}  requisitionGroup RequisitionGroup to be created
-         * @return {Promise}         Updated requisitionGroup
-         */
-        function create(requisitionGroup) {
-            return resource.save(null, requisitionGroup).$promise;
-        }
-        // SELV-476: ends here
 
     }
 })();
