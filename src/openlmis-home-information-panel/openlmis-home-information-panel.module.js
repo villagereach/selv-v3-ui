@@ -21,6 +21,7 @@
         'requisition-order-create',
         'cce-inventory-item',
         'openlmis-pagination',
-        'ui.router'
+        'ui.router',
+        'requisition'
     ]);
 })();

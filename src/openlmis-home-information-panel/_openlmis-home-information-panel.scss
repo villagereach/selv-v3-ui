@@ -15,7 +15,10 @@
 
         .header-section {
             font-size: $font-size-large;
-            margin-top: 3rem;
+
+            &:nth-child(3) {
+                margin-top: 3rem;
+            }
         }
 
         .stock-items-table {
@@ -36,7 +39,7 @@
 
             tbody {
                 overflow-y: scroll;
-                max-height: 180px;
+                max-height: 369px;
                 display: block;
                 tr {
                     td {
@@ -76,7 +79,7 @@
 
             tbody {
                 overflow-y: scroll;
-                max-height: 180px;
+                max-height: 369px;
                 display: block;
                 tr {
                     td {

@@ -25,6 +25,16 @@ $image-height: 136px;
       font-size:16px;
     }
   }
+
+  .main-top-home {
+    display: flex;
+    flex-direction: row;
+    min-width: 100%;
+
+    h2 {
+      min-width: 668px;
+    }
+  }
 }
 
 .home-page > h2{

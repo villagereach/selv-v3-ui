@@ -83,7 +83,8 @@
             },
             getNumbersForApproval: {
                 url: requisitionUrlFactory('/api/requisitions/numberOfRequisitionsForApproval'),
-                method: 'GET'
+                method: 'GET',
+                hasBody: false
             }
         });
 
@@ -318,11 +319,7 @@
         // SELV3-726: start
 
         function getNumbersForApproval() {
-            return resource.getNumbersForApproval().$promise.then(function(response) {
-                return response;
-            }).catch(function(error) {
-                throw error;
-            });
+            return resource.getNumbersForApproval();
         }
 
         // SELV3-726: end

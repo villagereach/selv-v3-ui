@@ -22,11 +22,11 @@
 
     controller.$inject = ['$state', 'requisitionService', 'orderCreateService', 'localStorageService',
         'inventoryItemService', 'StockCardSummaryRepository', 'StockCardSummaryRepositoryImpl',
-        'loadingModalService'];
+        'loadingModalService', '$scope'];
 
     function controller($state, requisitionService, orderCreateService, localStorageService,
                         inventoryItemService, StockCardSummaryRepository, StockCardSummaryRepositoryImpl,
-                        loadingModalService) {
+                        loadingModalService, $scope) {
         var vm = this;
 
         vm.redirectToRequisitionApprove = redirectToRequisitionApprove;
@@ -43,12 +43,24 @@
 
         function onInit() {
             loadingModalService.open();
+            var numbersApproval;
             vm.homeFacility = JSON.parse(localStorageService.get('homeFacility'));
-            vm.numbersForApproval = requisitionService.getNumbersForApproval();
 
             orderCreateService.numberOfOrdersData().then(function(fetchedData) {
                 vm.numbersOfOrders = fetchedData;
+
             });
+
+            $scope.$applyAsync(function() {
+                numbersApproval = requisitionService.getNumbersForApproval();
+            });
+
+            numbersApproval = requisitionService.forApproval().then(function(fetchedData) {
+                vm.numbersForApproval = fetchedData.numberOfElements;
+                loadingModalService.close();
+            });
+
+            console.log(vm.numbersForApproval, numbersApproval);
 
             fetchCCEInventory();
             fetchStockOnHand();
@@ -71,9 +83,9 @@
                             var sohItems = stockItem.canFulfillForMe;
                             if (sohItems.length > 0) {
                                 sohItems.sort(function(a, b) {
-                                    new Date(a.processedDate) - new Date(b.processedDate);
+                                    new Date(a.lot.expirationDate) - new Date(b.lot.expirationDate);
                                 });
-                                var earliestDate = sohItems.length > 0 ? sohItems[0].processedDate : null;
+                                var earliestDate = sohItems.length > 0 ? sohItems[0].lot.expirationDate : null;
 
                                 vm.stockOnHandItems.push({
                                     name: stockItem.orderable.fullProductName,
@@ -82,9 +94,6 @@
                                 });
                             }
                         });
-                    })
-                    .then(function() {
-                        loadingModalService.close();
                     });
             });
 
