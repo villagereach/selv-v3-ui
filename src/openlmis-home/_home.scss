@@ -1,0 +1,43 @@
+$image-height: 136px;
+
+.home-page{
+  @extend .page-hero;
+  padding-bottom: 4em;
+  display: flex;
+  align-items: flex-start;
+  flex-flow: wrap;
+
+  &::after{
+    content:"";
+    width: 100%;
+    height: $image-height;
+    position: absolute;
+    bottom: 0.5em;
+    left: 0em;
+    background: url('../assets/openlmis-home/home-background.png') no-repeat right bottom;
+    @media screen and (max-width: $res-sm) {
+      height: 100%;
+      background-size: 1200%
+    }
+  }
+  .system-notification-list > h2{
+    @media screen and (max-width: $res-sm) {
+      font-size:16px;
+    }
+  }
+}
+
+.home-page > h2{
+  white-space: pre-line;
+  @media screen and (max-width: $res-sm) {
+    font-size:16px;
+  }
+}
+
+.scroll {
+  width: 100%;
+  float:left;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding-bottom: 1em;
+}
