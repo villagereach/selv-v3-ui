@@ -1,0 +1,113 @@
+<div class="information-panel-wrapper">
+    <div class="left-panel">
+        <section class="header-section">
+            <h2>
+                {{:: 'homeInformationPanel.stockOnHand' | message}} - {{vm.homeFacility.name}}
+            </h2>
+        </section>
+        <section class="openlmis-table-container">
+            <p ng-if="!vm.stockOnHandItems || vm.stockOnHandItems.length === 0">
+                {{'homeInformationPanel.NoStockItemsFound' | message}}
+            </p>
+            <table>
+                <thead style="display: block" ng-if="vm.stockOnHandItems.length !== 0">
+                <tr>
+                    <th style="width: 300px">{{:: 'homeInformationPanel.product' | message}}</th>
+                    <th style="width: 120px">{{:: 'homeInformationPanel.stockDoses' | message}}</th>
+                    <th style="width: 130px">{{:: 'homeInformationPanel.firstExpireDate' | message}}</th>
+                </tr>
+                </thead>
+                <tbody style="overflow-y: scroll; max-height: 180px; display: block">
+                <tr ng-repeat="item in vm.stockOnHandItems">
+                    <td style="width: 300px">{{item.name}}</td>
+                    <td style="width: 120px">{{item.stockOnHand}}</td>
+                    <td style="width: 130px">{{item.firstExpiryDate  | openlmisDate}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="header-section" style="margin-top: 3rem">
+            <h2>
+                {{:: 'homeInformationPanel.cceStatus' | message}} - {{vm.homeFacility.name}}
+            </h2>
+        </section>
+        <section class="openlmis-table-container">
+            <p ng-if="!vm.cceItems || vm.cceItems.length === 0">
+                {{'homeInformationPanel.noCceItemsFound' | message}}
+            </p>
+            <table>
+                <thead style="display: block" ng-if="vm.cceItems.length !== 0">
+                    <tr>
+                        <th style="width: 100px">{{:: 'homeInformationPanel.equipment' | message}}</th>
+                        <th style="width: 110px">{{:: 'homeInformationPanel.serialNumber' | message}}</th>
+                        <th style="width: 140px">{{:: 'homeInformationPanel.brand' | message}}</th>
+                        <th style="width: 80px">{{:: 'homeInformationPanel.capacity' | message}}</th>
+                        <th style="width: 120px">{{:: 'homeInformationPanel.status' | message}}</th>
+                    </tr>
+                </thead>
+                <tbody style="overflow-y: scroll; max-height: 180px; display: block">
+                    <tr ng-repeat="item in vm.cceItems">
+                        <td style="width: 100px">{{item.catalogItem.type}}</td>
+                        <td style="width: 110px">{{item.equipmentTrackingId}}</td>
+                        <td style="width: 140px">{{item.catalogItem.manufacturer}} {{item.catalogItem.model}}</td>
+                        <td style="width: 80px">{{item.catalogItem.netVolume}} {{:: 'homeInformationPanel.liters' | message}}</td>
+                        <td style="width: 120px">{{item.functionalStatus}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <div class="right-panel">
+        <section class="header-section">
+            <h2>
+                {{:: 'homeInformationPanel.myPendingActions' | message}}
+            </h2>
+        </section>
+        <section class="openlmis-table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>{{:: 'homeInformationPanel.pendings' | message}}</th>
+                    <th>{{:: 'homeInformationPanel.number' | message}}</th>
+                    <th>{{:: 'homeInformationPanel.actions' | message}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{:: 'homeInformationPanel.requisitionsToBeApproved' | message}}</td>
+                    <td>{{vm.numbersForApproval}}</td>
+                    <td>
+                        <button
+                                class="primary"
+                                ng-click="vm.redirectToRequisitionApprove()">
+                            {{:: 'homeInformationPanel.view' | message}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{:: 'homeInformationPanel.ordersToBeExecuted' | message}}</td>
+                    <td>{{vm.numbersOfOrders.ordersToBeExecuted}}</td>
+                    <td>
+                        <button
+                                class="primary"
+                                ng-click="vm.redirectToFulfillOrders()">
+                            {{:: 'homeInformationPanel.view' | message}}
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{:: 'homeInformationPanel.ordersToBeReceived' | message}}</td>
+                    <td>{{vm.numbersOfOrders.ordersToBeReceived}}</td>
+                    <td>
+                        <button
+                                class="primary"
+                                ng-click="vm.redirectToPodManage()">
+                            {{:: 'homeInformationPanel.view' | message}}
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
