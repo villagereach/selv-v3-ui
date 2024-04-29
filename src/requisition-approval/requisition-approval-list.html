@@ -26,7 +26,7 @@
         <label for=processingPeriod>{{'requisitionApproval.processingPeriod' | message}}</label>
         <select id="processingPeriod" placeholder="{{'requisitionApproval.selectPeriod' | message}}"
                 ng-model="vm.selectedProcessingPeriod"
-                ng-options="program as program.name for program in vm.processingPeriods.$$state.value.content"
+                ng-options="period as period.name for period in vm.processingPeriods.$$state.value.content"
                 ng-disabled="vm.selectedProcessingSchedule === undefined"
         >
         </select>

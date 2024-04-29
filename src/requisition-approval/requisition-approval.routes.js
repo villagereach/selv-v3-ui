@@ -88,18 +88,6 @@
                         })[0];
                     }
                 },
-                // processingPeriods: function(periodService) {
-                //     if (this.selectedProcessingSchedule !== undefined) {
-                //         return periodService.get(this.selectedProcessingSchedule);
-                //     }
-                // },
-                // selectedProcessingPeriod: function($stateParams, $filter, processingPeriods) {
-                //     if ($stateParams.processingPeriod) {
-                //         return $filter('filter')(processingPeriods.$$state.value.content, {
-                //             id: $stateParams.processingPeriod
-                //         })[0];
-                //     }
-                // },
                 isBatchApproveScreenActive: function(BATCH_APPROVE_SCREEN_FEATURE_FLAG, featureFlagService) {
                     return featureFlagService.get(BATCH_APPROVE_SCREEN_FEATURE_FLAG);
                 }

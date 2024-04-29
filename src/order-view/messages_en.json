@@ -1,3 +1,7 @@
 {
-    "orderView.viewOrders": "View Orders"
+    "orderView.viewOrders": "View Orders",
+    "orderView.processingPeriod": "Processing Period",
+    "orderView.processingSchedule": "Processing Schedule",
+    "orderView.selectSchedule": "Select processing schedule",
+    "orderView.selectPeriod": "Select processing period"
 }
