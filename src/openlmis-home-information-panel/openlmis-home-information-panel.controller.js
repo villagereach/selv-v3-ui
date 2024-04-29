@@ -21,12 +21,12 @@
         .controller('openlmisHomeInformationPanelController', controller);
 
     controller.$inject = ['$state', 'requisitionService', 'orderCreateService', 'localStorageService',
-        'inventoryItemService', 'paginationService', '$stateParams', 'StockCardSummaryRepository',
-        'StockCardSummaryRepositoryImpl', 'loadingModalService'];
+        'inventoryItemService', 'StockCardSummaryRepository', 'StockCardSummaryRepositoryImpl',
+        'loadingModalService'];
 
     function controller($state, requisitionService, orderCreateService, localStorageService,
-                        inventoryItemService, paginationService, $stateParams, StockCardSummaryRepository,
-                        StockCardSummaryRepositoryImpl, loadingModalService) {
+                        inventoryItemService, StockCardSummaryRepository, StockCardSummaryRepositoryImpl,
+                        loadingModalService) {
         var vm = this;
 
         vm.redirectToRequisitionApprove = redirectToRequisitionApprove;
@@ -50,11 +50,12 @@
                 vm.numbersOfOrders = fetchedData;
             });
 
-            fetchStockOnHand();
             fetchCCEInventory();
+            fetchStockOnHand();
         }
 
         function fetchStockOnHand() {
+            loadingModalService.open();
             var facilityPrograms = vm.homeFacility.supportedPrograms;
 
             angular.forEach(facilityPrograms, function(program) {
@@ -81,17 +82,13 @@
                                 });
                             }
                         });
+                    })
+                    .then(function() {
+                        loadingModalService.close();
                     });
             });
 
-            paginationService.registerList(null, $stateParams, function() {
-                return vm.stockOnHandItems;
-            }, {
-                customPageParamName: 'stockOnHandPage',
-                customSizeParamName: 'stockOnHandSize',
-                paginationId: 'stockOnHandItemsList'
-            });
-
+            return vm.stockOnHandItems;
         }
 
         function fetchCCEInventory() {
@@ -113,15 +110,7 @@
                 });
             });
 
-            paginationService.registerList(null, $stateParams, function() {
-                return vm.cceItems;
-            }, {
-                customPageParamName: 'cceItemsPage',
-                customSizeParamName: 'cceItemsSize',
-                paginationId: 'cceItemsList'
-            });
-
-            loadingModalService.close();
+            return vm.cceItems;
         }
 
         function redirectToRequisitionApprove() {
