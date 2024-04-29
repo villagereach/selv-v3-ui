@@ -26,7 +26,7 @@
         $stateProvider.state('openlmis.administration.validSource', {
             showInNavigation: true,
             label: 'adminValidSourceList.validSources',
-            url: '/validSources?page&size&programId&facilityId&storageKey',
+            url: '/validSources?page&size&programId&facilityId&storageKey&geoZoneId',
             controller: 'ValidSourceListController',
             templateUrl: 'admin-valid-source-list/valid-source-list.html',
             controllerAs: 'vm',
@@ -38,7 +38,8 @@
                             size: params.size,
                             page: params.page,
                             programId: params.programId,
-                            facilityId: params.facilityId
+                            facilityId: params.facilityId,
+                            geoZoneId: params.geoZoneId
                         });
                     });
                 },

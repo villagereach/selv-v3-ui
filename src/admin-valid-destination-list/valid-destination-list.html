@@ -23,6 +23,14 @@
                     ng-required="vm.facilityId"
             >
             </select>
+            <label for="geoZoneId">
+                {{'adminValidDestinationList.geoZone' | message}}
+            </label>
+            <select id="geoZoneId"
+                    ng-model="vm.geoZoneId"
+                    ng-options="zone.id as zone.name for zone in vm.geographicZonesArray"
+            >
+            </select>
         </fieldset>
         <input type="submit" value="{{'adminValidDestinationList.search' | message}}"/>
     </form>

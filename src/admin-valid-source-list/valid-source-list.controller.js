@@ -65,6 +65,7 @@
 
             stateParams.programId = vm.programId;
             stateParams.facilityId = vm.facilityId;
+            stateParams.geoZoneId = vm.geoZoneId;
 
             $state.go('openlmis.administration.validSource', stateParams, {
                 reload: true
@@ -192,6 +193,9 @@
          *
          * @return {Array} list of selected valid sources
          */
+
+        vm.geographicZonesArray = [];
+
         function getSelected() {
             var storageSelected = $window.sessionStorage.getItem(vm.selectedValidSourcesStorageKey);
 
@@ -326,6 +330,17 @@
                     reload: false,
                     notify: false
                 });
+            }
+
+            for (var id in vm.geographicZonesMap) {
+                if (vm.geographicZonesMap.hasOwnProperty(id)) {
+                    vm.geographicZonesArray.push(
+                        {
+                            id: id,
+                            name: vm.geographicZonesMap[id]
+                        }
+                    );
+                }
             }
 
             vm.selectedValidSourcesStorageKey = 'admin-valid-source-list/selected-valid-sources/'
