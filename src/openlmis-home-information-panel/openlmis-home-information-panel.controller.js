@@ -37,7 +37,9 @@
         vm.numbersForApproval = undefined;
         vm.numbersOfOrders = undefined;
         vm.stockOnHandItems = [];
+        vm.stockOnHandItemsLength = undefined;
         vm.cceItems = [];
+        vm.cceItemsLength = undefined;
 
         vm.$onInit = onInit;
 
@@ -73,8 +75,7 @@
             angular.forEach(facilityPrograms, function(program) {
                 var params = {
                     facilityId: vm.homeFacility.id,
-                    programId: program.id,
-                    stockOnHandSize: 5
+                    programId: program.id
                 };
                 new StockCardSummaryRepository(new StockCardSummaryRepositoryImpl())
                     .query(params)
@@ -83,7 +84,7 @@
                             var sohItems = stockItem.canFulfillForMe;
                             if (sohItems.length > 0) {
                                 sohItems.sort(function(a, b) {
-                                    new Date(a.lot.expirationDate) - new Date(b.lot.expirationDate);
+                                    return a.lot.expirationDate - b.lot.expirationDate;
                                 });
                                 var earliestDate = sohItems.length > 0 ? sohItems[0].lot.expirationDate : null;
 
@@ -92,6 +93,7 @@
                                     stockOnHand: stockItem.stockOnHand,
                                     firstExpiryDate: earliestDate
                                 });
+                                vm.stockOnHandItemsLength = vm.stockOnHandItems.length;
                             }
                         });
                     });
@@ -115,6 +117,7 @@
                         angular.forEach(items.content, function(item) {
                             vm.cceItems.push(item);
                         });
+                        vm.cceItemsLength = items.content.length;
                     }
                 });
             });

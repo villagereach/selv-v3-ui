@@ -11,7 +11,7 @@
     "homeInformationPanel.cceStatus": "CCE Status",
     "homeInformationPanel.product": "Product",
     "homeInformationPanel.stockDoses": "Stock (Doses)",
-    "homeInformationPanel.firstExpireDate": "First Expire Date",
+    "homeInformationPanel.firstExpireDate": "First Expiry Date",
     "homeInformationPanel.equipment": "Equipment",
     "homeInformationPanel.serialNumber": "Serial N'",
     "homeInformationPanel.brand": "Brand",
@@ -20,5 +20,5 @@
     "homeInformationPanel.liters": "liters",
     "homeInformationPanel.noCceItemsFound": "No CCE Items found",
     "homeInformationPanel.NoStockItemsFound": "No Stock on Hand Items found",
-    "homeInformationPanel.showingItems": "Showing {number} item(s)"
+    "homeInformationPanel.showingItems": "Showing ${number} item(s)"
 }

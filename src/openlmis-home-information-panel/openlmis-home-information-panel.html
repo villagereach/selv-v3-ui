@@ -9,8 +9,8 @@
             <p ng-if="!vm.stockOnHandItems || vm.stockOnHandItems.length === 0">
                 {{'homeInformationPanel.NoStockItemsFound' | message}}
             </p>
-            <table class="stock-items-table">
-                <thead ng-if="vm.stockOnHandItems.length !== 0">
+            <table ng-if="vm.stockOnHandItems.length !== 0" class="stock-items-table">
+                <thead>
                 <tr>
                     <th>{{:: 'homeInformationPanel.product' | message}}</th>
                     <th>{{:: 'homeInformationPanel.stockDoses' | message}}</th>
@@ -26,6 +26,9 @@
                 </tbody>
             </table>
         </section>
+        <section ng-if="vm.stockOnHandItems.length > 5" class="show-number-items">
+            {{:: 'homeInformationPanel.showingItems' | message:({number: vm.stockOnHandItems.length})}}
+        </section>
         <section class="header-section">
             <h2>
                 {{:: 'homeInformationPanel.cceStatus' | message}} - {{vm.homeFacility.name}}
@@ -35,8 +38,8 @@
             <p ng-if="!vm.cceItems || vm.cceItems.length === 0">
                 {{'homeInformationPanel.noCceItemsFound' | message}}
             </p>
-            <table class="cce-items-table">
-                <thead ng-if="vm.cceItems.length !== 0">
+            <table ng-if="vm.cceItems.length !== 0" class="cce-items-table">
+                <thead>
                     <tr>
                         <th>{{:: 'homeInformationPanel.equipment' | message}}</th>
                         <th>{{:: 'homeInformationPanel.serialNumber' | message}}</th>
@@ -56,6 +59,9 @@
                 </tbody>
             </table>
         </section>
+        <section ng-if="vm.cceItems.length !== 0" class="show-number-items">
+            {{:: 'homeInformationPanel.showingItems' | message:({number: vm.cceItemsLength})}}
+        </section>
     </div>
     <div class="right-panel">
         <section class="header-section">
@@ -64,12 +70,12 @@
             </h2>
         </section>
         <section class="openlmis-table-container">
-            <table>
+            <table class="information-panel-table">
                 <thead>
                 <tr>
-                    <th>{{:: 'homeInformationPanel.pendings' | message}}</th>
-                    <th>{{:: 'homeInformationPanel.number' | message}}</th>
-                    <th>{{:: 'homeInformationPanel.actions' | message}}</th>
+                    <th class="header-element">{{:: 'homeInformationPanel.pendings' | message}}</th>
+                    <th class="header-element">{{:: 'homeInformationPanel.number' | message}}</th>
+                    <th class="header-element">{{:: 'homeInformationPanel.actions' | message}}</th>
                 </tr>
                 </thead>
                 <tbody>
