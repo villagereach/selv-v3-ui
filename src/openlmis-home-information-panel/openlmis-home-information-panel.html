@@ -6,7 +6,7 @@
             </h2>
         </section>
         <section class="openlmis-table-container">
-            <p ng-if="!vm.stockOnHandItems || vm.stockOnHandItems.length === 0">
+            <p ng-if="!vm.stockOnHandItems || vm.stockOnHandItems.length === 0" class="no-items-message">
                 {{'homeInformationPanel.NoStockItemsFound' | message}}
             </p>
             <table ng-if="vm.stockOnHandItems.length !== 0" class="stock-items-table">
