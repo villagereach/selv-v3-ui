@@ -28,10 +28,10 @@
                     th {
                         width: 300px;
                         &:nth-child(2) {
-                            width: 120px;
+                            width: 150px;
                         }
                         &:nth-child(3) {
-                            width: 130px;
+                            width: 150px;
                         }
                     }
                 }
@@ -45,10 +45,10 @@
                     td {
                         width: 300px;
                         &:nth-child(2) {
-                            width: 120px;
+                            width: 150px;
                         }
                         &:nth-child(3) {
-                            width: 130px;
+                            width: 150px;
                         }
                     }
                 }
@@ -60,15 +60,15 @@
                 display: block;
                 tr {
                     th {
-                        width: 100px;
+                        width: 110px;
                         &:nth-child(2) {
-                            width: 110px;
+                            width: 130px;
                         }
                         &:nth-child(3) {
                             width: 140px;
                         }
                         &:nth-child(4) {
-                            width: 80px;
+                            width: 100px;
                         }
                         &:nth-child(5) {
                             width: 120px;
@@ -83,15 +83,15 @@
                 display: block;
                 tr {
                     td {
-                        width: 100px;
+                        width: 110px;
                         &:nth-child(2) {
-                            width: 110px;
+                            width: 130px;
                         }
                         &:nth-child(3) {
                             width: 140px;
                         }
                         &:nth-child(4) {
-                            width: 80px;
+                            width: 100px;
                         }
                         &:nth-child(5) {
                             width: 120px;
