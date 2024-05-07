@@ -44,6 +44,8 @@ describe('OrderViewController', function() {
             this.accessTokenFactory = $injector.get('accessTokenFactory');
             this.deferred = this.$q.defer();
             this.$window = $injector.get('$window');
+            this.periodService = $injector.get('periodService');
+            this.processingScheduleService = $injector.get('processingScheduleService');
 
         });
         this.pod = new ProofOfDeliveryDataBuilder().build();
@@ -70,6 +72,13 @@ describe('OrderViewController', function() {
                 .build()
         ];
 
+        this.processingSchedules = [
+            {
+                id: 1,
+                name: 'first processing schedule'
+            }
+        ];
+
         this.orders = [
             new this.BasicOrderResponseDataBuilder()
                 .withStatus(this.ORDER_STATUS.ORDERED)
@@ -94,6 +103,8 @@ describe('OrderViewController', function() {
                 requestingFacilities: this.requestingFacilities,
                 programs: this.programs,
                 orders: this.orders,
+                processingSchedules: this.processingSchedules,
+                selectedProcessingSchedule: this.processingSchedules[0],
                 canRetryTransfer: this.canRetryTransfer,
                 notificationService: this.notificationService,
                 loadingModalService: this.loadingModalService,
@@ -226,6 +237,8 @@ describe('OrderViewController', function() {
                 status: null,
                 periodStartDate: null,
                 periodEndDate: null,
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -246,6 +259,8 @@ describe('OrderViewController', function() {
                 status: null,
                 periodStartDate: null,
                 periodEndDate: null,
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -266,6 +281,8 @@ describe('OrderViewController', function() {
                 status: null,
                 periodStartDate: null,
                 periodEndDate: null,
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -284,6 +301,8 @@ describe('OrderViewController', function() {
                 status: null,
                 periodStartDate: '2017-01-31',
                 periodEndDate: null,
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -302,6 +321,8 @@ describe('OrderViewController', function() {
                 status: null,
                 periodStartDate: null,
                 periodEndDate: '2017-01-31',
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -320,6 +341,8 @@ describe('OrderViewController', function() {
                 status: this.vm.orderStatuses[1].value,
                 periodStartDate: null,
                 periodEndDate: null,
+                processingSchedule: 1,
+                processingPeriodId: null,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -347,6 +370,8 @@ describe('OrderViewController', function() {
                 requestingFacilities: this.requestingFacilities,
                 programs: this.programs,
                 orders: this.orders,
+                processingSchedules: this.processingSchedules,
+                selectedProcessingSchedule: this.processingSchedules[0],
                 fulfillmentUrlFactory: this.fulfillmentUrlFactoryMock,
                 canRetryTransfer: this.canRetryTransfer,
                 orderStatusFactory: this.orderStatusFactory,
@@ -374,6 +399,8 @@ describe('OrderViewController', function() {
                 requestingFacilities: this.requestingFacilities,
                 programs: this.programs,
                 orders: this.orders,
+                processingSchedules: this.processingSchedules,
+                selectedProcessingSchedule: this.processingSchedules[0],
                 canRetryTransfer: this.canRetryTransfer,
                 orderService: this.orderService,
                 notificationService: this.notificationService,
@@ -448,6 +475,8 @@ describe('OrderViewController', function() {
             requestingFacilities: this.requestingFacilities,
             programs: this.programs,
             orders: this.orders,
+            processingSchedules: this.processingSchedules,
+            selectedProcessingSchedule: this.processingSchedules[0],
             canRetryTransfer: this.canRetryTransfer,
             notificationService: this.notificationService,
             loadingModalService: this.loadingModalService,

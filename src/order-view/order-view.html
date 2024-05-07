@@ -25,6 +25,20 @@
         <input id="periodStartDate" type="date" ng-model="vm.periodStartDate" max-date="vm.periodEndDate"/>
         <label for=periodEndDate>{{'orderView.periodEnd' | message}}</label>
         <input id="periodEndDate" type="date" ng-model="vm.periodEndDate" min-date="vm.periodStartDate"/>
+        <label for=processingSchedule>{{'orderView.processingSchedule' | message}}</label>
+        <select id="processingSchedule"
+                placeholder="{{'orderView.selectSchedule' | message}}"
+                ng-model="vm.selectedProcessingSchedule"
+                ng-options="schedule as schedule.name for schedule in vm.processingSchedules.content">
+        </select>
+        <label for=processingPeriod>{{'orderView.processingPeriod' | message}}</label>
+        <select id="processingPeriod"
+                placeholder="{{'orderView.selectPeriod' | message}}"
+                ng-model="vm.selectedProcessingPeriod"
+                ng-options="period as period.name for period in vm.processingPeriods.$$state.value.content"
+                ng-disabled="vm.selectedProcessingSchedule === undefined"
+        >
+        </select>
         <input type="submit" class="btn btn-primary" value="{{'orderView.search' | message}}"/>
     </form>
     <table>

@@ -33,13 +33,15 @@
         'supplyingFacilities', 'requestingFacilities', 'programs', 'requestingFacilityFactory',
         'loadingModalService', 'notificationService', 'fulfillmentUrlFactory', 'orders',
         'orderService', 'orderStatusFactory', 'canRetryTransfer', '$stateParams', '$filter', '$state', '$scope',
-        'accessTokenFactory', 'openlmisUrlFactory', 'proofOfDeliveryManageService', '$window', 'ORDER_STATUSES'
+        'accessTokenFactory', 'openlmisUrlFactory', 'proofOfDeliveryManageService', '$window', 'ORDER_STATUSES',
+        'processingSchedules', 'selectedProcessingSchedule', 'periodService'
     ];
 
     function controller(supplyingFacilities, requestingFacilities, programs, requestingFacilityFactory,
                         loadingModalService, notificationService, fulfillmentUrlFactory, orders, orderService,
                         orderStatusFactory, canRetryTransfer, $stateParams, $filter, $state, $scope,
-                        accessTokenFactory, openlmisUrlFactory, proofOfDeliveryManageService, $window, ORDER_STATUSES) {
+                        accessTokenFactory, openlmisUrlFactory, proofOfDeliveryManageService, $window, ORDER_STATUSES,
+                        processingSchedules, selectedProcessingSchedule, periodService) {
 
         var vm = this;
 
@@ -150,6 +152,51 @@
          * Initialization method called after the controller has been created. Responsible for
          * setting data to be available on the view.
          */
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name processingSchedules
+         * @type {Array}
+         *
+         * @description
+         * List of processing schedules to which user has access based on his role/permissions.
+         */
+        vm.processingSchedules = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedProcessingSchedule
+         * @type {Object}
+         *
+         * @description
+         * The processing schedule selected by the user.
+         */
+        vm.selectedProcessingSchedule = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name processingPeriods
+         * @type {Array}
+         *
+         * @description
+         * List of processing periods to which user has access based on his role/permissions.
+         */
+        vm.processingPeriods = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedProcessingPeriod
+         * @type {Object}
+         *
+         * @description
+         * The processing period selected by the user.
+         */
+        vm.selectedProcessingPeriod = undefined;
+
         function onInit() {
             vm.supplyingFacilities = supplyingFacilities;
             vm.requestingFacilities = requestingFacilities;
@@ -192,6 +239,27 @@
                 })[0];
             }
 
+            vm.processingSchedules = processingSchedules;
+            vm.selectedProcessingSchedule = selectedProcessingSchedule;
+
+            if (vm.processingPeriods) {
+                vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
+                    id: $stateParams.processingPeriod
+                })[0];
+            }
+
+            $scope.$watch('vm.selectedProcessingSchedule', function() {
+                fetchProcessingPeriods();
+            });
+
+            $scope.$watch('vm.processingPeriods.$$state.value.content', function() {
+                if ($stateParams.processingPeriod) {
+                    vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
+                        id: $stateParams.processingPeriod
+                    })[0];
+                }
+            });
+
             $scope.$watch(function() {
                 return vm.supplyingFacility;
             }, function(newValue, oldValue) {
@@ -224,6 +292,8 @@
             stateParams.status = vm.status ? vm.status.value : null;
             stateParams.periodStartDate = vm.periodStartDate ? $filter('isoDate')(vm.periodStartDate) : null;
             stateParams.periodEndDate = vm.periodEndDate ? $filter('isoDate')(vm.periodEndDate) : null;
+            stateParams.processingSchedule = vm.selectedProcessingSchedule ? vm.selectedProcessingSchedule.id : null;
+            stateParams.processingPeriodId = vm.selectedProcessingPeriod ? vm.selectedProcessingPeriod.id : null;
             stateParams.sort = 'createdDate,desc';
 
             $state.go('openlmis.orders.view', stateParams, {
@@ -328,6 +398,14 @@
             );
         }
 
+        function fetchProcessingPeriods() {
+            if (vm.selectedProcessingSchedule) {
+                vm.processingPeriods = periodService.query({
+                    processingScheduleId: vm.selectedProcessingSchedule.id,
+                    size: 9999
+                });
+            }
+        }
     }
 
 })();

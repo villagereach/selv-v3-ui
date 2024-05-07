@@ -35,7 +35,7 @@
             </h2>
         </section>
         <section class="openlmis-table-container">
-            <p ng-if="!vm.cceItems || vm.cceItems.length === 0">
+            <p ng-if="!vm.cceItems || vm.cceItems.length === 0" class="no-items-message">
                 {{'homeInformationPanel.noCceItemsFound' | message}}
             </p>
             <table ng-if="vm.cceItems.length !== 0" class="cce-items-table">

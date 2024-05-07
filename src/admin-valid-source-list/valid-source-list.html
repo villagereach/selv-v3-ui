@@ -23,6 +23,14 @@
                     ng-required="vm.facilityId"
             >
             </select>
+            <label for="geographicZoneId">
+                {{:: 'adminValidSourceList.geoZone' | message}}
+            </label>
+            <select id="geographicZoneId"
+                    ng-model="vm.geographicZoneId"
+                    ng-options="zone.id as zone.name for zone in vm.geographicZonesArray"
+            >
+            </select>
         </fieldset>
         <input type="submit" value="{{'adminValidSourceList.search' | message}}"/>
     </form>

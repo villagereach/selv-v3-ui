@@ -31,11 +31,13 @@
 
     controller.$inject = [
         '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram', 'alertService', 'offlineService',
-        'localStorageFactory', 'isBatchApproveScreenActive'
+        'localStorageFactory', 'isBatchApproveScreenActive', 'processingSchedules', 'selectedProcessingSchedule',
+        'facilities', 'selectedFacility', 'periodService', '$scope', '$filter'
     ];
 
     function controller($state, requisitions, $stateParams, programs, selectedProgram, alertService, offlineService,
-                        localStorageFactory, isBatchApproveScreenActive) {
+                        localStorageFactory, isBatchApproveScreenActive, processingSchedules,
+                        selectedProcessingSchedule, facilities, selectedFacility, periodService, $scope, $filter) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -83,6 +85,72 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name facilities
+         * @type {Array}
+         *
+         * @description
+         * List of facilities to which user has access based on his role/permissions.
+         */
+        vm.facilities = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedFacility
+         * @type {Object}
+         *
+         * @description
+         * The facility selected by the user.
+         */
+        vm.selectedFacility = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name programs
+         * @type {Array}
+         *
+         * @description
+         * List of programs to which user has access based on his role/permissions.
+         */
+        vm.processingSchedules = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedProgram
+         * @type {Object}
+         *
+         * @description
+         * The program selected by the user.
+         */
+        vm.selectedProcessingSchedule = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name programs
+         * @type {Array}
+         *
+         * @description
+         * List of programs to which user has access based on his role/permissions.
+         */
+        vm.processingPeriods = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedProgram
+         * @type {Object}
+         *
+         * @description
+         * The program selected by the user.
+         */
+        vm.selectedProcessingPeriod = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
          * @name offline
          * @type {Boolean}
          *
@@ -117,11 +185,34 @@
          * setting data to be available on the view.
          */
         function onInit() {
+            fetchProcessingPeriods();
+
             vm.requisitions = requisitions;
             vm.programs = programs;
             vm.selectedProgram = selectedProgram;
+            vm.facilities = facilities;
+            vm.selectedFacility = selectedFacility;
+            vm.processingSchedules = processingSchedules;
+            vm.selectedProcessingSchedule = selectedProcessingSchedule;
+            if (vm.processingPeriods) {
+                vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
+                    id: $stateParams.processingPeriod
+                })[0];
+            }
             vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
             vm.isBatchApproveScreenActive = isBatchApproveScreenActive;
+
+            $scope.$watch('vm.selectedProcessingSchedule', function() {
+                fetchProcessingPeriods();
+            });
+
+            $scope.$watch('vm.processingPeriods.$$state.value.content', function() {
+                if ($stateParams.processingPeriod) {
+                    vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
+                        id: $stateParams.processingPeriod
+                    })[0];
+                }
+            });
         }
 
         /**
@@ -136,6 +227,9 @@
             var stateParams = angular.copy($stateParams);
 
             stateParams.program = vm.selectedProgram ? vm.selectedProgram.id : null;
+            stateParams.facility = vm.selectedFacility ? vm.selectedFacility.id : null;
+            stateParams.processingSchedule = vm.selectedProcessingSchedule ? vm.selectedProcessingSchedule.id : null;
+            stateParams.processingPeriod = vm.selectedProcessingPeriod ? vm.selectedProcessingPeriod.id : null;
             stateParams.offline = vm.offline;
 
             $state.go('openlmis.requisitions.approvalList', stateParams, {
@@ -225,6 +319,15 @@
                 id: requisitionId
             });
             return !vm.offline || vm.offline && offlineRequisition.length > 0;
+        }
+
+        function fetchProcessingPeriods() {
+            if (vm.selectedProcessingSchedule) {
+                vm.processingPeriods = periodService.query({
+                    processingScheduleId: vm.selectedProcessingSchedule.id,
+                    size: 9999
+                });
+            }
         }
     }
 
