@@ -29,7 +29,7 @@
             showInNavigation: true,
             isOffline: true,
             label: 'requisitionApproval.approve',
-            url: '/approvalList?page&size&program&facility&processingSchedule&processingPeriod&offline&sort',
+            url: '/approvalList?page&size&program&d&processingSchedule&processingPeriod&offline&sort',
             params: {
                 sort: ['emergency,desc', 'authorizedDate,desc']
             },
@@ -67,12 +67,14 @@
                         })[0];
                     }
                 },
+                isBatchApproveScreenActive: function(BATCH_APPROVE_SCREEN_FEATURE_FLAG, featureFlagService) {
+                    return featureFlagService.get(BATCH_APPROVE_SCREEN_FEATURE_FLAG);
+                },
                 facilities: function(requisitionSearchService) {
                     return requisitionSearchService.getFacilities();
                 },
                 selectedFacility: function($stateParams, $filter, facilities) {
                     if ($stateParams.facility) {
-                        console.log($stateParams);
                         return $filter('filter')(facilities, {
                             id: $stateParams.facility
                         })[0];
@@ -87,9 +89,6 @@
                             id: $stateParams.processingSchedule
                         })[0];
                     }
-                },
-                isBatchApproveScreenActive: function(BATCH_APPROVE_SCREEN_FEATURE_FLAG, featureFlagService) {
-                    return featureFlagService.get(BATCH_APPROVE_SCREEN_FEATURE_FLAG);
                 }
             }
         });

@@ -85,22 +85,22 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name programs
+         * @name facilities
          * @type {Array}
          *
          * @description
-         * List of programs to which user has access based on his role/permissions.
+         * List of facilities to which user has access based on his role/permissions.
          */
         vm.facilities = undefined;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name selectedProgram
+         * @name selectedFacility
          * @type {Object}
          *
          * @description
-         * The program selected by the user.
+         * The facility selected by the user.
          */
         vm.selectedFacility = undefined;
 

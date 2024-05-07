@@ -16,13 +16,12 @@
 describe('RequisitionApprovalListController', function() {
 
     //injects
-    var vm, $state, alertService, $controller, requisitionsStorage, batchRequisitionsStorage;
-
-    //variables
-    var requisitions, programs;
+    var requisitionsStorage, batchRequisitionsStorage;
 
     beforeEach(function() {
         module('requisition-approval');
+        module('referencedata-facility');
+        module('referencedata-program');
 
         module(function($provide) {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
@@ -48,12 +47,17 @@ describe('RequisitionApprovalListController', function() {
 
         inject(function($injector) {
 
-            $controller = $injector.get('$controller');
-            $state = $injector.get('$state');
-            alertService = $injector.get('alertService');
+            this.$controller = $injector.get('$controller');
+            this.$stateParams = $injector.get('$stateParams');
+            this.$q = $injector.get('$q');
+            this.$state = $injector.get('$state');
+            this.alertService = $injector.get('alertService');
+            this.periodService = $injector.get('periodService');
+            this.$rootScope = $injector.get('$rootScope');
+            this.scope = this.$rootScope.$new();
         });
 
-        programs = [{
+        this.programs = [{
             id: '1',
             code: 'PRG001',
             name: 'Family Planning'
@@ -64,7 +68,30 @@ describe('RequisitionApprovalListController', function() {
             name: 'Essential Meds'
         }];
 
-        requisitions = [
+        this.facilities = [
+            {
+                id: '1',
+                name: 'first facility',
+                code: 'first code'
+            },
+            {
+                id: '2',
+                name: 'second facility',
+                code: 'second code'
+            }
+        ];
+
+        this.processingSchedules = {
+            content: [
+                {
+                    id: '1',
+                    code: 'code_1',
+                    name: 'Code 1'
+                }
+            ]
+        };
+
+        this.requisitions = [
             {
                 id: 1,
                 facility: {
@@ -72,7 +99,7 @@ describe('RequisitionApprovalListController', function() {
                     name: 'first facility',
                     code: 'first code'
                 },
-                program: programs[0]
+                program: this.programs[0]
 
             },
             {
@@ -82,7 +109,7 @@ describe('RequisitionApprovalListController', function() {
                     name: 'second facility',
                     code: 'second code'
                 },
-                program: programs[1]
+                program: this.programs[1]
 
             }
         ];
@@ -91,41 +118,55 @@ describe('RequisitionApprovalListController', function() {
     describe('$onInit', function() {
 
         beforeEach(function() {
-            initController();
+            this.vm = this.$controller('RequisitionApprovalListController', {
+                requisitions: this.requisitions,
+                programs: this.programs,
+                selectedProgram: this.programs[0],
+                facilities: this.facilities,
+                selectedFacility: this.facilities[0],
+                processingSchedules: this.processingSchedules.content,
+                selectedProcessingSchedule: this.processingSchedules.content[0],
+                isBatchApproveScreenActive: true,
+                $scope: this.scope
+            });
+
+            spyOn(this.scope, '$watch').andCallThrough();
         });
 
         it('should expose requisitions', function() {
-            vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions).toBe(requisitions);
+            this.vm.$onInit();
+
+            expect(this.vm.requisitions).toBe(this.requisitions);
         });
 
         it('should expose programs', function() {
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.programs).toBe(programs);
+            expect(this.vm.programs).toBe(this.programs);
         });
 
         it('should expose selected program', function() {
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.selectedProgram).toBe(programs[0]);
+            expect(this.vm.selectedProgram).toBe(this.programs[0]);
         });
 
         it('should expose offline flag', function() {
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.offline).toBe(false);
+            expect(this.vm.offline).toBe(false);
         });
 
         it('should expose isBatchApproveScreenActive flag', function() {
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.isBatchApproveScreenActive).toBe(true);
+            expect(this.vm.isBatchApproveScreenActive).toBe(true);
         });
 
         it('should expose sort options', function() {
-            expect(vm.options).toEqual({
+            expect(this.vm.options).toEqual({
                 'requisitionApproval.newestAuthorized': ['emergency,desc', 'authorizedDate,desc'],
                 'requisitionApproval.oldestAuthorized': ['emergency,desc', 'authorizedDate,asc']
             });
@@ -135,18 +176,32 @@ describe('RequisitionApprovalListController', function() {
     describe('search', function() {
 
         beforeEach(function() {
-            initController();
+            this.vm = this.$controller('RequisitionApprovalListController', {
+                requisitions: this.requisitions,
+                programs: this.programs,
+                selectedProgram: this.programs[0],
+                facilities: this.facilities,
+                selectedFacility: this.facilities[0],
+                processingSchedules: this.processingSchedules.content,
+                selectedProcessingSchedule: this.processingSchedules.content[0],
+                isBatchApproveScreenActive: true,
+                $scope: this.scope
+            });
 
-            spyOn($state, 'go');
+            spyOn(this.$state, 'go');
         });
 
         it('should set program', function() {
-            vm.selectedProgram = programs[0];
+            this.vm.selectedProgram = this.programs[0];
+            this.vm.offline = false;
 
-            vm.search();
+            this.vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
-                program: vm.selectedProgram.id,
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
+                program: this.vm.selectedProgram.id,
+                facility: null,
+                processingSchedule: null,
+                processingPeriod: null,
                 offline: false
             }, {
                 reload: true
@@ -154,13 +209,16 @@ describe('RequisitionApprovalListController', function() {
         });
 
         it('should set offline flag correctly', function() {
-            vm.selectedProgram = programs[0];
-            vm.offline = true;
+            this.vm.selectedProgram = this.programs[0];
+            this.vm.offline = true;
 
-            vm.search();
+            this.vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
-                program: vm.selectedProgram.id,
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
+                program: this.vm.selectedProgram.id,
+                facility: null,
+                processingSchedule: null,
+                processingPeriod: null,
                 offline: true
             }, {
                 reload: true
@@ -168,26 +226,36 @@ describe('RequisitionApprovalListController', function() {
         });
 
         it('should reload state', function() {
-            vm.search();
+            this.vm.search();
 
-            expect($state.go).toHaveBeenCalled();
+            expect(this.$state.go).toHaveBeenCalled();
         });
     });
 
     describe('openRnr', function() {
 
         beforeEach(function() {
-            initController();
+            this.vm = this.$controller('RequisitionApprovalListController', {
+                requisitions: this.requisitions,
+                programs: this.programs,
+                selectedProgram: this.programs[0],
+                facilities: this.facilities,
+                selectedFacility: this.facilities[0],
+                processingSchedules: this.processingSchedules.content,
+                selectedProcessingSchedule: this.processingSchedules.content[0],
+                isBatchApproveScreenActive: true,
+                $scope: this.scope
+            });
 
-            spyOn($state, 'go');
+            spyOn(this.$state, 'go');
         });
 
         it('should go to fullSupply state', function() {
-            vm.openRnr(requisitions[0].id);
+            this.vm.openRnr(this.requisitions[0].id);
 
             // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisitions[0].id,
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+                rnr: this.requisitions[0].id,
                 fullSupplyListSize: 25
             });
             // SELV3-126: ends here
@@ -197,51 +265,57 @@ describe('RequisitionApprovalListController', function() {
     describe('viewSelectedRequisitions', function() {
 
         beforeEach(function() {
-            initController();
+            this.vm = this.$controller('RequisitionApprovalListController', {
+                requisitions: this.requisitions,
+                programs: this.programs,
+                selectedProgram: this.programs[0],
+                facilities: this.facilities,
+                selectedFacility: this.facilities[0],
+                processingSchedules: this.processingSchedules.content,
+                selectedProcessingSchedule: this.processingSchedules.content[0],
+                isBatchApproveScreenActive: true,
+                $scope: this.scope
+            });
 
-            spyOn($state, 'go');
-            spyOn(alertService, 'error');
+            spyOn(this.$state, 'go');
+            spyOn(this.alertService, 'error');
         });
 
         it('should show error when trying to call with no requisition selected', function() {
-            vm.viewSelectedRequisitions();
+            this.vm.viewSelectedRequisitions();
 
-            expect($state.go).not.toHaveBeenCalled();
-            expect(alertService.error).toHaveBeenCalledWith('requisitionApproval.selectAtLeastOneRnr');
+            expect(this.$state.go).not.toHaveBeenCalled();
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionApproval.selectAtLeastOneRnr');
         });
 
         it('should show error when trying to call with requisition selected from two different programs', function() {
-            vm.selectedProgram = undefined;
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[1].$selected = true;
+            this.vm.selectedProgram = undefined;
+            this.requisitions[0].$selected = true;
+            this.requisitions[1].$selected = true;
 
-            vm.viewSelectedRequisitions();
+            this.vm.requisitions = this.requisitions;
 
-            expect($state.go).not.toHaveBeenCalled();
-            expect(alertService.error).toHaveBeenCalledWith('requisitionApproval.selectRequisitionsFromTheSameProgram');
+            this.vm.viewSelectedRequisitions();
+
+            expect(this.$state.go).not.toHaveBeenCalled();
+            expect(this.alertService.error)
+                .toHaveBeenCalledWith('requisitionApproval.selectRequisitionsFromTheSameProgram');
         });
 
         it('should not show error when trying to call with requisition selected', function() {
-            vm.requisitions[0].$selected = true;
+            this.requisitions[0].$selected = true;
 
-            vm.viewSelectedRequisitions();
+            this.vm.requisitions = this.requisitions;
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
-                ids: [ vm.requisitions[0].id ].join(',')
+            this.vm.viewSelectedRequisitions();
+
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
+                ids: [ this.vm.requisitions[0].id ].join(',')
             });
 
-            expect(alertService.error).not.toHaveBeenCalled();
+            expect(this.alertService.error).not.toHaveBeenCalled();
         });
 
     });
 
-    function initController() {
-        vm = $controller('RequisitionApprovalListController', {
-            requisitions: requisitions,
-            programs: programs,
-            selectedProgram: programs[0],
-            isBatchApproveScreenActive: true
-        });
-        vm.$onInit();
-    }
 });
