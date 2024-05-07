@@ -293,7 +293,7 @@
             stateParams.periodStartDate = vm.periodStartDate ? $filter('isoDate')(vm.periodStartDate) : null;
             stateParams.periodEndDate = vm.periodEndDate ? $filter('isoDate')(vm.periodEndDate) : null;
             stateParams.processingSchedule = vm.selectedProcessingSchedule ? vm.selectedProcessingSchedule.id : null;
-            stateParams.processingPeriod = vm.selectedProcessingPeriod ? vm.selectedProcessingPeriod.id : null;
+            stateParams.processingPeriodId = vm.selectedProcessingPeriod ? vm.selectedProcessingPeriod.id : null;
             stateParams.sort = 'createdDate,desc';
 
             $state.go('openlmis.orders.view', stateParams, {

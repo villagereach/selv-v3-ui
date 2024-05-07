@@ -23,11 +23,11 @@
                     ng-required="vm.facilityId"
             >
             </select>
-            <label for="geoZoneId">
+            <label for="geographicZoneId">
                 {{'adminValidDestinationList.geoZone' | message}}
             </label>
-            <select id="geoZoneId"
-                    ng-model="vm.geoZoneId"
+            <select id="geographicZoneId"
+                    ng-model="vm.geographicZoneId"
                     ng-options="zone.id as zone.name for zone in vm.geographicZonesArray"
             >
             </select>

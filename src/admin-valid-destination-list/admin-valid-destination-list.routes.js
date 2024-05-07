@@ -26,7 +26,7 @@
         $stateProvider.state('openlmis.administration.validDestination', {
             showInNavigation: true,
             label: 'adminValidDestinationList.validDestinations',
-            url: '/validDestinations?page&size&programId&facilityId&storageKey&geoZoneId',
+            url: '/validDestinations?page&size&programId&facilityId&storageKey&geographicZoneId',
             controller: 'ValidDestinationListController',
             templateUrl: 'admin-valid-destination-list/valid-destination-list.html',
             controllerAs: 'vm',
@@ -39,7 +39,7 @@
                             page: params.page,
                             programId: params.programId,
                             facilityId: params.facilityId,
-                            geoZoneId: params.geoZoneId
+                            geographicZoneId: params.geographicZoneId
                         });
                     });
                 },

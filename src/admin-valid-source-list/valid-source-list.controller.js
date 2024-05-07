@@ -65,7 +65,7 @@
 
             stateParams.programId = vm.programId;
             stateParams.facilityId = vm.facilityId;
-            stateParams.geoZoneId = vm.geoZoneId;
+            stateParams.geographicZoneId = vm.geographicZoneId;
 
             $state.go('openlmis.administration.validSource', stateParams, {
                 reload: true
