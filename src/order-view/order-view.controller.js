@@ -34,14 +34,16 @@
         'loadingModalService', 'notificationService', 'fulfillmentUrlFactory', 'orders',
         'orderService', 'orderStatusFactory', 'canRetryTransfer', '$stateParams', '$filter', '$state', '$scope',
         'accessTokenFactory', 'openlmisUrlFactory', 'proofOfDeliveryManageService', '$window', 'ORDER_STATUSES',
-        'processingSchedules', 'selectedProcessingSchedule', 'periodService'
+        'processingSchedules', 'selectedProcessingSchedule', 'periodService', 'processingPeriods',
+        'selectedProcessingPeriod'
     ];
 
     function controller(supplyingFacilities, requestingFacilities, programs, requestingFacilityFactory,
                         loadingModalService, notificationService, fulfillmentUrlFactory, orders, orderService,
                         orderStatusFactory, canRetryTransfer, $stateParams, $filter, $state, $scope,
                         accessTokenFactory, openlmisUrlFactory, proofOfDeliveryManageService, $window, ORDER_STATUSES,
-                        processingSchedules, selectedProcessingSchedule, periodService) {
+                        processingSchedules, selectedProcessingSchedule, periodService, processingPeriods,
+                        selectedProcessingPeriod) {
 
         var vm = this;
 
@@ -241,23 +243,11 @@
 
             vm.processingSchedules = processingSchedules;
             vm.selectedProcessingSchedule = selectedProcessingSchedule;
-
-            if (vm.processingPeriods) {
-                vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
-                    id: $stateParams.processingPeriod
-                })[0];
-            }
+            vm.processingPeriods = processingPeriods;
+            vm.selectedProcessingPeriod = selectedProcessingPeriod;
 
             $scope.$watch('vm.selectedProcessingSchedule', function() {
                 fetchProcessingPeriods();
-            });
-
-            $scope.$watch('vm.processingPeriods.$$state.value.content', function() {
-                if ($stateParams.processingPeriod) {
-                    vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
-                        id: $stateParams.processingPeriod
-                    })[0];
-                }
             });
 
             $scope.$watch(function() {
@@ -399,10 +389,12 @@
         }
 
         function fetchProcessingPeriods() {
-            if (vm.selectedProcessingSchedule) {
-                vm.processingPeriods = periodService.query({
+            if (vm.selectedProcessingSchedule && processingPeriods === undefined) {
+                periodService.query({
                     processingScheduleId: vm.selectedProcessingSchedule.id,
                     size: 9999
+                }).then(function(fetchedData) {
+                    vm.processingPeriods = fetchedData;
                 });
             }
         }

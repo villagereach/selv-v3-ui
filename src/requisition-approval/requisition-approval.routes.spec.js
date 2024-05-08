@@ -93,6 +93,16 @@ describe('openlmis.requisitions.approvalList', function() {
             ]
         };
 
+        this.processingPeriods = {
+            content: [
+                {
+                    id: '1',
+                    code: 'code_1',
+                    name: 'Code 1'
+                }
+            ]
+        };
+
         this.user = new this.UserDataBuilder().build();
         //eslint-disable-next-line camelcase
         this.user.user_id = this.user.id;
@@ -113,6 +123,7 @@ describe('openlmis.requisitions.approvalList', function() {
         spyOn(this.requisitionApprovalService, 'getPrograms').andReturn(this.$q.resolve(this.programs));
         spyOn(this.requisitionSearchService, 'getFacilities').andReturn(this.$q.resolve(this.facilities));
         spyOn(this.processingScheduleService, 'get').andReturn(this.$q.resolve(this.processingSchedules));
+        spyOn(this.periodService, 'query').andReturn(this.$q.resolve(this.processingPeriods));
         spyOn(this.permissionService, 'hasRoleWithRightAndFacility').andReturn(this.$q.resolve(true));
     });
 
