@@ -31,6 +31,7 @@
         'ui.router',
         'referencedata-geographic-zone',
         'stock-adjustment-creation',
-        'openlmis-state-tracker'
+        'openlmis-state-tracker',
+        'openlmis-uuid'
     ]);
 })();

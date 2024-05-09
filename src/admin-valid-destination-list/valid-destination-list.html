@@ -12,7 +12,6 @@
                     ng-model="vm.facilityId"
                     ng-options="f.id as f.name for f in vm.facilities"
                     ng-required="vm.programId"
-                    ng-invalid
             >
             </select>
             <label for="programId" ng-class="{'is-required': vm.facilityId}">
