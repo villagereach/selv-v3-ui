@@ -24,6 +24,7 @@
      * Provides valid destination list screen for administrator.
      */
     angular.module('admin-valid-destination-list', [
+        'ngResource',
         'openlmis-admin',
         'openlmis-pagination',
         'openlmis-rights',

@@ -32,7 +32,9 @@
             >
             </select>
         </fieldset>
-        <input type="submit" value="{{'adminValidSourceList.search' | message}}"/>
+        <input type="submit"
+               value="{{'adminValidSourceList.search' | message}}"
+               ng-disabled="(!!vm.facilityId && !vm.programId) || (!!vm.programId && !vm.facilityId)"/>
     </form>
     <table>
         <caption ng-if="!vm.validSources || vm.validSources.length === 0">

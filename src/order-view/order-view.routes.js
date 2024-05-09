@@ -93,6 +93,21 @@
                             id: $stateParams.processingSchedule
                         })[0];
                     }
+                },
+                processingPeriods: function(periodService, selectedProcessingSchedule) {
+                    if (selectedProcessingSchedule) {
+                        return periodService.query({
+                            processingScheduleId: selectedProcessingSchedule.id,
+                            size: 9999
+                        });
+                    }
+                },
+                selectedProcessingPeriod: function($stateParams, $filter, processingPeriods) {
+                    if ($stateParams.processingPeriodId) {
+                        return $filter('filter')(processingPeriods.content, {
+                            id: $stateParams.processingPeriodId
+                        })[0];
+                    }
                 }
             }
         });

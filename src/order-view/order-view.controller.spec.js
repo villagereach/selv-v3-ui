@@ -79,6 +79,16 @@ describe('OrderViewController', function() {
             }
         ];
 
+        this.processingPeriods = {
+            content: [
+                {
+                    id: 1,
+                    code: 'code_1',
+                    name: 'Code 1'
+                }
+            ]
+        };
+
         this.orders = [
             new this.BasicOrderResponseDataBuilder()
                 .withStatus(this.ORDER_STATUS.ORDERED)
@@ -105,6 +115,8 @@ describe('OrderViewController', function() {
                 orders: this.orders,
                 processingSchedules: this.processingSchedules,
                 selectedProcessingSchedule: this.processingSchedules[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 canRetryTransfer: this.canRetryTransfer,
                 notificationService: this.notificationService,
                 loadingModalService: this.loadingModalService,
@@ -238,7 +250,7 @@ describe('OrderViewController', function() {
                 periodStartDate: null,
                 periodEndDate: null,
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -260,7 +272,7 @@ describe('OrderViewController', function() {
                 periodStartDate: null,
                 periodEndDate: null,
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -282,7 +294,7 @@ describe('OrderViewController', function() {
                 periodStartDate: null,
                 periodEndDate: null,
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -302,7 +314,7 @@ describe('OrderViewController', function() {
                 periodStartDate: '2017-01-31',
                 periodEndDate: null,
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -322,7 +334,7 @@ describe('OrderViewController', function() {
                 periodStartDate: null,
                 periodEndDate: '2017-01-31',
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -342,7 +354,7 @@ describe('OrderViewController', function() {
                 periodStartDate: null,
                 periodEndDate: null,
                 processingSchedule: 1,
-                processingPeriodId: null,
+                processingPeriodId: 1,
                 sort: 'createdDate,desc'
             }, {
                 reload: true
@@ -372,6 +384,8 @@ describe('OrderViewController', function() {
                 orders: this.orders,
                 processingSchedules: this.processingSchedules,
                 selectedProcessingSchedule: this.processingSchedules[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 fulfillmentUrlFactory: this.fulfillmentUrlFactoryMock,
                 canRetryTransfer: this.canRetryTransfer,
                 orderStatusFactory: this.orderStatusFactory,
@@ -401,6 +415,8 @@ describe('OrderViewController', function() {
                 orders: this.orders,
                 processingSchedules: this.processingSchedules,
                 selectedProcessingSchedule: this.processingSchedules[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 canRetryTransfer: this.canRetryTransfer,
                 orderService: this.orderService,
                 notificationService: this.notificationService,
@@ -477,6 +493,8 @@ describe('OrderViewController', function() {
             orders: this.orders,
             processingSchedules: this.processingSchedules,
             selectedProcessingSchedule: this.processingSchedules[0],
+            processingPeriods: this.processingPeriods.content,
+            selectedProcessingPeriod: this.processingPeriods.content[0],
             canRetryTransfer: this.canRetryTransfer,
             notificationService: this.notificationService,
             loadingModalService: this.loadingModalService,

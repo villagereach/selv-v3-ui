@@ -91,6 +91,16 @@ describe('RequisitionApprovalListController', function() {
             ]
         };
 
+        this.processingPeriods = {
+            content: [
+                {
+                    id: '1',
+                    code: 'code_1',
+                    name: 'Code 1'
+                }
+            ]
+        };
+
         this.requisitions = [
             {
                 id: 1,
@@ -126,6 +136,8 @@ describe('RequisitionApprovalListController', function() {
                 selectedFacility: this.facilities[0],
                 processingSchedules: this.processingSchedules.content,
                 selectedProcessingSchedule: this.processingSchedules.content[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 isBatchApproveScreenActive: true,
                 $scope: this.scope
             });
@@ -184,6 +196,8 @@ describe('RequisitionApprovalListController', function() {
                 selectedFacility: this.facilities[0],
                 processingSchedules: this.processingSchedules.content,
                 selectedProcessingSchedule: this.processingSchedules.content[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 isBatchApproveScreenActive: true,
                 $scope: this.scope
             });
@@ -243,6 +257,8 @@ describe('RequisitionApprovalListController', function() {
                 selectedFacility: this.facilities[0],
                 processingSchedules: this.processingSchedules.content,
                 selectedProcessingSchedule: this.processingSchedules.content[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 isBatchApproveScreenActive: true,
                 $scope: this.scope
             });
@@ -273,6 +289,8 @@ describe('RequisitionApprovalListController', function() {
                 selectedFacility: this.facilities[0],
                 processingSchedules: this.processingSchedules.content,
                 selectedProcessingSchedule: this.processingSchedules.content[0],
+                processingPeriods: this.processingPeriods.content,
+                selectedProcessingPeriod: this.processingPeriods.content[0],
                 isBatchApproveScreenActive: true,
                 $scope: this.scope
             });

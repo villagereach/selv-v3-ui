@@ -29,7 +29,7 @@
             showInNavigation: true,
             isOffline: true,
             label: 'requisitionApproval.approve',
-            url: '/approvalList?page&size&program&d&processingSchedule&processingPeriod&offline&sort',
+            url: '/approvalList?page&size&program&facility&processingSchedule&processingPeriod&offline&sort',
             params: {
                 sort: ['emergency,desc', 'authorizedDate,desc']
             },
@@ -87,6 +87,21 @@
                     if ($stateParams.processingSchedule) {
                         return $filter('filter')(processingSchedules.content, {
                             id: $stateParams.processingSchedule
+                        })[0];
+                    }
+                },
+                processingPeriods: function(periodService, selectedProcessingSchedule) {
+                    if (selectedProcessingSchedule) {
+                        return periodService.query({
+                            processingScheduleId: selectedProcessingSchedule.id,
+                            size: 9999
+                        });
+                    }
+                },
+                selectedProcessingPeriod: function($stateParams, $filter, processingPeriods) {
+                    if ($stateParams.processingPeriod) {
+                        return $filter('filter')(processingPeriods.content, {
+                            id: $stateParams.processingPeriod
                         })[0];
                     }
                 }

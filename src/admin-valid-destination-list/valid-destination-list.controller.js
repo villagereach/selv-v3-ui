@@ -96,6 +96,17 @@
 
         /**
          * @ngdoc property
+         * @propertyOf admin-valid-source-list.controller:ValidSourceListController
+         * @name geographicZoneId
+         * @type {String}
+         *
+         * @description
+         * Id of geo zone selected in for filtering
+         */
+        vm.geographicZoneId = $stateParams.geographicZoneId;
+
+        /**
+         * @ngdoc property
          * @propertyOf admin-valid-destination-list.controller:ValidDestinationListController
          * @name validDestinations
          * @type {Array}

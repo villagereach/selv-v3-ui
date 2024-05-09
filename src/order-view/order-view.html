@@ -35,7 +35,7 @@
         <select id="processingPeriod"
                 placeholder="{{'orderView.selectPeriod' | message}}"
                 ng-model="vm.selectedProcessingPeriod"
-                ng-options="period as period.name for period in vm.processingPeriods.$$state.value.content"
+                ng-options="period as period.name for period in vm.processingPeriods.content"
                 ng-disabled="vm.selectedProcessingSchedule === undefined"
         >
         </select>

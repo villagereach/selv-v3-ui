@@ -32,12 +32,13 @@
     controller.$inject = [
         '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram', 'alertService', 'offlineService',
         'localStorageFactory', 'isBatchApproveScreenActive', 'processingSchedules', 'selectedProcessingSchedule',
-        'facilities', 'selectedFacility', 'periodService', '$scope', '$filter'
+        'facilities', 'selectedFacility', 'processingPeriods', 'selectedProcessingPeriod', 'periodService', '$scope'
     ];
 
     function controller($state, requisitions, $stateParams, programs, selectedProgram, alertService, offlineService,
                         localStorageFactory, isBatchApproveScreenActive, processingSchedules,
-                        selectedProcessingSchedule, facilities, selectedFacility, periodService, $scope, $filter) {
+                        selectedProcessingSchedule, facilities, selectedFacility, processingPeriods,
+                        selectedProcessingPeriod, periodService, $scope) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -107,44 +108,44 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name programs
+         * @name processingSchedules
          * @type {Array}
          *
          * @description
-         * List of programs to which user has access based on his role/permissions.
+         * List of processing schedules to which user has access based on his role/permissions.
          */
         vm.processingSchedules = undefined;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name selectedProgram
+         * @name selectedProcessingSchedule
          * @type {Object}
          *
          * @description
-         * The program selected by the user.
+         * The processing schedule selected by the user.
          */
         vm.selectedProcessingSchedule = undefined;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name programs
+         * @name processingPeriods
          * @type {Array}
          *
          * @description
-         * List of programs to which user has access based on his role/permissions.
+         * List of processing periods to which user has access based on his role/permissions.
          */
         vm.processingPeriods = undefined;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
-         * @name selectedProgram
+         * @name selectedProcessingPeriod
          * @type {Object}
          *
          * @description
-         * The program selected by the user.
+         * The processing period selected by the user.
          */
         vm.selectedProcessingPeriod = undefined;
 
@@ -185,8 +186,6 @@
          * setting data to be available on the view.
          */
         function onInit() {
-            fetchProcessingPeriods();
-
             vm.requisitions = requisitions;
             vm.programs = programs;
             vm.selectedProgram = selectedProgram;
@@ -194,24 +193,13 @@
             vm.selectedFacility = selectedFacility;
             vm.processingSchedules = processingSchedules;
             vm.selectedProcessingSchedule = selectedProcessingSchedule;
-            if (vm.processingPeriods) {
-                vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
-                    id: $stateParams.processingPeriod
-                })[0];
-            }
+            vm.processingPeriods = processingPeriods;
+            vm.selectedProcessingPeriod = selectedProcessingPeriod;
             vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
             vm.isBatchApproveScreenActive = isBatchApproveScreenActive;
 
             $scope.$watch('vm.selectedProcessingSchedule', function() {
                 fetchProcessingPeriods();
-            });
-
-            $scope.$watch('vm.processingPeriods.$$state.value.content', function() {
-                if ($stateParams.processingPeriod) {
-                    vm.selectedProcessingPeriod = $filter('filter')(vm.processingPeriods.$$state.value.content, {
-                        id: $stateParams.processingPeriod
-                    })[0];
-                }
             });
         }
 
@@ -322,10 +310,12 @@
         }
 
         function fetchProcessingPeriods() {
-            if (vm.selectedProcessingSchedule) {
-                vm.processingPeriods = periodService.query({
+            if (vm.selectedProcessingSchedule && processingPeriods === undefined) {
+                periodService.query({
                     processingScheduleId: vm.selectedProcessingSchedule.id,
                     size: 9999
+                }).then(function(fetchedData) {
+                    vm.processingPeriods = fetchedData;
                 });
             }
         }

@@ -24,6 +24,7 @@
      * Provides valid source list screen for administrator.
      */
     angular.module('admin-valid-source-list', [
+        'ngResource',
         'openlmis-admin',
         'openlmis-pagination',
         'openlmis-rights',
