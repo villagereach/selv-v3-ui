@@ -58,7 +58,8 @@
             query: query,
             save: save,
             deleteInventory: deleteInventory,
-            transfer: transfer
+            transfer: transfer,
+            getDownloadURL: getDownloadURL
         };
 
         /**
@@ -112,6 +113,21 @@
                 }, inventoryItem).$promise;
             }
             return resource.save({}, inventoryItem).$promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf cce-inventory-item.inventoryItemService
+         * @name getDownloadURL
+         *
+         * @description
+         * Returns the download url for  the provided parameters
+         *
+         * @return {String}     the download url
+         */
+        function getDownloadURL(params) {
+            return cceUrlFactory('/api/inventoryItems/download?format=csv&programId='
+                + params.programId + '&facilityId=' + params.facilityId);
         }
 
         /**

@@ -9,6 +9,7 @@
     <input type="submit" value="{{'cceInventoryList.search' | message}}"/>
 </form>
 <section class="openlmis-table-container">
+    <input openlmis-download="{{vm.getDownloadURL()}}" type="button" value="{{'cceInventoryList.exportCSV' | message}}"/>
     <button id="add-inventory-item" class="add" ui-sref="openlmis.cce.inventory.add"
         ng-show="vm.userHasRightToEdit">
         {{'cceInventoryList.addEquipment' | message}}
@@ -48,10 +49,8 @@
                 <td>{{item.catalogItem.type}}</td>
                 <td>
                     <div class="cce-inventory-item-status-box">
-                        <!-- SELV3-674: Fix issues related to new Chrome popover functionality -->
                         <span class="cce-inventory-item-status {{vm.getFunctionalStatusClass(item.functionalStatus)}}"
-                            popover="{{vm.getReasonLabel(item.reasonNotWorkingOrNotInUse)}}">{{vm.getStatusLabel(item.functionalStatus)}}</span>
-                        <!-- SELV3-674: FEnds here -->
+                            openlmis-popover="{{vm.getReasonLabel(item.reasonNotWorkingOrNotInUse)}}">{{vm.getStatusLabel(item.functionalStatus)}}</span></span>
                         <span ng-if="vm.cceAlerts[item.id] && vm.cceAlerts[item.id].activeAlerts.length" class="rtm-alert-status-active" openlmis-popover
                             popover-title="{{'cceInventoryList.rtmAlerts.title' | message}}"
                             popover-template="cce-inventory-list/rtm-alerts-popover.html"></span>
