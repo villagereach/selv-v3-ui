@@ -44,13 +44,12 @@
             SYSTEM_NOTIFICATIONS_MANAGE: 'SYSTEM_NOTIFICATIONS_MANAGE',
             FACILITY_APPROVED_ORDERABLES_MANAGE: 'FACILITY_APPROVED_ORDERABLES_MANAGE',
             LOTS_MANAGE: 'LOTS_MANAGE',
-            // SELV3-343: Add possibility to add valid sources
             STOCK_SOURCES_MANAGE: 'STOCK_SOURCES_MANAGE',
-            // SELV3-343: Ends here
-            // SELV3-469: Add possibility to add valid destinations
             STOCK_DESTINATIONS_MANAGE: 'STOCK_DESTINATIONS_MANAGE',
-            // SELV3-469: Ends here
             ORDER_CREATE: 'ORDER_CREATE',
+            DATA_EXPORT: 'DATA_EXPORT',
+            DATA_IMPORT: 'DATA_IMPORT',
+            MANAGE_BUQ: 'MANAGE_BUQ',
             // SELV3-670: Secure DHIS2 page 
             MANAGE_DHIS2: 'MANAGE_DHIS2'
             // SELV3-670: Ends here
