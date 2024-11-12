@@ -16,7 +16,7 @@
 describe('RequisitionApprovalListController', function() {
 
     //injects
-    var requisitionsStorage, batchRequisitionsStorage;
+    var requisitionsStorage, batchRequisitionsStorage, TBArray, LeprosyArray;
 
     beforeEach(function() {
         module('requisition-approval');
@@ -27,7 +27,8 @@ describe('RequisitionApprovalListController', function() {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
             batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
                 'removeBy']);
-
+            TBArray = jasmine.createSpyObj('TBArray', ['clearAll']);
+            LeprosyArray = jasmine.createSpyObj('LeprosyArray', ['clearAll']);
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
@@ -37,6 +38,13 @@ describe('RequisitionApprovalListController', function() {
                 if (resourceName === 'batchApproveRequisitions') {
                     return batchRequisitionsStorage;
                 }
+                if (resourceName === 'TBArray') {
+                    return TBArray;
+                }
+                if (resourceName === 'LeprosyArray') {
+                    return LeprosyArray;
+                }
+
                 return requisitionsStorage;
             });
 
@@ -267,11 +275,12 @@ describe('RequisitionApprovalListController', function() {
         });
 
         it('should go to fullSupply state', function() {
-            this.vm.openRnr(this.requisitions[0].id);
+            this.vm.openRnr(this.requisitions[0]);
 
             // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
                 rnr: this.requisitions[0].id,
+                requisition: this.requisitions[0],
                 fullSupplyListSize: 25
             });
             // SELV3-126: ends here

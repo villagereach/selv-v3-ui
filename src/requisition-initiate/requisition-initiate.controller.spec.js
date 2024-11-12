@@ -82,11 +82,12 @@ describe('RequisitionInitiateController', function() {
     it('should change page to requisitions.requisition for with selected period with rnrId', function() {
         spyOn(this.$state, 'go');
 
-        this.vm.goToRequisition(1);
+        this.vm.goToRequisition(this.requisition);
 
         // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
         expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
             rnr: 1,
+            requisition: this.requisition,
             fullSupplyListSize: 25
         });
         // SELV3-126: ends here

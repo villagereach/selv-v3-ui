@@ -34,7 +34,7 @@
         '$scope', 'RequisitionWatcher', 'accessTokenFactory', 'messageService', 'stateTrackerService',
         'RequisitionStockCountDateModal', 'localStorageFactory', 'canSubmit', 'canAuthorize', 'canApproveAndReject',
         'canDelete', 'canSkip', 'canSync', 'program', 'facility', 'processingPeriod',
-        'rejectionReasonModalService', '$q'
+        'rejectionReasonModalService', '$q', 'TB_STORAGE', 'LEPROSY_STORAGE', '$rootScope', 'RequisitionViewService'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, requisitionService,
@@ -43,7 +43,8 @@
                                        RequisitionWatcher, accessTokenFactory, messageService, stateTrackerService,
                                        RequisitionStockCountDateModal, localStorageFactory, canSubmit, canAuthorize,
                                        canApproveAndReject, canDelete, canSkip, canSync,
-                                       program, facility, processingPeriod, rejectionReasonModalService, $q) {
+                                       program, facility, processingPeriod, rejectionReasonModalService, $q,
+                                       TB_STORAGE, LEPROSY_STORAGE, $rootScope, RequisitionViewService) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -212,6 +213,17 @@
          */
         vm.displaySyncButton = undefined;
 
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name patientsTabEnabled
+         * @type {Boolean}
+         *
+         * @description
+         * Flag to define requisition tab names whenever patientsTabEnabled is true or false.
+         */
+        vm.patientsTabEnabled = vm.requisition.template.patientsTabEnabled;
+
         // Functions
         vm.$onInit = onInit;
         vm.updateRequisition = updateRequisition;
@@ -379,7 +391,9 @@
                 'requisitionView.submit.confirm';
             confirmService.confirm(confirmMessage, 'requisitionView.submit.label').then(function() {
                 // SELV3-15: ends here
-                if (requisitionValidator.validateRequisition(requisition)) {
+                if (requisitionValidator.validateRequisition(requisition) && validatePatientsTable()) {
+                    addPatientsDataToRequisition();
+
                     if (requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     } else if (vm.program.enableDatePhysicalStockCountCompleted) {
@@ -389,6 +403,7 @@
                         saveThenSubmit();
                     }
                 } else {
+                    $rootScope.$broadcast('isSubmitInProgress', true);
                     $scope.$broadcast('openlmis-form-submit');
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
@@ -401,6 +416,7 @@
                         watcher.disableWatcher();
                         loadingPromise.then(function() {
                             notificationService.success('requisitionView.submit.success');
+                            clearPatientsLocalStorage();
                         });
                         stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
                     }, loadingModalService.close);
@@ -434,7 +450,9 @@
                 // SELV3-15: ends here
                 'requisitionView.authorize.label'
             ).then(function() {
-                if (requisitionValidator.validateRequisition(requisition)) {
+                if (requisitionValidator.validateRequisition(requisition) && validatePatientsTable()) {
+                    addPatientsDataToRequisition();
+
                     if (requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     } else if (vm.program.enableDatePhysicalStockCountCompleted) {
@@ -444,6 +462,7 @@
                         saveThenAuthorize();
                     }
                 } else {
+                    $rootScope.$broadcast('isSubmitInProgress', true);
                     $scope.$broadcast('openlmis-form-submit');
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
@@ -456,6 +475,7 @@
                         watcher.disableWatcher();
                         loadingPromise.then(function() {
                             notificationService.success('requisitionView.authorize.success');
+                            clearPatientsLocalStorage();
                         });
                         stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
                     }, loadingModalService.close);
@@ -485,6 +505,7 @@
                     watcher.disableWatcher();
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.delete.success');
+                        clearPatientsLocalStorage();
                     });
                     stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
                 }, loadingModalService.close);
@@ -521,6 +542,7 @@
                             watcher.disableWatcher();
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionView.approve.success');
+                                clearPatientsLocalStorage();
                             });
                             stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
                         }, loadingModalService.close);
@@ -559,6 +581,7 @@
                             watcher.disableWatcher();
                             notificationService.success('requisitionView.reject.success');
                             stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
+                            clearPatientsLocalStorage();
                         })
                         .catch(loadingModalService.close);
                 });
@@ -697,6 +720,40 @@
                 loadingModalService.close();
                 alertService.error(message);
             };
+        }
+
+        function clearPatientsLocalStorage() {
+            localStorageFactory(TB_STORAGE).clearAll();
+            localStorageFactory(LEPROSY_STORAGE).clearAll();
+        }
+
+        function getFromLocalStorage(storageName) {
+            return localStorageFactory(storageName).getAll();
+        }
+
+        function validatePatientsTable() {
+            var TBArray = getFromLocalStorage(TB_STORAGE);
+            var LeprosyArray = getFromLocalStorage(LEPROSY_STORAGE);
+
+            // When PatientsTab is not enabled should return true
+            if (!requisition.template.patientsTabEnabled) {
+                return true;
+            }
+
+            return RequisitionViewService.isArrayFullyFilled(TBArray) &&
+                RequisitionViewService.isArrayFullyFilled(LeprosyArray);
+        }
+
+        function addPatientsDataToRequisition() {
+            var TBArray = getFromLocalStorage(TB_STORAGE);
+            var LeprosyArray = getFromLocalStorage(LEPROSY_STORAGE);
+
+            vm.requisition.patientsData = JSON.stringify(
+                {
+                    TBData: TBArray,
+                    leprosyData: LeprosyArray
+                }
+            );
         }
     }
 })();
