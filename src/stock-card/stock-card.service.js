@@ -32,7 +32,8 @@
         'loadingModalService', 'openlmisUrlFactory'];
 
     function service($resource, $window, stockmanagementUrlFactory, accessTokenFactory, dateUtils,
-                     loadingModalService, openlmisUrlFactory) {
+                     loadingModalService, openlmisUrlFactory, StockCardResource, $q, offlineService) {
+        var stockCardResource = new StockCardResource();
         var resource = $resource(stockmanagementUrlFactory('/api/stockCards/:stockCardId'), {}, {
             get: {
                 method: 'GET',
@@ -60,9 +61,13 @@
          * @return {Promise} stock card promise.
          */
         function getStockCard(stockCardId) {
-            return resource.get({
-                stockCardId: stockCardId
-            }).$promise;
+            return stockCardResource.get(stockCardId)
+                .then(function(stockCard) {
+                    if (!stockCard && offlineService.isOffline()) {
+                        throw new Error('stockCard.notCached.error');
+                    }
+                    return $q.resolve(stockCard);
+                });
         }
 
         /**

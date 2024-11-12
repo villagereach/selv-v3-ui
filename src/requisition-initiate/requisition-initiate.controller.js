@@ -144,7 +144,7 @@
                 .then(function() {
                     requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key)
                         .then(function(data) {
-                            goToInitiatedRequisition(data);
+                            goToRequisition(data);
                         })
                         .catch(function() {
                             notificationService.error('requisitionInitiate.couldNotInitiateRequisition');

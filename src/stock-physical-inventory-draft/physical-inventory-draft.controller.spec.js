@@ -22,6 +22,7 @@ describe('PhysicalInventoryDraftController', function() {
         module('stock-physical-inventory-draft', function() {
             chooseDateModalService = jasmine.createSpyObj('chooseDateModalService', ['show']);
         });
+        module('admin-lot-edit');
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
@@ -168,7 +169,8 @@ describe('PhysicalInventoryDraftController', function() {
             stockmanagementUrlFactory: this.stockmanagementUrlFactory,
             accessTokenFactory: this.accessTokenFactory,
             confirmService: this.confirmService,
-            stockCardService: this.stockCardService
+            stockCardService: this.stockCardService,
+            LotResource: this.LotResource
         });
 
         this.vm.$onInit();
