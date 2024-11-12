@@ -72,6 +72,9 @@ describe('StockCardSummaryListController', function() {
         };
         this.vm.isSupervised = true;
         this.vm.includeInactive = false;
+        this.vm.productCode = 'product code';
+        this.vm.productName = 'product name';
+        this.vm.lotCode = 'lot code';
 
         spyOn(this.$state, 'go').andReturn(true);
         spyOn(accessTokenFactory, 'addAccessToken').andCallThrough();
@@ -106,7 +109,10 @@ describe('StockCardSummaryListController', function() {
                 stockCardSummariesSize: 10,
                 program: 'program',
                 active: 'ACTIVE',
-                supervised: true
+                supervised: true,
+                productCode: 'product code',
+                productName: 'product name',
+                lotCode: 'lot code'
             }, {
                 reload: true
             });
@@ -160,7 +166,12 @@ describe('StockCardSummaryListController', function() {
                     facility: 'facility',
                     program: 'program',
                     supervised: true,
-                    includeInactive: false
+                    includeInactive: false,
+                    productCode: 'product code',
+                    productName: 'product name',
+                    lotCode: 'lot code',
+                    page: 0,
+                    size: 10
                 },
                 {
                     reload: true

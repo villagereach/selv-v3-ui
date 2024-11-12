@@ -41,7 +41,8 @@
                 facility: undefined,
                 noReload: undefined,
                 draft: undefined,
-                includeInactive: 'false'
+                includeInactive: 'false',
+                isSubmitted: false
             },
             resolve: {
                 draft: function($stateParams, physicalInventoryFactory, offlineService,
