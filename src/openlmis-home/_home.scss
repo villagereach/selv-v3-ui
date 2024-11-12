@@ -13,7 +13,7 @@ $image-height: 136px;
     height: $image-height;
     position: absolute;
     bottom: 0.5em;
-    left: 0em;
+    @include left(0em);
     background: url('../assets/openlmis-home/home-background.png') no-repeat right bottom;
     @media screen and (max-width: $res-sm) {
       height: 100%;
