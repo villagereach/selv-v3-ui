@@ -40,7 +40,7 @@
 
         vm.$onInit = onInit;
         vm.search = search;
-        vm.showFacilityPopover = showFacilityPopover;
+        vm.hasMemberFacilities = hasMemberFacilities;
         //SELV3-340: deleteSupplyLine added
         vm.deleteSupplyLine = deleteSupplyLine;
 
@@ -137,15 +137,15 @@
         /**
          * @ngdoc method
          * @methodOf admin-supply-line-list.controller:SupplyLineListController
-         * @name showFacilityPopover
+         * @name hasMemberFacilities
          *
          * @description
-         * Checks if member facilities popover should be shown.
+         * Checks if there are member facilities
          * 
          * @param   {Object}  supplyLine given supply line
-         * @returns {boolean}            true if popover should be shown
+         * @returns {boolean}            true if there are member facilities
          */
-        function showFacilityPopover(supplyLine) {
+        function hasMemberFacilities(supplyLine) {
             return supplyLine.supervisoryNode.requisitionGroup &&
                 supplyLine.supervisoryNode.requisitionGroup.memberFacilities &&
                 supplyLine.supervisoryNode.requisitionGroup.memberFacilities.length;

@@ -4,6 +4,8 @@ $image-height: 136px;
   @extend .page-hero;
   padding-bottom: 4em;
   display: flex;
+  flex-wrap: wrap;
+  flex: 1 0 auto;
   align-items: flex-start;
   flex-flow: wrap;
 
@@ -44,9 +46,13 @@ $image-height: 136px;
   }
 }
 
+.home-page > openlmis-home-alerts-panel {
+  width: 100%;
+}
+
 .scroll {
   width: 100%;
-  float:left;
+  @include float(left);
   overflow-y: auto;
   max-height: 60vh;
   padding-bottom: 1em;

@@ -138,38 +138,38 @@ describe('SupplyLineListController', function() {
         });
     });
 
-    describe('showFacilityPopover', function() {
+    describe('hasMemberFacilities', function() {
 
-        it('should not show facility popover when requisition group is empty', function() {
+        it('should return false when requisition group is empty', function() {
             this.supplyLines[0].supervisoryNode.requisitionGroup = [];
 
-            expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeFalsy();
+            expect(this.vm.hasMemberFacilities(this.supplyLines[0])).toBeFalsy();
         });
 
-        it('should not show facility popover when requisition group is null', function() {
+        it('should return false when requisition group is null', function() {
             this.supplyLines[0].supervisoryNode.requisitionGroup = [];
 
-            expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeFalsy();
+            expect(this.vm.hasMemberFacilities(this.supplyLines[0])).toBeFalsy();
         });
 
-        it('should not show facility popover when member facilities are null', function() {
+        it('should return false when member facilities are null', function() {
             this.supplyLines[0].supervisoryNode.requisitionGroup.memberFacilities = null;
 
-            expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeFalsy();
+            expect(this.vm.hasMemberFacilities(this.supplyLines[0])).toBeFalsy();
         });
 
-        it('should not show facility popover when member facilities are empty', function() {
+        it('should return false when member facilities are empty', function() {
             this.supplyLines[0].supervisoryNode.requisitionGroup.memberFacilities = [];
 
-            expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeFalsy();
+            expect(this.vm.hasMemberFacilities(this.supplyLines[0])).toBeFalsy();
         });
 
-        it('should show facility popover when member facilities are not empty', function() {
+        it('should return true when member facilities are not empty', function() {
             this.supplyLines[0].supervisoryNode.requisitionGroup.memberFacilities = [
                 new this.FacilityDataBuilder().build()
             ];
 
-            expect(this.vm.showFacilityPopover(this.supplyLines[0])).toBeTruthy();
+            expect(this.vm.hasMemberFacilities(this.supplyLines[0])).toBeTruthy();
         });
     });
 
