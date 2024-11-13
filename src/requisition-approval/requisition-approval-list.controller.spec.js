@@ -22,6 +22,7 @@ describe('RequisitionApprovalListController', function() {
         module('requisition-approval');
         module('referencedata-facility');
         module('referencedata-program');
+        module('requisition-view-tab');
 
         module(function($provide) {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
@@ -63,7 +64,10 @@ describe('RequisitionApprovalListController', function() {
             this.periodService = $injector.get('periodService');
             this.$rootScope = $injector.get('$rootScope');
             this.scope = this.$rootScope.$new();
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
+
+        this.requistion = new this.RequisitionDataBuilder();
 
         this.programs = [{
             id: '1',
@@ -275,12 +279,12 @@ describe('RequisitionApprovalListController', function() {
         });
 
         it('should go to fullSupply state', function() {
-            this.vm.openRnr(this.requisitions[0]);
+            this.vm.openRnr(this.requistion);
 
             // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: this.requisitions[0].id,
-                requisition: this.requisitions[0],
+                rnr: this.requistion.id,
+                requisition: this.requistion,
                 fullSupplyListSize: 25
             });
             // SELV3-126: ends here

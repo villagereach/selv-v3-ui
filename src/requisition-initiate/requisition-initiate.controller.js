@@ -185,7 +185,7 @@
          * @description
          * Directs a user to the requisition view data for a specific period
          *
-         * @param {Object} requisition A requisition object
+         * @param {Object} requisition A requisition
          */
         function goToRequisition(requisition) {
             if (typeof requisition === 'object') {
@@ -196,7 +196,6 @@
                 });
             }
         }
-
         function redirectRequisition(requisition) {
             if (requisition.template.patientsTabEnabled) {
                 $state.go('openlmis.requisitions.requisition.patients', {
