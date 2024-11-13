@@ -28,9 +28,9 @@
         .module('requisition-order-create')
         .service('orderCreateService', service);
 
-    service.$inject = ['$resource', 'openlmisUrlFactory'];
+    service.$inject = ['$resource', 'openlmisUrlFactory', '$http'];
 
-    function service($resource, openlmisUrlFactory) {
+    function service($resource, openlmisUrlFactory, $http) {
 
         var resource = $resource(openlmisUrlFactory('/api/orders/:id'), {}, {
             update: {
@@ -55,6 +55,7 @@
         this.update = update;
         this.send = send;
         this.numberOfOrdersData = numberOfOrdersData;
+        this.delete = deleteOrders;
 
         function get(orderId) {
             return resource.get({
@@ -76,6 +77,19 @@
             return resource.send({
                 id: order.id
             }, order).$promise;
+        }
+
+        function deleteOrders(orderIds) {
+            return $http({
+                method: 'DELETE',
+                url: openlmisUrlFactory('/api/orders'),
+                data: {
+                    ids: orderIds
+                },
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                }
+            });
         }
 
         function numberOfOrdersData() {

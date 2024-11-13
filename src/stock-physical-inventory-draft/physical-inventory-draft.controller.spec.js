@@ -22,6 +22,7 @@ describe('PhysicalInventoryDraftController', function() {
         module('stock-physical-inventory-draft', function() {
             chooseDateModalService = jasmine.createSpyObj('chooseDateModalService', ['show']);
         });
+        module('admin-lot-edit');
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
@@ -168,7 +169,8 @@ describe('PhysicalInventoryDraftController', function() {
             stockmanagementUrlFactory: this.stockmanagementUrlFactory,
             accessTokenFactory: this.accessTokenFactory,
             confirmService: this.confirmService,
-            stockCardService: this.stockCardService
+            stockCardService: this.stockCardService,
+            LotResource: this.LotResource
         });
 
         this.vm.$onInit();
@@ -250,7 +252,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.lineItem4,
             getLineItemByOrderable(this.lineItem1.orderable),
             getLineItemByOrderable(this.lineItem3.orderable)
-        ], [this.lineItem1, this.lineItem2, this.lineItem3, this.lineItem4]);
+        ], this.draft);
     });
 
     function getLineItemByOrderable(orderable) {
@@ -267,6 +269,19 @@ describe('PhysicalInventoryDraftController', function() {
 
     describe('saveDraft', function() {
 
+        it('should open confirmation modal', function() {
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+
+            this.vm.saveDraft();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirmDestroy).toHaveBeenCalledWith(
+                'stockPhysicalInventoryDraft.saveDraft',
+                'stockPhysicalInventoryDraft.save'
+            );
+        });
+
         it('should not save lots if all exists', function() {
             this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
             spyOn(this.LotResource.prototype, 'create');
@@ -280,7 +295,9 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should save draft', function() {
-            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
+
             this.$rootScope.$apply();
 
             this.vm.saveDraftOrSubmit(false);
@@ -290,7 +307,9 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should cache draft', function() {
-            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
+
             this.$rootScope.$apply();
 
             this.vm.saveDraft();
@@ -322,7 +341,6 @@ describe('PhysicalInventoryDraftController', function() {
         it('should show modal for occurred date if no quantity missing', function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
-            // SELV3-508: Add validation to check unaccounted quantity
             this.lineItem1.quantity = 1234;
             this.lineItem3.quantity = 123;
             this.lineItem1.stockAdjustments = [{
@@ -339,7 +357,6 @@ describe('PhysicalInventoryDraftController', function() {
             }];
             this.lineItem1.unaccountedQuantity = 0;
             this.lineItem3.unaccountedQuantity = 0;
-            // SELV3-508: ends here
             var deferred = this.$q.defer();
             deferred.resolve();
             chooseDateModalService.show.andReturn(deferred.promise);
@@ -368,7 +385,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.deactivateStockCardDeferred.resolve();
             this.$rootScope.$apply();
 
-            expect(this.draftFactory.saveDraft).toHaveBeenCalled();
+            expect(this.physicalInventoryDraftCacheService.cacheDraft).toHaveBeenCalledWith(this.draft);
         });
     });
 
@@ -376,7 +393,6 @@ describe('PhysicalInventoryDraftController', function() {
         beforeEach(function() {
             this.lineItem1.active = true;
             this.lineItem3.active = true;
-            // SELV3-508: Add validation to check unaccounted quantity
             this.lineItem1.quantity = 1234;
             this.lineItem3.quantity = 123;
             this.lineItem1.stockAdjustments = [{
@@ -393,7 +409,6 @@ describe('PhysicalInventoryDraftController', function() {
             }];
             this.lineItem1.unaccountedQuantity = 0;
             this.lineItem3.unaccountedQuantity = 0;
-            // SELV3-508: ends here
             spyOn(this.$window, 'open').andCallThrough();
             chooseDateModalService.show.andReturn(this.$q.when({}));
             spyOn(this.accessTokenFactory, 'addAccessToken').andCallThrough();

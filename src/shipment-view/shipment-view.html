@@ -38,12 +38,10 @@
                 <th>{{'shipmentView.lotCode' | message}}</th>
                 <th>{{'shipmentView.vvmStatus' | message}}</th>
                 <th>{{'shipmentView.expiryDate' | message}}</th>
-                <!-- SELV3-674: Fix issues related to new Chrome popover functionality -->
                 <th openlmis-popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.orderQuantity' | message}}</th>
                 <th openlmis-popover="{{vm.getMessageInQuantityUnitKey() | message}}">{{vm.getMessageInQuantityUnitKey() | message}}</th>
                 <th openlmis-popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.availableSoh' | message}}</th>
                 <th openlmis-popover="{{'shipmentView.quantitiesProvidedIn' | message}} {{vm.getSelectedQuantityUnitKey() | message}}">{{'shipmentView.remainingSoh' | message}}</th>
-                <!-- SELV3-674: Ends here -->
             </tr>
         </thead>
         <tbody>

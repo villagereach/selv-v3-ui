@@ -4,6 +4,8 @@ $image-height: 136px;
   @extend .page-hero;
   padding-bottom: 4em;
   display: flex;
+  flex-wrap: wrap;
+  flex: 1 0 auto;
   align-items: flex-start;
   flex-flow: wrap;
 
@@ -13,7 +15,7 @@ $image-height: 136px;
     height: $image-height;
     position: absolute;
     bottom: 0.5em;
-    left: 0em;
+    @include left(0em);
     background: url('../assets/openlmis-home/home-background.png') no-repeat right bottom;
     @media screen and (max-width: $res-sm) {
       height: 100%;
@@ -44,9 +46,13 @@ $image-height: 136px;
   }
 }
 
+.home-page > openlmis-home-alerts-panel {
+  width: 100%;
+}
+
 .scroll {
   width: 100%;
-  float:left;
+  @include float(left);
   overflow-y: auto;
   max-height: 60vh;
   padding-bottom: 1em;

@@ -18,6 +18,7 @@ describe('RequisitionOrderVolumeController', function() {
     beforeEach(function() {
         module('requisition-order-volume');
         module('requisition');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');

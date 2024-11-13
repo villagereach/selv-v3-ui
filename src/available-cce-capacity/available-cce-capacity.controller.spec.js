@@ -18,6 +18,7 @@ describe('AvailableCceCapacityController', function() {
     beforeEach(function() {
         module('available-cce-capacity');
         module('requisition');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             this.$controller = $injector.get('$controller');

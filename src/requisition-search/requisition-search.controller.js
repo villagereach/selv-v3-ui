@@ -33,7 +33,8 @@
     ];
 
     function RequisitionSearchController($state, $filter, $stateParams, facilities, offlineService, localStorageFactory,
-                                         confirmService, requisitions, REQUISITION_STATUS) {
+                                         confirmService, requisitions, REQUISITION_STATUS, requisitionService,
+                                         TB_STORAGE, LEPROSY_STORAGE) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -226,16 +227,37 @@
          * @description
          * Redirect to requisition page after clicking on grid row.
          *
-         * @param {String} requisitionId Requisition UUID
+         * @param {Object} requisition Requisition object
          */
-        // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
-        function openRnr(requisitionId) {
-            $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisitionId,
-                fullSupplyListSize: 25
-            });
+        function openRnr(requisition) {
+            // Clear Patients Tab local storage before openRnr
+            localStorageFactory(TB_STORAGE).clearAll();
+            localStorageFactory(LEPROSY_STORAGE).clearAll();
+
+            if (typeof requisition === 'object') {
+                redirectRequisition(requisition);
+            } else {
+                requisitionService.get(requisition).then(function(requisitionDetails) {
+                    redirectRequisition(requisitionDetails);
+                });
+            }
         }
-        // SELV3-126: ends here
+
+        function redirectRequisition(requisition) {
+            if (requisition.template.patientsTabEnabled) {
+                $state.go('openlmis.requisitions.requisition.patients', {
+                    rnr: requisition.id,
+                    requisition: requisition,
+                    fullSupplyListSize: 25
+                });
+            } else {
+                $state.go('openlmis.requisitions.requisition.fullSupply', {
+                    rnr: requisition.id,
+                    requisition: requisition,
+                    fullSupplyListSize: 25
+                });
+            }
+        }
 
         /**
          * @ngdoc method

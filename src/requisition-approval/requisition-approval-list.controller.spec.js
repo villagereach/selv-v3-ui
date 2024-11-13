@@ -16,18 +16,20 @@
 describe('RequisitionApprovalListController', function() {
 
     //injects
-    var requisitionsStorage, batchRequisitionsStorage;
+    var requisitionsStorage, batchRequisitionsStorage, TBArray, LeprosyArray;
 
     beforeEach(function() {
         module('requisition-approval');
         module('referencedata-facility');
         module('referencedata-program');
+        module('requisition-view-tab');
 
         module(function($provide) {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
             batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
                 'removeBy']);
-
+            TBArray = jasmine.createSpyObj('TBArray', ['clearAll']);
+            LeprosyArray = jasmine.createSpyObj('LeprosyArray', ['clearAll']);
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
@@ -37,6 +39,13 @@ describe('RequisitionApprovalListController', function() {
                 if (resourceName === 'batchApproveRequisitions') {
                     return batchRequisitionsStorage;
                 }
+                if (resourceName === 'TBArray') {
+                    return TBArray;
+                }
+                if (resourceName === 'LeprosyArray') {
+                    return LeprosyArray;
+                }
+
                 return requisitionsStorage;
             });
 
@@ -55,7 +64,10 @@ describe('RequisitionApprovalListController', function() {
             this.periodService = $injector.get('periodService');
             this.$rootScope = $injector.get('$rootScope');
             this.scope = this.$rootScope.$new();
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
+
+        this.requistion = new this.RequisitionDataBuilder();
 
         this.programs = [{
             id: '1',
@@ -267,11 +279,12 @@ describe('RequisitionApprovalListController', function() {
         });
 
         it('should go to fullSupply state', function() {
-            this.vm.openRnr(this.requisitions[0].id);
+            this.vm.openRnr(this.requistion);
 
             // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: this.requisitions[0].id,
+                rnr: this.requistion.id,
+                requisition: this.requistion,
                 fullSupplyListSize: 25
             });
             // SELV3-126: ends here

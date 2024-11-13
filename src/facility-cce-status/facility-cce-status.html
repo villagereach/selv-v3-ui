@@ -1,8 +1,0 @@
-<!-- SELV3-674: Fix issues related to new Chrome popover functionality -->
-<p ng-if="vm.cceAvailable" class="facility-cce-status {{vm.statusClass}}" openlmis-popover 
-    popover-title="{{vm.inventoryItems.length}} {{ 'facilityCceStatus.inventoryItems.title' | message }}"
-    popover-template="facility-cce-status/inventory-items-popover.html">{{vm.statusLabel | message}}
-    <span class="facility-cce-alert-status {{vm.alertStatusClass}}"></span>
-</p>
-<!-- SELV3-674: Ends here -->
-<p ng-if="!vm.cceAvailable" class="facility-cce-status {{vm.statusClass}}">{{vm.statusLabel | message}}</p>

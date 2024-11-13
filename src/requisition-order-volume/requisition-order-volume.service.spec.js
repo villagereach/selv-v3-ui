@@ -18,6 +18,7 @@ describe('requisitionOrderVolumeService', function() {
     beforeEach(function() {
         module('requisition-order-volume');
         module('requisition');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             this.$q = $injector.get('$q');

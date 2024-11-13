@@ -82,6 +82,7 @@
               <td class="digit-cell" >
                   <input
                       class="form-control" ng-blur="vm.validateQuantity(lineItem)"
+                      ng-class="{'has-popover is-invalid': vm.validateOnPageChange()}"
                       ng-change="vm.quantityChanged(lineItem)"
                       ng-model="lineItem.quantity"
                       openlmis-invalid="{{lineItem.quantityInvalid ? lineItem.quantityInvalid : ''}}"
@@ -96,17 +97,17 @@
                   </select>
               </td>
               <td class="reasons-cell" >
-                <!-- SELV3-508: Add validation to check unaccounted quantity -->
                   <stock-reasons
                       ng-model="lineItem.stockAdjustments"
                       line-item="lineItem"
                       reasons="vm.reasons"
+                      ng-class="{'has-popover is-invalid': vm.validateOnPageChange()}"
                       ng-change="vm.checkUnaccountedStockAdjustments(lineItem); vm.validateUnaccountedQuantity(lineItem)"
                       />
               <td align="right" 
-                  openlmis-invalid="{{lineItem.unaccountedQuantityInvalid | message}}">{{lineItem.unaccountedQuantity}}</td>
+                      ng-class="{'has-popover is-invalid': vm.validateOnPageChange()}"
+                      openlmis-invalid="{{lineItem.unaccountedQuantityInvalid | message}}">{{lineItem.unaccountedQuantity}}</td>
               </td>
-              <!-- SELV3-508: ends here -->
               <td ng-if="vm.showHideButtonColumn">
                   <button type="button" class="danger" ng-if="lineItem.stockOnHand === 0 && lineItem.active && !lineItem.$isNewItem" ng-disabled="offlineService.isOffline()"
                   ng-click="vm.hideLineItem(lineItem)">{{'stockPhysicalInventoryDraft.deactivate' | message}}</button>

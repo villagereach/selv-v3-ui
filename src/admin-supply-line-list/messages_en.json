@@ -9,6 +9,7 @@
     "adminSupplyLineList.add": "Add Supply Line",
     "adminSupplyLineList.actions": "Action",
     "adminSupplyLineList.servedFacilities": "Served Facilities",
+    "adminSupplyLineList.noFacilitiesAreAssigned": "No facilities are assigned",
     "adminSupplyLineList.delete": "Delete",
     "adminSupplyLineList.supplyLineDeletedSuccessfully": "The supply line has been deleted successfully!",
     "adminSupplyLineList.delete.confirm": "Do you really want to remove the supply line?"

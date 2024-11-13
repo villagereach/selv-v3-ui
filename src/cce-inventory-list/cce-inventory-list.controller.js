@@ -48,6 +48,7 @@
         vm.search = search;
         vm.deleteInventory = deleteInventory;
         vm.getFunctionalStatusClass = FUNCTIONAL_STATUS.getClass;
+        vm.getDownloadURL = getDownloadURL;
 
         /**
          * @ngdoc property
@@ -238,6 +239,23 @@
 
             $state.go('openlmis.cce.inventory', stateParams, {
                 reload: true
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf cce-inventory-list.controller:CceInventoryListController
+         * @name getDownloadURL
+         *
+         * @description
+         * Downloads the facility Inventory data as a csv.
+         *
+         * @return {String} url
+         */
+        function getDownloadURL() {
+            return inventoryItemService.getDownloadURL({
+                facilityId: vm.facility.id,
+                programId: vm.program.id
             });
         }
 

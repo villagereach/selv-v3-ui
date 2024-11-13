@@ -144,7 +144,7 @@
                 .then(function() {
                     requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key)
                         .then(function(data) {
-                            goToInitiatedRequisition(data);
+                            goToRequisition(data);
                         })
                         .catch(function() {
                             notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
@@ -185,23 +185,31 @@
          * @description
          * Directs a user to the requisition view data for a specific period
          *
-         * @param {Object} id A requisition id
+         * @param {Object} requisition A requisition
          */
-        // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
-        function goToRequisition(id) {
-            $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: id,
-                fullSupplyListSize: 25
-            });
+        function goToRequisition(requisition) {
+            if (typeof requisition === 'object') {
+                redirectRequisition(requisition);
+            } else {
+                requisitionService.get(requisition).then(function(requisitionDetails) {
+                    redirectRequisition(requisitionDetails);
+                });
+            }
         }
-
-        function goToInitiatedRequisition(requisition) {
-            $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisition.id,
-                requisition: requisition,
-                fullSupplyListSize: 25
-            });
+        function redirectRequisition(requisition) {
+            if (requisition.template.patientsTabEnabled) {
+                $state.go('openlmis.requisitions.requisition.patients', {
+                    rnr: requisition.id,
+                    requisition: requisition,
+                    fullSupplyListSize: 25
+                });
+            } else {
+                $state.go('openlmis.requisitions.requisition.fullSupply', {
+                    rnr: requisition.id,
+                    requisition: requisition,
+                    fullSupplyListSize: 25
+                });
+            }
         }
-        // SELV3-126: ends here
     }
 })();

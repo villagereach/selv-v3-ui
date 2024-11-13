@@ -5,5 +5,6 @@
     "cceInventoryList.no":"No",
     "cceInventoryList.deleteInventory": "Delete Inventory",
     "cceInventoryList.inventoryHasBeenDeleted": "Inventory has been deleted",
-    "cceInventoryList.failedToDeleteInventory": "Failed to delete inventory"
+    "cceInventoryList.failedToDeleteInventory": "Failed to delete inventory",
+    "cceInventoryList.exportCSV": "Export CSV"
 }

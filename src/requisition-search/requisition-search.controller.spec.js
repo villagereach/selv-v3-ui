@@ -5,12 +5,12 @@
  * This program is free software: you can redistribute it and/or modify it under the terms
  * of the GNU Affero General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- *  
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
  * See the GNU Affero General Public License for more details. You should have received a copy of
  * the GNU Affero General Public License along with this program. If not, see
- * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
+ * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
 describe('RequisitionSearchController', function() {
@@ -18,6 +18,8 @@ describe('RequisitionSearchController', function() {
     beforeEach(function() {
 
         module('requisition-search');
+        module('requisition-view-tab');
+        module('requisition-view');
 
         inject(function($injector) {
             this.$q = $injector.get('$q');
@@ -28,7 +30,10 @@ describe('RequisitionSearchController', function() {
             this.offlineService = $injector.get('offlineService');
             this.confirmService = $injector.get('confirmService');
             this.REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
+
+        this.requistion = new this.RequisitionDataBuilder();
 
         this.facilities = [{
             name: 'facilityOne',
@@ -306,11 +311,12 @@ describe('RequisitionSearchController', function() {
         it('should go to requisitions.requisition.fullSupply state', function() {
             spyOn(this.$state, 'go').andReturn();
 
-            this.vm.openRnr('requisition-id');
+            this.vm.openRnr(this.requistion);
 
             // SELV3-126: Increases pagination size of requisition forms from 10 to 25 items
             expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: 'requisition-id',
+                rnr: this.requistion.id,
+                requisition: this.requistion,
                 fullSupplyListSize: 25
             });
             // SELV3-126: ends here

@@ -14,7 +14,8 @@
         <select id="supplyingFacility"
                 ng-model="vm.supplyingFacility"
                 ng-required="!vm.requestingFacility"
-                ng-options="facility.name for facility in vm.supplyingFacilities | orderBy:'name'"></select>
+                ng-options="facility.name for facility in vm.supplyingFacilities | orderBy:'name'"
+                no-auto-select></select>
     </fieldset>
     <fieldset class="form-group">
         <label for="program">{{'proofOfDeliveryManage.program' | message}}</label>

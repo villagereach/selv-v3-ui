@@ -140,6 +140,18 @@
         /**
          * @ngdoc property
          * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name isSubmitted
+         * @type {boolean}
+         *
+         * @description
+         * If submitted once, set this to true and allow to do validation.
+         */
+
+        vm.isSubmitted = $stateParams.isSubmitted;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name showVVMStatusColumn
          * @type {boolean}
          *
@@ -246,7 +258,7 @@
                 notYetAddedItems.push(item);
             });
 
-            addProductsModalService.show(notYetAddedItems, draft.lineItems).then(function() {
+            addProductsModalService.show(notYetAddedItems, draft).then(function() {
 
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
@@ -334,8 +346,7 @@
                             return item;
                         }
                     }).active = false;
-                    vm.draft = draft;
-                    vm.saveDraft(true);
+                    vm.cacheDraft();
                     $state.go($state.current.name, $stateParams, {
                         reload: $state.current.name
                     });
@@ -436,31 +447,35 @@
          * @description
          * Save physical inventory draft.
          */
-        vm.saveDraft = function(withNotification) {
-            loadingModalService.open();
-            return physicalInventoryFactory.saveDraft(draft).then(function() {
-                if (!withNotification) {
+        vm.saveDraft = function() {
+            confirmService.confirmDestroy(
+                'stockPhysicalInventoryDraft.saveDraft',
+                'stockPhysicalInventoryDraft.save'
+            ).then(function() {
+                loadingModalService.open();
+                return physicalInventoryFactory.saveDraft(draft).then(function() {
                     notificationService.success('stockPhysicalInventoryDraft.saved');
-                }
 
-                draft.$modified = undefined;
-                vm.cacheDraft();
+                    draft.$modified = undefined;
+                    vm.cacheDraft();
 
-                $stateParams.program = vm.program;
-                $stateParams.facility = vm.facility;
-                draft.lineItems.forEach(function(lineItem) {
-                    if (lineItem.$isNewItem) {
-                        lineItem.$isNewItem = false;
-                    }
+                    $stateParams.isAddProduct = false;
+                    $stateParams.program = vm.program;
+                    $stateParams.facility = vm.facility;
+                    draft.lineItems.forEach(function(lineItem) {
+                        if (lineItem.$isNewItem) {
+                            lineItem.$isNewItem = false;
+                        }
+                    });
+                    $stateParams.noReload = true;
+
+                    $state.go($state.current.name, $stateParams, {
+                        reload: $state.current.name
+                    });
+                }, function(errorResponse) {
+                    loadingModalService.close();
+                    alertService.error(errorResponse.data.message);
                 });
-                $stateParams.noReload = true;
-
-                $state.go($state.current.name, $stateParams, {
-                    reload: $state.current.name
-                });
-            }, function(errorResponse) {
-                loadingModalService.close();
-                alertService.error(errorResponse.data.message);
             });
         };
 
@@ -489,7 +504,24 @@
         vm.saveOnPageChange = function() {
             var params = {};
             params.noReload = true;
+            params.isSubmitted = vm.isSubmitted;
+
             return $q.resolve(params);
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name validateOnPageChange
+         *
+         * @description
+         * Validate physical inventory draft if form was submitted once.
+         */
+        vm.validateOnPageChange = function() {
+            if ($stateParams.isSubmitted === true) {
+                validate();
+                $scope.$broadcast('openlmis-form-submit');
+            }
         };
 
         /**
@@ -526,6 +558,8 @@
          * Submit physical inventory.
          */
         vm.submit = function() {
+            vm.isSubmitted = true;
+
             var error = validate();
             if (error) {
                 $scope.$broadcast('openlmis-form-submit');
@@ -590,8 +624,16 @@
                         })
                         .catch(function(response) {
                             if (response.data.messageKey ===
-                                'referenceData.error.lot.lotCode.mustBeUnique') {
-                                errorLots.push(lineItem.lot.lotCode);
+                                'referenceData.error.lot.lotCode.mustBeUnique' ||
+                                response.data.messageKey ===
+                                'referenceData.error.lot.tradeItem.required') {
+                                errorLots.push({
+                                    lotCode: lineItem.lot.lotCode,
+                                    error: response.data.messageKey ===
+                                    'referenceData.error.lot.lotCode.mustBeUnique' ?
+                                        'stockPhysicalInventoryDraft.lotCodeMustBeUnique' :
+                                        'stockPhysicalInventoryDraft.tradeItemRequuiredToAddLotCode'
+                                });
                             }
                         }));
                 }
@@ -604,7 +646,8 @@
                     }
                     responses.forEach(function(lot) {
                         draft.lineItems.forEach(function(lineItem) {
-                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode) {
+                            if (lineItem.lot && lineItem.lot.lotCode === lot.lotCode
+                                && lineItem.orderable.identifiers['tradeItem'] === lot.tradeItemId) {
                                 lineItem.lot = lot;
                             }
                         });
@@ -615,8 +658,17 @@
                 .catch(function(errorResponse) {
                     loadingModalService.close();
                     if (errorLots) {
-                        alertService.error('stockPhysicalInventoryDraft.lotCodeMustBeUnique',
-                            errorLots.join(', '));
+                        var errorLotsReduced = errorLots.reduce(function(result, currentValue) {
+                            if (currentValue.error in result) {
+                                result[currentValue.error].push(currentValue.lotCode);
+                            } else {
+                                result[currentValue.error] = [currentValue.lotCode];
+                            }
+                            return result;
+                        }, {});
+                        for (var error in errorLotsReduced) {
+                            alertService.error(error, errorLotsReduced[error].join(', '));
+                        }
                         return $q.reject(errorResponse.data.message);
                     }
                     alertService.error(errorResponse.data.message);
@@ -644,7 +696,6 @@
             return lineItem.quantityInvalid;
         };
 
-        // SELV3-508: Add validation to check unaccounted quantity
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -664,7 +715,6 @@
             }
             return lineItem.unaccountedQuantityInvalid;
         };
-        // SELV3-508: ends here
 
         function isEmpty(value) {
             return value === '' || value === undefined || value === null;
@@ -675,7 +725,7 @@
             var activeError = false;
             _.chain(displayLineItemsGroup).flatten()
                 .each(function(item) {
-                    if (!item.active) {
+                    if (!item.active && item.stockOnHand === 0) {
                         activeError = 'stockPhysicalInventoryDraft.submitInvalidActive';
                     } else if (vm.validateQuantity(item) || vm.validateUnaccountedQuantity(item)) {
                         qtyError = 'stockPhysicalInventoryDraft.submitInvalid';
@@ -700,11 +750,9 @@
                 return item.lot;
             });
 
-            //SELV3-508: Fix error when submitting physical inventory
             draft.lineItems.forEach(function(item) {
                 checkUnaccountedStockAdjustments(item);
             });
-            //SELV3-508: Ends here
 
             vm.updateProgress();
 
@@ -801,5 +849,7 @@
                 }
             });
         }
+
+        vm.validateOnPageChange();
     }
 })();

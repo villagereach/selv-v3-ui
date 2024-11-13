@@ -24,13 +24,12 @@
      * Provides valid destination list screen for administrator.
      */
     angular.module('admin-valid-destination-list', [
-        'ngResource',
         'openlmis-admin',
+        'openlmis-cached-repository',
         'openlmis-pagination',
         'openlmis-rights',
         'ui.router',
         'referencedata-geographic-zone',
-        'stock-adjustment-creation',
         'openlmis-state-tracker',
         'openlmis-uuid'
     ]);
