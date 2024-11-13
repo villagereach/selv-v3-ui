@@ -252,7 +252,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.lineItem4,
             getLineItemByOrderable(this.lineItem1.orderable),
             getLineItemByOrderable(this.lineItem3.orderable)
-        ], [this.lineItem1, this.lineItem2, this.lineItem3, this.lineItem4]);
+        ], this.draft);
     });
 
     function getLineItemByOrderable(orderable) {
@@ -269,6 +269,19 @@ describe('PhysicalInventoryDraftController', function() {
 
     describe('saveDraft', function() {
 
+        it('should open confirmation modal', function() {
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+
+            this.vm.saveDraft();
+            this.$rootScope.$apply();
+
+            expect(this.confirmService.confirmDestroy).toHaveBeenCalledWith(
+                'stockPhysicalInventoryDraft.saveDraft',
+                'stockPhysicalInventoryDraft.save'
+            );
+        });
+
         it('should not save lots if all exists', function() {
             this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
             spyOn(this.LotResource.prototype, 'create');
@@ -282,7 +295,9 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should save draft', function() {
-            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
+
             this.$rootScope.$apply();
 
             this.vm.saveDraftOrSubmit(false);
@@ -368,7 +383,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.deactivateStockCardDeferred.resolve();
             this.$rootScope.$apply();
 
-            expect(this.draftFactory.saveDraft).toHaveBeenCalled();
+            expect(this.physicalInventoryDraftCacheService.cacheDraft).toHaveBeenCalledWith(this.draft);
         });
     });
 

@@ -447,7 +447,7 @@
          * @description
          * Save physical inventory draft.
          */
-        vm.saveDraft = function(withNotification) {
+        vm.saveDraft = function() {
             confirmService.confirmDestroy(
                 'stockPhysicalInventoryDraft.saveDraft',
                 'stockPhysicalInventoryDraft.save'
