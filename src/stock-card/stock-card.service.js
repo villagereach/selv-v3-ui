@@ -29,7 +29,7 @@
         .service('stockCardService', service);
 
     service.$inject = ['$resource', '$window', 'stockmanagementUrlFactory', 'accessTokenFactory', 'dateUtils',
-        'loadingModalService', 'openlmisUrlFactory'];
+        'loadingModalService', 'openlmisUrlFactory', 'StockCardResource', '$q', 'offlineService'];
 
     function service($resource, $window, stockmanagementUrlFactory, accessTokenFactory, dateUtils,
                      loadingModalService, openlmisUrlFactory, StockCardResource, $q, offlineService) {

@@ -307,7 +307,9 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         it('should cache draft', function() {
-            this.draftFactory.saveDraft.andReturn(this.$q.defer().promise);
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve());
+            this.draftFactory.saveDraft.andReturn(this.$q.resolve());
+
             this.$rootScope.$apply();
 
             this.vm.saveDraft();
