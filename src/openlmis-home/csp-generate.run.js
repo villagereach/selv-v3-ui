@@ -24,32 +24,7 @@
     run.$inject = [];
 
     function run() {
-
-        function getCSPTag() {
-            var GOOGLE_ANALYTICS_URL = 'www.google-analytics.com';
-            var SUPERSET_URL = '${SUPERSET_URL}';
-            var IMAGE_URL = 'data:';
-            if (SUPERSET_URL.substr(0, 2) === '${') {
-                SUPERSET_URL = '';
-            }
-
-            var cspHeader = 'default-src \'self\' ' + SUPERSET_URL + ' \'unsafe-inline\';\n' +
-                'img-src \'self\' ' + IMAGE_URL + ' ' + GOOGLE_ANALYTICS_URL + ';\n' +
-                'script-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' \'unsafe-inline\' \'unsafe-eval\';\n' +
-                'connect-src \'self\' ' + GOOGLE_ANALYTICS_URL + ' ' + SUPERSET_URL + ';\n' +
-                'frame-src \'self\' ' + SUPERSET_URL + ';';
-
-            return cspHeader;
-        }
-
-        function addCSPTag() {
-            var cspContent = getCSPTag();
-            var metaTag = document.createElement('meta');
-            metaTag.setAttribute('http-equiv', 'Content-Security-Policy');
-            metaTag.setAttribute('content', cspContent);
-            document.head.appendChild(metaTag);
-        }
-        addCSPTag();
+        // remove csp adding because of powerbi issues
     }
 
 })();
