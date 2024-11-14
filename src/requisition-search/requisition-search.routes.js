@@ -25,7 +25,7 @@
 
         $stateProvider.state('openlmis.requisitions.search', {
             showInNavigation: true,
-            isOffline: true,
+            isOffline: false,
             label: 'requisitionSearch.view',
             url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline&sort&requisitionStatus',
             params: {
