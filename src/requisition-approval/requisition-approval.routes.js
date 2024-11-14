@@ -27,7 +27,7 @@
 
         $stateProvider.state('openlmis.requisitions.approvalList', {
             showInNavigation: true,
-            isOffline: true,
+            isOffline: false,
             label: 'requisitionApproval.approve',
             url: '/approvalList?page&size&program&facility&processingSchedule&processingPeriod&offline&sort',
             params: {
