@@ -40,6 +40,7 @@ describe('physicalInventoryService', function() {
         var orderable1 = new this.OrderableDataBuilder().withFullProductName('Streptococcus Pneumoniae Vaccine II')
                 .build(),
             orderable2 = new this.OrderableDataBuilder().build(),
+            orderable3 = new this.OrderableDataBuilder().build(),
             lot = new this.LotDataBuilder().build(),
             stockAdjustments = [new this.PhysicalInventoryLineItemAdjustmentDataBuilder().build()];
 
@@ -48,13 +49,17 @@ describe('physicalInventoryService', function() {
                 .withStockAdjustments(stockAdjustments)
                 .buildAsAdded(),
             new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
-                .withStockOnHand(null)
+                .withStockOnHand(0)
                 .withQuantity(4)
                 .buildAsAdded(),
             new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable2)
                 .withLot(lot)
-                .withStockOnHand(null)
+                .withStockOnHand(0)
                 .withQuantity(null)
+                .buildAsAdded(),
+            new this.PhysicalInventoryLineItemDataBuilder().withOrderable(orderable3)
+                .withStockOnHand(null)
+                .withQuantity(40)
                 .buildAsAdded()
         ];
 
@@ -231,7 +236,7 @@ describe('physicalInventoryService', function() {
 
         it('should search by quantity', function() {
             expect(this.physicalInventoryService.search('4', this.physicalInventoryLineItems, null))
-                .toEqual([this.physicalInventoryLineItems[1]]);
+                .toEqual([this.physicalInventoryLineItems[1], this.physicalInventoryLineItems[3]]);
         });
 
         it('should search by lotCode', function() {
@@ -244,7 +249,8 @@ describe('physicalInventoryService', function() {
             this.messageService.get.andReturn('No lot defined');
 
             expect(this.physicalInventoryService.search('No lot defined', this.physicalInventoryLineItems, null))
-                .toEqual([this.physicalInventoryLineItems[0], this.physicalInventoryLineItems[1]]);
+                .toEqual([this.physicalInventoryLineItems[0], this.physicalInventoryLineItems[1],
+                    this.physicalInventoryLineItems[3]]);
         });
 
         it('should search by expirationDate', function() {
@@ -256,15 +262,21 @@ describe('physicalInventoryService', function() {
         it('should search by only active', function() {
             var lineItems = [
                 {
-                    active: true
+                    active: true,
+                    stockOnHand: 20
                 },
                 {
-                    active: false
+                    active: false,
+                    stockOnHand: 0
+                },
+                {
+                    active: false,
+                    stockOnHand: null
                 }
             ];
 
             expect(this.physicalInventoryService.search('', lineItems, false))
-                .toEqual([lineItems[0]]);
+                .toEqual([lineItems[0], lineItems[2]]);
         });
 
         it('should find include inactive', function() {
@@ -297,10 +309,11 @@ describe('physicalInventoryService', function() {
         this.$httpBackend.flush();
         this.$rootScope.$apply();
 
-        expect(result.lineItems.length).toBe(3);
+        expect(result.lineItems.length).toBe(4);
         expect(result.lineItems[0].quantity).toBe(3);
         expect(result.lineItems[1].quantity).toBe(4);
         expect(result.lineItems[2].quantity).toBe(null);
+        expect(result.lineItems[3].quantity).toBe(40);
     });
 
     //eslint-disable-next-line jasmine/missing-expect
