@@ -197,7 +197,7 @@
             }
         }
         function redirectRequisition(requisition) {
-            if (requisition.template.patientsTabEnabled) {
+            if (requisition.template && requisition.template.patientsTabEnabled) {
                 $state.go('openlmis.requisitions.requisition.patients', {
                     rnr: requisition.id,
                     requisition: requisition,
