@@ -199,6 +199,20 @@
          */
         vm.selectedProcessingPeriod = undefined;
 
+        /**
+         * @ngdoc property
+         * @propertyOf order-view.controller:OrderViewController
+         * @name sortOptions
+         * @type {Object}
+         * 
+         * @description
+         * Contains a list of possible sort options to allow sorting.
+         */
+        vm.sortOptions = {
+            'orderView.newestFirst': ['createdDate,desc'],
+            'orderView.oldestFirst': ['createdDate,asc']
+        };
+
         function onInit() {
             vm.supplyingFacilities = supplyingFacilities;
             vm.requestingFacilities = requestingFacilities;
