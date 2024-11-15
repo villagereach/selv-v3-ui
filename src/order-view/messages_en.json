@@ -3,5 +3,7 @@
     "orderView.processingPeriod": "Processing Period",
     "orderView.processingSchedule": "Processing Schedule",
     "orderView.selectSchedule": "Select processing schedule",
-    "orderView.selectPeriod": "Select processing period"
+    "orderView.selectPeriod": "Select processing period",
+    "orderView.newestFirst": "Date Created (Newest First)",
+    "orderView.oldestFirst": "Date Created (Oldest First)"
 }

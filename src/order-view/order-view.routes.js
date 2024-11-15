@@ -30,9 +30,12 @@
             controllerAs: 'vm',
             label: 'orderView.viewOrders',
             showInNavigation: true,
+            params: {
+                sort: ['createdDate,desc']
+            },
             templateUrl: 'order-view/order-view.html',
             url: '/view?supplyingFacilityId&requestingFacilityId&programId&periodStartDate&periodEndDate&page&size' +
-                '&status&processingSchedule&processingPeriodId',
+                '&status&processingSchedule&processingPeriodId&sort',
             accessRights: [
                 FULFILLMENT_RIGHTS.PODS_MANAGE,
                 FULFILLMENT_RIGHTS.ORDERS_VIEW
@@ -78,7 +81,6 @@
                 orders: function(paginationService, orderRepository, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
                         if (stateParams.supplyingFacilityId) {
-                            stateParams.sort = 'createdDate,desc';
                             return orderRepository.search(stateParams);
                         }
                         return undefined;
