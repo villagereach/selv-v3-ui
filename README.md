@@ -16,3 +16,6 @@ Before pushing a new version of the docker image, you need to provide user-based
 AUTH_SERVER_CLIENT_ID=<clientId>
 AUTH_SERVER_CLIENT_SECRET=<clientSecret>
 ```
+
+## Feature Flags
+- `CATCHMENT_POPULATION_CALC_AUTO`: By default __true__. This feature flag controls whether the catchment population is automatically aggregated (`editable only in the lowest-level geo zones, such as districts, and then automatically propagated to higher levels like provinces and the country`) or allows for manual editing. You can modify the default value in the file: `catchment-population-auto-calc.flag.run.js`. Additionally, you can define which geographic level should be treated as the lowest (e.g., if a level lower than the district is introduced) in: `geographic-level.service.js`. You can also modify `CATCHMENT_POPULATION_CALC_AUTO` via `settings.env`.
