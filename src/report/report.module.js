@@ -34,8 +34,11 @@
         'openlmis-main-state',
         'ui.router',
         // SELVSUP-6: Create Stock on Hand Report on reports page
-        'ngTagsInput'
+        'ngTagsInput',
         // SELVSUP-6: Ends here
+        'openlmis-superset',
+        'report-category',
+        'report-dashboard'
     ]);
 
 })();
