@@ -17,7 +17,8 @@
             ng-disabled="vm.paramsOptions[parameter.name].length == 0"
             ng-options="option.value as option.name for option in vm.paramsOptions[parameter.name]"
             ng-required="{{parameter.required}}"
-            aria-labelledby="infolabelForSelect">
+            aria-labelledby="infolabelForSelect"
+            ng-init="vm.reinitializeSelect(parameter.name)">
     </select>
 
     <select id="{{parameter.name}}"
@@ -25,7 +26,8 @@
     ng-model="vm.selectedParamsOptions[parameter.name]"
     ng-options="option.value as option.name for option in vm.booleanOptions"
     ng-required="{{parameter.required}}"
-    aria-labelledby="infolabelForSelect">
+    aria-labelledby="infolabelForSelect"
+    ng-init="vm.reinitializeSelect(parameter.name)">
     </select>
 
     <span ng-if="vm.paramsOptions[parameter.name].length == 0 && parameter.dependencies.length == 0 && parameter.description != 'datepickers' &&  parameter.description != 'booleanSelect'"
