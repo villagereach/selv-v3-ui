@@ -29,17 +29,19 @@
         .controller('ReportGenerateController', controller);
 
     controller.$inject = [
-        '$state', '$scope', '$window', 'report', 'reportFactory',
+        '$state', '$scope', '$window', 'report', 'reportFactory', '$timeout',
         'reportParamsOptions', 'reportUrlFactory', 'accessTokenFactory',  '$q', 'messageService'
     ];
 
-    function controller($state, $scope, $window, report, reportFactory,
+    function controller($state, $scope, $window, report, reportFactory, $timeout,
                         reportParamsOptions, reportUrlFactory, accessTokenFactory, $q, messageService) {
         var vm = this;
 
         vm.$onInit = onInit;
 
         vm.downloadReport = downloadReport;
+
+        vm.reinitializeSelect = reinitializeSelect;
 
         vm.paramsInfo = {
             GeographicZone: 'report.geographicZoneInfo',
@@ -304,5 +306,51 @@
             }))));
         }
         // SELVSUP-6: Ends here
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name reinitializeSelect
+         *
+         * @description
+         * Reinitializes the select2 plugin for the given parameter name.
+         */
+        function reinitializeSelect(parameterName) {
+            $timeout(function() {
+                var element = angular.element('#' + parameterName);
+
+                element.select2({
+                    allowClear: true,
+                    selectOnClose: true,
+                    placeholder: getPlaceholder(element),
+                    language: {
+                        noResults: function() {
+                            return messageService.get('openlmisForm.selectNoResults');
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name getPlaceholder
+         *
+         * @description
+         * Gets the placeholder text from the first item in the placeholder list
+         */
+        function getPlaceholder(element) {
+            var placeholderOption = element.children('.placeholder:first');
+
+            if (placeholderOption.length === 0) {
+                return false;
+            }
+
+            return {
+                id: placeholderOption.val(),
+                text: placeholderOption.text()
+            };
+        }
     }
 })();
