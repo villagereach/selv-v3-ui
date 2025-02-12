@@ -40,5 +40,6 @@
   "report.CCEReports": "CCE",
   "report.shipmentReports": "Shipment",
   "report.boolean.yes": "Yes",
-  "report.boolean.no": "No"
+  "report.boolean.no": "No",
+  "report.xlsx":"XLSX"
 }
