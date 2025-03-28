@@ -641,17 +641,14 @@
             vm.reasons = reasons;
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
 
-            if (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state ||
-                adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state) {
-                if (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state) {
-                    vm.defaultReason = _.find(vm.reasons, function(reason) {
-                        return DEFAULT_RECEIVE_REASON_ID === reason.id;
-                    });
-                } else if (adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state) {
-                    vm.defaultReason = _.find(vm.reasons, function(reason) {
-                        return DEFAULT_ISSUE_REASON_ID === reason.id;
-                    });
-                }
+            var isReceive = adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state;
+            var isIssue = adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state;
+
+            if (isReceive || isIssue) {
+                var targetReasonId = isReceive ? DEFAULT_RECEIVE_REASON_ID : DEFAULT_ISSUE_REASON_ID;
+                vm.defaultReason = _.find(vm.reasons, function(reason) {
+                    return targetReasonId === reason.id;
+                });
             }
 
             vm.srcDstAssignments = srcDstAssignments;
