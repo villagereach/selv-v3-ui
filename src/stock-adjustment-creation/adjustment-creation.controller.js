@@ -52,6 +52,19 @@
         vm.lotChanged = lotChanged;
         vm.addProduct = addProduct;
         vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+        var DEFAULT_ISSUE_REASON_ID = '@@DEFAULT_ISSUE_REASON_ID';
+        var DEFAULT_RECEIVE_REASON_ID = '@@DEFAULT_RECEIVE_REASON_ID';
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name defaultReason
+         * @type {Object}
+         *
+         * @description
+         * Holds default reason
+         */
+        vm.defaultReason = undefined;
 
         /**
          * @ngdoc property
@@ -627,6 +640,20 @@
             vm.facility = facility;
             vm.reasons = reasons;
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
+
+            if (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state ||
+                adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state) {
+                if (adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state) {
+                    vm.defaultReason = _.find(vm.reasons, function(reason) {
+                        return DEFAULT_RECEIVE_REASON_ID === reason.id;
+                    });
+                } else if (adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state) {
+                    vm.defaultReason = _.find(vm.reasons, function(reason) {
+                        return DEFAULT_ISSUE_REASON_ID === reason.id;
+                    });
+                }
+            }
+
             vm.srcDstAssignments = srcDstAssignments;
             vm.addedLineItems = $stateParams.addedLineItems || [];
             $stateParams.displayItems = displayItems;
