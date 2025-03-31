@@ -17,5 +17,7 @@
   "applicationLoadingMessage": "Iniciando SELV-V3",
   "applicationTitle": "SELV-V3",
   "defaultLanguage": "pt",
-  "showRequisitionLessOrder": "true"
+  "showRequisitionLessOrder": "true",
+  "DEFAULT_ISSUE_REASON_ID": "1c2ae47a-a6eb-4277-81c1-d11c082799cb",
+  "DEFAULT_RECEIVE_REASON_ID": "2cf5f2eb-ad1c-49de-a387-fe961857318e"
 }
