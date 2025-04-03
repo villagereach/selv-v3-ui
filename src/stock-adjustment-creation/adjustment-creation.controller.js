@@ -34,7 +34,7 @@
         'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService', 'offlineService',
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
         'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES', 'STOCKCARD_STATUS',
-        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment'
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment', 'defaultReason'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
@@ -42,7 +42,8 @@
                         adjustmentType, srcDstAssignments, stockAdjustmentCreationService, notificationService,
                         offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
-                        STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment) {
+                        STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment,
+                        defaultReason) {
         var vm = this,
             previousAdded = {};
 
@@ -52,8 +53,6 @@
         vm.lotChanged = lotChanged;
         vm.addProduct = addProduct;
         vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
-        var DEFAULT_ISSUE_REASON_ID = '@@DEFAULT_ISSUE_REASON_ID';
-        var DEFAULT_RECEIVE_REASON_ID = '@@DEFAULT_RECEIVE_REASON_ID';
 
         /**
          * @ngdoc property
@@ -64,7 +63,7 @@
          * @description
          * Holds default reason
          */
-        vm.defaultReason = undefined;
+        vm.defaultReason = defaultReason;
 
         /**
          * @ngdoc property
@@ -640,16 +639,6 @@
             vm.facility = facility;
             vm.reasons = reasons;
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
-
-            var isReceive = adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state;
-            var isIssue = adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state;
-
-            if (isReceive || isIssue) {
-                var targetReasonId = isReceive ? DEFAULT_RECEIVE_REASON_ID : DEFAULT_ISSUE_REASON_ID;
-                vm.defaultReason = _.find(vm.reasons, function(reason) {
-                    return targetReasonId === reason.id;
-                });
-            }
 
             vm.srcDstAssignments = srcDstAssignments;
             vm.addedLineItems = $stateParams.addedLineItems || [];
