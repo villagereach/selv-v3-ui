@@ -1,22 +1,26 @@
-1.1.14 / wip
-==================
-
-1.1.13 / 2025-02-20
-==================
-
+1.1.14 / 2025-04-29
+===================
 Improvements:
-* [SELVSUP-6](https://openlmis.atlassian.net/browse/SELVSUP-6): 
-  * Added XLSX support for Stock on Hand report. 
-  * Ensure that every dropdown in the search form is using the Select2 plugin for consistent styling, enhanced filtering options, and the ability to clear the search input.
+- [SELVSUP-41 & SELVSUP-42](https://openlmis.atlassian.net/browse/SELVSUP-42)
+  - Added default reasons for Issue and Receive stock movements.
+- [SELVSUP-20](https://openlmis.atlassian.net/browse/SELVSUP-20)
+  - Added missing translations.
+
+1.1.13 / 2025-02-02
+===================
+Improvements:
+- [SELVSUP-6](https://openlmis.atlassian.net/browse/SELVSUP-6)
+  - Added XLSX export support for the Stock on Hand report.
+  - Updated all dropdowns in the search form to use the Select2 plugin for consistent styling, improved filtering, and clearable inputs.
 
 1.1.12 / 2025-01-15
-==================
-
-New features:
-* [SELV3-752](https://openlmis.atlassian.net/browse/SELV3-752): Added dashboard feature from 5.2.10 reference-ui core version
+===================
+New Features:
+- [SELV3-752](https://openlmis.atlassian.net/browse/SELV3-752)
+  - Introduced the Dashboard feature from reference-ui core version 5.2.10.
 
 1.1.11 / 2024-12-17
-==================
-
-Bug fixes:
-* [SELVSUP-36](https://openlmis.atlassian.net/browse/SELVSUP-36): Fix editing column `Receibido`
+===================
+Bug Fixes:
+- [SELVSUP-36](https://openlmis.atlassian.net/browse/SELVSUP-36)
+  - Fixed an issue with editing the `Receibido` column.
