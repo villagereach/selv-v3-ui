@@ -118,8 +118,16 @@
             return function() {
                 var shipment = this;
                 // SELV3-507: Allow user to enter Shipment Date
-                var minimumShipmentDate = drafts[0].occurredDate;
-                return chooseDateModalService.showWhenChoosingShipmentDate(minimumShipmentDate)
+                var minimumShipmentDate;
+                if (drafts[0] && drafts[0].occurredDate) {
+                    minimumShipmentDate = drafts[0].occurredDate;
+                } else {
+                    minimumShipmentDate = new Date(1900, 1, 1);
+                }
+
+                return chooseDateModalService.showWhenChoosingShipmentDate(
+                    minimumShipmentDate, showPhysicalInventoryWarning()
+                )
                     .then(function(resolvedData) {
                         loadingModalService.open();
                         shipment.shipmentDate = resolvedData.shipmentDate;
@@ -135,6 +143,10 @@
                     });
                 // SELV3-507: ends here
             };
+        }
+
+        function showPhysicalInventoryWarning() {
+            return !(drafts[0] && drafts[0].occurredDate);
         }
 
         function decorateDelete(originalDelete) {

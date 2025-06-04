@@ -16,7 +16,8 @@
 describe('ChooseDateModalController', function() {
 
     // SELV3-507: Allow user to enter Shipment Date
-    var vm, $q, $controller, authorizationService, UserDataBuilder, user, $filter, modalDeferred, minDate;
+    var vm, $q, $controller, authorizationService, UserDataBuilder, user, $filter, modalDeferred, minDate,
+        showPhysicalInventoryWarning;
 
     beforeEach(function() {
         module('stock-choose-date-modal');
@@ -33,12 +34,14 @@ describe('ChooseDateModalController', function() {
         user = new UserDataBuilder().build();
         modalDeferred = $q.defer();
         minDate = $filter('isoDate')(new Date(1900, 1, 1));
+        showPhysicalInventoryWarning = true;
 
         spyOn(authorizationService, 'getUser').andReturn(user);
 
         vm = $controller('ChooseDateModalController', {
             modalDeferred: modalDeferred,
-            minDate: minDate
+            minDate: minDate,
+            showPhysicalInventoryWarning: showPhysicalInventoryWarning
         });
 
     });

@@ -55,6 +55,9 @@
                     resolve: {
                         minDate: function() {
                             return $filter('isoDate')(new Date(1900, 1, 1));
+                        },
+                        showPhysicalInventoryWarning: function() {
+                            return false;
                         }
                     }
                     // SELV3-507: ends here
@@ -75,7 +78,7 @@
          *
          * @return {Promise} resolved with chosen date and signature.
          */
-        function showWhenChoosingShipmentDate(minimumShipmentDate) {
+        function showWhenChoosingShipmentDate(minimumShipmentDate, showPhysicalInventoryWarning) {
             return openlmisModalService.createDialog(
                 {
                     controller: 'ChooseDateModalController',
@@ -84,7 +87,11 @@
                     resolve: {
                         minDate: function() {
                             return minimumShipmentDate;
+                        },
+                        showPhysicalInventoryWarning: function() {
+                            return showPhysicalInventoryWarning;
                         }
+
                     },
                     show: true
                 }
