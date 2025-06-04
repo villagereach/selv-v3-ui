@@ -2,5 +2,6 @@
     "stockChooseDateModal.confirmShipmentHeader": "Confirm Shipment",
     "stockChooseDateModal.shipmentDate": "Shipment date",
     "stockChooseDateModal.confirmShipment": "Confirm shipment",
-    "stockChooseDateModal.confirmShipment.question": "By confirming this shipment, the order will be fulfilled and the ordering facility will be notified of pending shipment with an electronic Proof of Delivery (POD)."
+    "stockChooseDateModal.confirmShipment.question": "By confirming this shipment, the order will be fulfilled and the ordering facility will be notified of pending shipment with an electronic Proof of Delivery (POD).",
+    "stockChooseDateModal.confirmShipment.warningIncompletePhysicalInventory": "Physical inventory has not been sent in your facility. Please consider sending a physical inventory before confirming shipment"
 }

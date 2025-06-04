@@ -13,6 +13,9 @@
         </div>
   
         <div class="modal-body">
+          <p ng-if="vm.showPhysicalInventoryWarning" class="alert is-danger">
+            {{'stockChooseDateModal.confirmShipment.warningIncompletePhysicalInventory' | message}}
+          </p>
           <p>{{'stockChooseDateModal.confirmShipment.question' | message}}</p>
           <form id="dateForm" ng-submit="vm.submit()">
             <fieldset>
