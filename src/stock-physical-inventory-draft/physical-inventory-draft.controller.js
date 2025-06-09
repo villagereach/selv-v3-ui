@@ -51,6 +51,7 @@
         vm.cacheDraft = cacheDraft;
         vm.quantityChanged = quantityChanged;
         vm.checkUnaccountedStockAdjustments = checkUnaccountedStockAdjustments;
+        vm.toggleSelectAll = toggleSelectAll;
 
         /**
          * @ngdoc property
@@ -205,6 +206,28 @@
         vm.dataChanged = false;
 
         /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name selectAll
+         * @type {Boolean}
+         *
+         * @description
+         * Indicates if all line items from list are selected or not.
+         */
+        vm.selectAll = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name selectAll
+         * @type {Array}
+         *
+         * @description
+         * Stores a selected list of stock cards for deactivation
+         */
+        vm.selectedStockCards = [];
+
+        /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name getStatusDisplay
@@ -323,37 +346,35 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
-         * @name getStatusDisplay
+         * @name deactivateLineItems
          *
          * @description
-         * Pops up a modal for users to hide product for physical inventory.
-         *
-         * @param  {Object} lineItem line items to be hidded.
+         * Pops up a modal for users to deactivate selected products.
          */
-        vm.hideLineItem = function(lineItem) {
-            var itemToHide = lineItem;
+        vm.deactivateLineItems = function() {
             confirmService.confirm(
-                messageService.get('stockPhysicalInventoryDraft.deactivateItem', {
-                    product: lineItem.orderable.fullProductName,
-                    lot: lineItem.displayLotMessage
-                }),
+                messageService.get('stockPhysicalInventoryDraft.deactivateItem'),
                 'stockPhysicalInventoryDraft.deactivate'
             ).then(function() {
                 loadingModalService.open();
-                stockCardService.deactivateStockCard(lineItem.stockCardId).then(function() {
-                    draft.lineItems.find(function(item) {
-                        if (item.stockCardId === itemToHide.stockCardId) {
-                            return item;
-                        }
-                    }).active = false;
+                stockCardService.deactivateStockCards(vm.selectedStockCards).then(function() {
+                    vm.selectedStockCards.forEach(function(stockCardId) {
+                        draft.lineItems.find(function(item) {
+                            if (item.stockCardId === stockCardId) {
+                                return item;
+                            }
+                        }).active = false;
+                    });
                     vm.cacheDraft();
                     $state.go($state.current.name, $stateParams, {
                         reload: $state.current.name
                     });
                     notificationService.success('stockPhysicalInventoryDraft.deactivated');
                 })
-                    .catch(function() {
+                    .catch(function(errorResponse) {
                         loadingModalService.close();
+                        notificationService.error('stockPhysicalInventoryDraft.deactivatedFailure');
+                        alertService.error(errorResponse.data.error, errorResponse.data.message);
                     });
             });
         };
@@ -849,6 +870,44 @@
                 }
             });
         }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name toggleSelectAll
+         *
+         * @description
+         * Responsible for marking/unmarking all lineItems as selected.
+         *
+         * @param {Boolean} selectAll Determines if all line items should be selected or not
+         */
+        function toggleSelectAll(selectAll) {
+            angular.forEach(vm.groupedCategories, function(category) {
+                category.forEach(function(product) {
+                    product.forEach(function(lineItem) {
+                        if (lineItem.stockOnHand === 0 && lineItem.active && !lineItem.$isNewItem) {
+                            lineItem.$selected = selectAll;
+                            if (selectAll) {
+                                vm.selectedStockCards.push(lineItem.stockCardId);
+                            }
+                        }
+                    });
+                });
+            });
+
+            if (selectAll === false) {
+                vm.selectedStockCards = [];
+            }
+        }
+
+        vm.onLineItemSelect = function(lineItem) {
+            if (lineItem.$selected) {
+                vm.selectedStockCards.push(lineItem.stockCardId);
+            } else {
+                var index = vm.selectedStockCards.indexOf(lineItem.stockCardId);
+                vm.selectedStockCards.splice(index, 1);
+            }
+        };
 
         vm.validateOnPageChange();
     }
