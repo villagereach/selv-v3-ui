@@ -63,7 +63,7 @@ describe('PhysicalInventoryDraftController', function() {
         spyOn(this.draftFactory, 'saveDraft');
         spyOn(this.physicalInventoryDraftCacheService, 'cacheDraft');
         spyOn(this.alertService, 'error');
-        spyOn(this.stockCardService, 'deactivateStockCard');
+        spyOn(this.stockCardService, 'deactivateStockCards');
         spyOn(this.editLotModalService, 'show');
 
         this.program = new this.ProgramDataBuilder()
@@ -368,19 +368,21 @@ describe('PhysicalInventoryDraftController', function() {
 
     });
 
-    describe('hideLineItem', function() {
-        it('should hide item', function() {
+    describe('deactivateLineItems', function() {
+        it('should deactivate selected line items', function() {
             this.draft.lineItems[0] = {
                 displayLotMessage: 'product',
                 orderable: {
                     fullProductName: 'product'
                 }
             };
+            this.vm.selectedStockCards = ['1770cebc-5f84-4de2-bde8-c9fd5c3c5c64',
+                'fa284839-a4e1-4504-acba-70c224a9e9f3'];
             this.confirmDeferred = this.$q.defer();
             this.deactivateStockCardDeferred = this.$q.defer();
             this.confirmService.confirm.andReturn(this.confirmDeferred.promise);
-            this.stockCardService.deactivateStockCard.andReturn(this.deactivateStockCardDeferred.promise);
-            this.vm.hideLineItem(this.draft.lineItems[0]);
+            this.stockCardService.deactivateStockCards.andReturn(this.deactivateStockCardDeferred.promise);
+            this.vm.deactivateLineItems();
             this.confirmDeferred.resolve();
             this.deactivateStockCardDeferred.resolve();
             this.$rootScope.$apply();

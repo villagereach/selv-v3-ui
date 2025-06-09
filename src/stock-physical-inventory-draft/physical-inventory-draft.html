@@ -41,6 +41,10 @@
       </caption>
       <thead>
           <tr>
+              <th class="col-sticky" ng-if="vm.showHideButtonColumn">
+                <input type="checkbox" ng-model="vm.selectAll"
+                       ng-change="vm.toggleSelectAll(vm.selectAll)">
+              </th>
               <th>{{'stockPhysicalInventoryDraft.productCode' | message}}</th>
               <th>{{'stockPhysicalInventoryDraft.product' | message}}</th>
               <th>{{'stockPhysicalInventoryDraft.lotCode' | message}}</th>
@@ -50,11 +54,11 @@
               <th ng-if="vm.showVVMStatusColumn" class="col-sticky sticky-right">{{'stockPhysicalInventoryDraft.VVMStatus' | message}}</th>
               <th class="col-sticky sticky-right">{{'stockPhysicalInventoryDraft.reasons' | message}}</th>
               <th class="col-sticky sticky-right">{{'stockPhysicalInventoryDraft.unaccountedQuantity' | message}}</th>
-              <th ng-if="vm.showHideButtonColumn" >{{'stockPhysicalInventoryDraft.actions' | message}}</th>
           </tr>
       </thead>
       <tbody ng-repeat="(category, groupedLineItems) in vm.groupedCategories"  tbody-title="{{category}}">
          <tr ng-if="lineItems.length > 1" ng-repeat-start="lineItems in groupedLineItems">
+              <td ng-if="vm.showHideButtonColumn"></td>
               <td>{{lineItems[0].orderable.productCode}}</td>
               <td>{{lineItems[0].orderable | productName}}</td>
               <td></td>
@@ -64,9 +68,14 @@
               <td ng-if="vm.showVVMStatusColumn"></td>
               <td align="right"></td>
               <td align="right"></td>
-              <td align="right" ng-if="vm.showHideButtonColumn"></td>
           </tr>
           <tr ng-repeat="lineItem in lineItems | orderBy:'lot?lot.lotCode:\'\''" ng-repeat-end>
+              <td ng-if="vm.showHideButtonColumn">
+                  <input type="checkbox" 
+                         ng-model="lineItem.$selected" 
+                         ng-if="lineItem.stockOnHand === 0 && lineItem.active && !lineItem.$isNewItem"
+                         ng-change="vm.onLineItemSelect(lineItem)">
+              </td>
               <td>{{lineItems.length > 1 ? '' : lineItem.orderable.productCode}}</td>
               <td>{{lineItems.length > 1 ? '' : (lineItem.orderable | productName)}}</td>
               <td ng-if="vm.canEditLot(lineItem)">
@@ -107,10 +116,6 @@
               <td align="right" 
                       ng-class="{'has-popover is-invalid': vm.validateOnPageChange()}"
                       openlmis-invalid="{{lineItem.unaccountedQuantityInvalid | message}}">{{lineItem.unaccountedQuantity}}</td>
-              </td>
-              <td ng-if="vm.showHideButtonColumn">
-                  <button type="button" class="danger" ng-if="lineItem.stockOnHand === 0 && lineItem.active && !lineItem.$isNewItem" ng-disabled="offlineService.isOffline()"
-                  ng-click="vm.hideLineItem(lineItem)">{{'stockPhysicalInventoryDraft.deactivate' | message}}</button>
               </td>
           </tr>
       </tbody>

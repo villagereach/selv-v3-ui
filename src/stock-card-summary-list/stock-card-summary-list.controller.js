@@ -105,7 +105,7 @@
          * @description
          * When true shows inactive items
          */
-        vm.includeInactive = $stateParams.includeInactive;
+        vm.includeInactive = false;
 
         /**
          * @ngdoc method
@@ -153,6 +153,7 @@
             stateParams.productCode = vm.productCode;
             stateParams.productName = vm.productName;
             stateParams.lotCode = vm.lotCode;
+            stateParams.includeInactive = vm.includeInactive;
 
             $state.go('openlmis.stockmanagement.stockCardSummaries', stateParams, {
                 reload: true
