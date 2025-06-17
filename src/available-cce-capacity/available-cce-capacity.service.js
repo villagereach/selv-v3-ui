@@ -29,11 +29,13 @@
         .service('availableCceCapacityService', availableCceCapacityService);
 
     availableCceCapacityService.$inject = [
-        '$q', 'CceVolumeResource', 'StockCardSummaryResource', 'programService', 'OrderableResource'
+        '$q', 'CceVolumeResource', 'StockCardSummaryResource', 'programService', 'OrderableResource',
+        'authorizationService', 'permissionService', 'STOCKMANAGEMENT_RIGHTS'
     ];
 
     function availableCceCapacityService(
-        $q, CceVolumeResource, StockCardSummaryResource, programService, OrderableResource
+        $q, CceVolumeResource, StockCardSummaryResource, programService, OrderableResource,
+        authorizationService, permissionService, STOCKMANAGEMENT_RIGHTS
     ) {
 
         this.getFullCceVolume = getFullCceVolume;
@@ -59,6 +61,20 @@
                 });
         }
 
+        function hasStockCardViewRight(program, facility) {
+            return permissionService.hasPermission(authorizationService.getUser().user_id, {
+                right: STOCKMANAGEMENT_RIGHTS.STOCK_CARDS_VIEW,
+                programId: program,
+                facilityId: facility
+            })
+                .then(function() {
+                    return true;
+                })
+                .catch(function() {
+                    return false;
+                });
+        }
+
         /**
          * @ngdoc method
          * @name getCceVolumeInUse
@@ -73,35 +89,51 @@
          */
         function getCceVolumeInUse(facilityId) {
             return programService.getAll().then(function(programs) {
-                return new OrderableResource().query()
-                    .then(function(orderablePage) {
-                        var cceOrderables = orderablePage.content.filter(function(orderable) {
-                                return isCceOrderable(orderable);
-                            }),
-                            cceOrderableIds = cceOrderables.map(function(orderable) {
-                                return orderable.id;
-                            }),
-                            stockCardsPromises = programs.map(function(program) {
-                                return new StockCardSummaryResource().query({
-                                    orderableId: cceOrderableIds,
-                                    facilityId: facilityId,
-                                    programId: program.id,
-                                    nonEmptyOnly: true
-                                });
-                            });
-
-                        return $q.all(stockCardsPromises).then(function(stockCardSummaryPages) {
-                            return calculateVolumeInUse(
-                                stockCardSummaryPages.flatMap(function(stockCardSummaryPage) {
-                                    return stockCardSummaryPage.content;
-                                }),
-                                cceOrderables.reduce(function(map, orderable) {
-                                    map[orderable.id] = orderable;
-                                    return map;
-                                }, {})
-                            );
+                var permissionChecks = programs.map(function(program) {
+                    return hasStockCardViewRight(program.id, facilityId)
+                        .then(function(hasRight) {
+                            return hasRight ? program : null;
                         });
-                    });
+                });
+                return $q.all(permissionChecks).then(function(programsWithAccess) {
+                    var filteredPrograms = programsWithAccess.filter(Boolean);
+
+                    return new OrderableResource().query()
+                        .then(function(orderablePage) {
+                            var cceOrderables = orderablePage.content.filter(function(orderable) {
+                                    return isCceOrderable(orderable);
+                                }),
+                                cceOrderableIds = cceOrderables.map(function(orderable) {
+                                    return orderable.id;
+                                }),
+                                stockCardsPromises = filteredPrograms.map(function(program) {
+                                    var docId = program.id + '/' + facilityId + '/' +
+                                        authorizationService.getUser().user_id;
+                                    var params = {
+                                        orderableId: cceOrderableIds,
+                                        facilityId: facilityId,
+                                        programId: program.id,
+                                        nonEmptyOnly: true
+                                    };
+                                    return new StockCardSummaryResource().query(params, docId)
+                                        .then(function(stockCardSummariesPage) {
+                                            return stockCardSummariesPage;
+                                        });
+                                });
+
+                            return $q.all(stockCardsPromises).then(function(stockCardSummaryPages) {
+                                return calculateVolumeInUse(
+                                    stockCardSummaryPages.flatMap(function(stockCardSummaryPage) {
+                                        return stockCardSummaryPage.content;
+                                    }),
+                                    cceOrderables.reduce(function(map, orderable) {
+                                        map[orderable.id] = orderable;
+                                        return map;
+                                    }, {})
+                                );
+                            });
+                        });
+                });
             });
         }
 
