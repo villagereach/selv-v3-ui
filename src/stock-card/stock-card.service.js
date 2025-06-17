@@ -40,7 +40,7 @@
                 transformResponse: transformResponse
             },
             update: {
-                method: 'PUT',
+                method: 'POST',
                 url: stockmanagementUrlFactory('/api/stockCards/:stockCardId/deactivate')
             }
         });

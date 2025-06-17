@@ -52,7 +52,7 @@ describe('stockCardService', function() {
     describe('updateStockCardStatus', function() {
 
         beforeEach(function() {
-            this.$httpBackend.when('PUT',
+            this.$httpBackend.when('POST',
                 this.stockmanagementUrlFactory('/api/stockCards/deactivate?stockCardIds=' + this.stockCard1.id +
                     '&stockCardIds=' + this.stockCard2.id))
                 .respond(200);
