@@ -4,6 +4,10 @@ Bug Fixes:
 - [SELVSUP-51](https://openlmis.atlassian.net/browse/SELVSUP-51)
   - Fixed bug with date selection at confirm shipment when no physical inventory was created in the facility.
 
+Improvements:
+- [SELVSUP-14](https://openlmis.atlassian.net/browse/SELVSUP-14)
+  - Recalculate input quantity to doses
+
 1.1.14 / 2025-04-29
 ===================
 Improvements:

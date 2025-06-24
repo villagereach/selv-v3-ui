@@ -53,11 +53,18 @@
                 <td>{{vm.getVvmStatusLabel(tableLineItem.vvmStatus) | message}}</td>
                 <td>{{tableLineItem.lot.expirationDate | openlmisDate}}</td>
                 <td>{{tableLineItem.getOrderQuantity(vm.showInDoses())}}</td>
-                <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity()}}</td>
+                <!-- SELVSUP-14: Recalculate input quantity to doses -->
+                <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity(vm.showInDoses())}}</td>
                 <td ng-if="tableLineItem.shipmentLineItem">
-                    <input ng-show="vm.shipment.isEditable()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
+                    <input ng-show="vm.shipment.isEditable() && !vm.showInDoses()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
                         ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
-                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"/>
+                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
+                        ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
+                    <input ng-show="vm.shipment.isEditable() && vm.showInDoses()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShippedInDoses"
+                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
+                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
+                        ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
+                <!-- SELVSUP-14: ends here -->
                     <div ng-show="!vm.shipment.isEditable()">{{tableLineItem.shipmentLineItem.quantityShipped}}</div>
                 </td>
                 <td>{{tableLineItem.getAvailableSoh(vm.showInDoses())}}</td>

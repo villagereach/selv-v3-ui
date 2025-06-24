@@ -54,6 +54,9 @@
         // SELV3-229: Translate Requisition and Order Status
         vm.getOrderStatus = ORDER_STATUSES.getStatusMessage;
         // SELV3-229: Ends here
+        // SELVSUP-14: Recalculate input quantity to doses
+        vm.recalculateInputQuantity = recalculateInputQuantity;
+        // SELVSUP-14: ends here
 
         /**
          * @ngdoc property
@@ -126,6 +129,13 @@
             // SELV3-229: Ends here
             vm.shipment = shipment;
             vm.tableLineItems = tableLineItems;
+            // SELVSUP-14: Recalculate input quantity to doses
+            vm.tableLineItems.forEach(function(item) {
+                if (!item.isMainGroup && item.shipmentLineItem) {
+                    recalculateInputQuantity(item);
+                }
+            });
+            // SELVSUP-14: ends here
             // SELV3-507: Allow user to enter Shipment Date
             vm.drafts = drafts.flat().filter(function(draft) {
                 return !draft.isDraft && !draft.isStarter && draft.programId === vm.order.program.id;
@@ -239,6 +249,26 @@
 
             return sum;
         }
+
+        // SELVSUP-14: Recalculate input quantity to doses
+        function recalculateInputQuantity(lineItem) {
+            if (vm.showInDoses()) {
+                var remainderDoses = lineItem.shipmentLineItem.quantityShippedInDoses % lineItem.netContent;
+                var packs = (remainderDoses >= lineItem.packRoundingThreshold) ?
+                    Math.floor(lineItem.shipmentLineItem.quantityShippedInDoses / lineItem.netContent) :
+                    Math.ceil(lineItem.shipmentLineItem.quantityShippedInDoses / lineItem.netContent);
+
+                if (lineItem.shipmentLineItem.quantityShippedInDoses !== 0 && packs === 0 && !lineItem.roundToZero) {
+                    lineItem.shipmentLineItem.quantityShipped = 1;
+                } else {
+                    lineItem.shipmentLineItem.quantityShipped = packs;
+                }
+            } else {
+                lineItem.shipmentLineItem.quantityShippedInDoses =
+                    lineItem.shipmentLineItem.quantityShipped * lineItem.netContent;
+            }
+        }
+        // SELVSUP-14: ends here
 
     }
 })();

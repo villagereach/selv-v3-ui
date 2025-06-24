@@ -147,14 +147,18 @@
                         lotId
                     );
 
+                // SELVSUP-14: Recalculate input quantity to doses
                 if (shipmentLineItem) {
                     lotLineItems.push(new ShipmentViewLineItem({
                         lot: canFulfillForMe.lot,
                         vvmStatus: getVvmStatus(canFulfillForMe),
                         shipmentLineItem: shipmentLineItem,
-                        netContent: orderable.netContent
+                        netContent: orderable.netContent,
+                        packRoundingThreshold: orderable.packRoundingThreshold,
+                        roundToZero: orderable.roundToZero
                     }));
                 }
+                // SELVSUP-14: ends here
             });
 
             lotLineItems.sort(compareLineItems);
