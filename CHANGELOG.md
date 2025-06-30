@@ -6,6 +6,8 @@ Bug Fixes:
 Improvements:
 - [SELV3-814](https://openlmis.atlassian.net/browse/SELV3-814)
   - Added the ability to deactivate a batch of stock cards.
+- [SELVSUP-17](https://openlmis.atlassian.net/browse/SELVSUP-17)
+  - Get rid of hardcoded field names and use translations (reports).
 
 1.1.14 / 2025-04-29
 ===================
