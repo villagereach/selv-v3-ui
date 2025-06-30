@@ -232,6 +232,8 @@
             vm.filterAvailableParameters = filterAvailableParameters;
             vm.mapParameters = mapParameters;
             // SELVSUP-6: Ends here
+
+            vm.transformReportNameIntoTranslationKey = transformReportNameIntoTranslationKey;
         }
 
         // SELVSUP-6: Create Stock on Hand Report on reports page
@@ -351,6 +353,25 @@
                 id: placeholderOption.val(),
                 text: placeholderOption.text()
             };
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf report.controller:ReportGenerateController
+         * @name transformReportNameIntoTranslationKey
+         * 
+         * @description
+         * Transforms the report name from `Report Name` to `report.report_name`
+         * to be used as a translation key.
+         */
+        function transformReportNameIntoTranslationKey(reportName) {
+            if (!reportName) {
+                return reportName;
+            }
+
+            var translationKey = reportName.replace(/\s+/g, '_').toLowerCase();
+
+            return 'report.' + translationKey;
         }
     }
 })();
