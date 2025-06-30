@@ -41,5 +41,12 @@
   "report.shipmentReports": "Shipment",
   "report.boolean.yes": "Yes",
   "report.boolean.no": "No",
-  "report.xlsx":"XLSX"
+  "report.xlsx": "XLSX",
+  "report.stock_on_hand": "Stock on Hand",
+  "report.templateParameter.date": "Date",
+  "report.templateParameter.geographicZone": "Geographic Zone",
+  "report.templateParameter.facilityType": "Facility Type",
+  "report.templateParameter.facility": "Facility",
+  "report.templateParameter.product": "Product",
+  "report.templateParameter.expiredProducts": "Expired Products"
 }

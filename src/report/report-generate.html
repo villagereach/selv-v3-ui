@@ -1,10 +1,11 @@
 <h2>{{'report.chooseReportOptions' | message}}</h2>
 <form ng-submit="vm.downloadReport()">
     <!-- AO-58: Added report name in header -->
-    <h2>{{vm.report.name}}</h2>
+    <h2>{{ ::vm.transformReportNameIntoTranslationKey(vm.report.name) | message }}</h2>
     <!-- AO-58: ends here -->
-    <label for="{{parameter.name}}"
-        ng-repeat-start="parameter in vm.report.templateParameters">{{parameter.displayName}}</label>
+    <label for="{{parameter.name}}" ng-repeat-start="parameter in vm.report.templateParameters">
+        {{ ('report.templateParameter.' + parameter.name) | message }}
+    </label>
 
     <!-- SELVSUP-6: Create Stock on Hand Report on reports page -->
     <input id="{{parameter.name}}"
