@@ -47,7 +47,7 @@
 
         this.getStockCard = getStockCard;
         this.print = print;
-        this.deactivateStockCard = deactivateStockCard;
+        this.deactivateStockCards = deactivateStockCards;
 
         /**
          * @ngdoc method
@@ -73,17 +73,17 @@
         /**
          * @ngdoc method
          * @methodOf stock-card.stockCardService
-         * @name deactivateStockCard
+         * @name deactivateStockCards
          *
          * @description
          * Change stock card active property by id to false.
          *
-         * @param {String} stockCardId stock card UUID
+         * @param {Array} stockCardIds stock card UUIDs
          * @return {Promise} stock card promise.
          */
-        function deactivateStockCard(stockCardId) {
+        function deactivateStockCards(stockCardIds) {
             return resource.update({
-                stockCardId: stockCardId
+                stockCardIds: stockCardIds
             }, null).$promise;
         }
 

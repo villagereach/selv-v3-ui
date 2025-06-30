@@ -3,6 +3,9 @@
 Bug Fixes:
 - [SELVSUP-51](https://openlmis.atlassian.net/browse/SELVSUP-51)
   - Fixed bug with date selection at confirm shipment when no physical inventory was created in the facility.
+Improvements:
+- [SELV3-814](https://openlmis.atlassian.net/browse/SELV3-814)
+  - Added the ability to deactivate a batch of stock cards.
 
 1.1.14 / 2025-04-29
 ===================
