@@ -53,8 +53,7 @@ describe('stockCardService', function() {
 
         beforeEach(function() {
             this.$httpBackend.when('POST',
-                this.stockmanagementUrlFactory('/api/stockCards/deactivate?stockCardIds=' + this.stockCard1.id +
-                    '&stockCardIds=' + this.stockCard2.id))
+                this.stockmanagementUrlFactory('/api/stockCards/deactivate'))
                 .respond(200);
         });
 

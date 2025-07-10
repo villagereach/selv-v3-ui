@@ -130,9 +130,6 @@ describe('openlmis.requisitions.approvalList', function() {
     it('should resolve isBatchApproveScreenActive', function() {
         this.goToUrl('/requisitions/approvalList');
 
-        console.log(this.getResolvedValue('isBatchApproveScreenActive'));
-        console.log(this.$state.$current.locals.globals);
-
         expect(this.getResolvedValue('isBatchApproveScreenActive')).toEqual(true);
         expect(this.featureFlagService.get).toHaveBeenCalledWith(this.BATCH_APPROVE_SCREEN_FEATURE_FLAG);
     });

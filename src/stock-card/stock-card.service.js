@@ -41,7 +41,8 @@
             },
             update: {
                 method: 'POST',
-                url: stockmanagementUrlFactory('/api/stockCards/:stockCardId/deactivate')
+                url: stockmanagementUrlFactory('/api/stockCards/deactivate'),
+                isArray: true
             }
         });
 
@@ -82,9 +83,7 @@
          * @return {Promise} stock card promise.
          */
         function deactivateStockCards(stockCardIds) {
-            return resource.update({
-                stockCardIds: stockCardIds
-            }, null).$promise;
+            return resource.update([], stockCardIds).$promise;
         }
 
         function print(stockCardId) {
