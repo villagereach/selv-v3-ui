@@ -9,6 +9,10 @@ Improvements:
 - [SELVSUP-17](https://openlmis.atlassian.net/browse/SELVSUP-17)
   - Get rid of hardcoded field names and use translations (reports).
 
+Improvements:
+- [SELVSUP-14](https://openlmis.atlassian.net/browse/SELVSUP-14)
+  - Recalculate input quantity to doses
+
 1.1.14 / 2025-04-29
 ===================
 Improvements:
