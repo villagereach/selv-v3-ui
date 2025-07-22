@@ -56,14 +56,18 @@
                 <!-- SELVSUP-14: Recalculate input quantity to doses -->
                 <td ng-if="!tableLineItem.shipmentLineItem">{{tableLineItem.getFillQuantity(vm.showInDoses())}}</td>
                 <td ng-if="tableLineItem.shipmentLineItem">
-                    <input ng-show="vm.shipment.isEditable() && !vm.showInDoses()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
-                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
-                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
-                        ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
-                    <input ng-show="vm.shipment.isEditable() && vm.showInDoses()" positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShippedInDoses"
-                        ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
-                        openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
-                        ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
+                    <div ng-if="vm.shipment.isEditable() && !vm.showInDoses()">
+                        <input positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
+                            ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
+                            openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
+                            ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
+                    </div>
+                    <div ng-if="vm.shipment.isEditable() && vm.showInDoses()">
+                        <input positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShippedInDoses"
+                            ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
+                            openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
+                            ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
+                    </div>
                 <!-- SELVSUP-14: ends here -->
                     <div ng-show="!vm.shipment.isEditable()">{{tableLineItem.shipmentLineItem.quantityShipped}}</div>
                 </td>
