@@ -8,5 +8,10 @@
   "stockIssue.offline1": "You are offline. There are Issue events pending. They will be synchronized automatically when the internet connection returns.",
   "stockIssue.offline2": "Please check ",
   "stockIssue.pendingOfflineEvents": "Pending offline events",
-  "stockIssue.offline3": " for details."
+  "stockIssue.offline3": " for details.",
+  "stockIssueCreation.sohDoses": "Stock on Hand (in Doses)",
+  "stockIssueCreation.sohPacks": "Stock on Hand (in Packs)",
+  "stockIssueCreation.quantityDoses": "Quantity (in Doses)",
+  "stockIssueCreation.quantityPacks": "Quantity (in Packs)",
+  "stockIssueCreation.totalQuantityInDoses": "Total Quantity (in doses)"
 }

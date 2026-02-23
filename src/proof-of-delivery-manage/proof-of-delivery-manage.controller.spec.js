@@ -20,7 +20,12 @@ describe('ProofOfDeliveryManageController', function() {
         loadingModalService, notificationService, loadingDeferred, $window, accessTokenFactory;
 
     beforeEach(function() {
-        module('proof-of-delivery-manage');
+        module('proof-of-delivery-manage', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
 
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');

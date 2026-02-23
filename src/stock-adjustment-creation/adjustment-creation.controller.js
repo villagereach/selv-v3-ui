@@ -34,7 +34,8 @@
         'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService', 'offlineService',
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
         'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES', 'STOCKCARD_STATUS',
-        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment', 'defaultReason'
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment', 'defaultReason',
+        'QUANTITY_UNIT', 'quantityUnitCalculateService'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
@@ -43,7 +44,8 @@
                         offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
                         STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment,
-                        defaultReason) {
+                        defaultReason, QUANTITY_UNIT, quantityUnitCalculateService)
+    {
         var vm = this,
             previousAdded = {};
 
@@ -53,6 +55,35 @@
         vm.lotChanged = lotChanged;
         vm.addProduct = addProduct;
         vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+        vm.formatDate = formatDate;
+        vm.showInDoses = showInDoses;
+        vm.recalculateSOHQuantity = recalculateSOHQuantity;
+
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name quantityUnit
+         * @type {Object}
+         *
+         * @description
+         * Holds quantity unit.
+         */
+        vm.quantityUnit = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name showInDoses
+         *
+         * @description
+         * Returns whether the screen is showing quantities in doses.
+         *
+         * @return {boolean} true if the quantities are in doses, false otherwise
+         */
+        function showInDoses() {
+            return vm.quantityUnit === QUANTITY_UNIT.DOSES;
+        }
 
         /**
          * @ngdoc property
@@ -252,7 +283,13 @@
          * @param {Object} lineItem line item to be validated.
          */
         vm.validateQuantity = function(lineItem) {
-            if (lineItem.quantity > lineItem.$previewSOH && lineItem.reason
+            lineItem = quantityUnitCalculateService.recalculateInputQuantity(
+                lineItem, lineItem.orderable.netContent, vm.showInDoses()
+            );
+
+            if (lineItem.quantity  === undefined) {
+                lineItem.$errors.quantityInvalid = messageService.get('openlmisForm.required');
+            } else if (lineItem.quantity > lineItem.$previewSOH && lineItem.reason
                     && lineItem.reason.reasonType === REASON_TYPES.DEBIT) {
                 lineItem.$errors.quantityInvalid = messageService
                     .get('stockAdjustmentCreation.quantityGreaterThanStockOnHand');
@@ -750,6 +787,18 @@
             vm.newLot.expirationDateInvalid = undefined;
         }
 
+         /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name formatDate
+         *
+         * @description
+         * Format date
+         */
+        function formatDate(date) {
+            return dateUtils.toStringDateWithDefaultFormat(date);
+        }
+
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
@@ -782,6 +831,23 @@
                     }
                 });
             }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name recalculateSOHQuantity
+         *
+         * @description
+         * Recalculates the given stockOnHand to packs or doses
+         *
+         * @param  {number}  stockOnHand  the quantity in doses to be recalculated
+         * @param  {number}  netContent   quantity of doses in one pack
+         *
+         * @return {String}                the stockOnHand in Doses or Packs
+         */
+        function recalculateSOHQuantity(stockOnHand, netContent) {
+            return quantityUnitCalculateService.recalculateSOHQuantity(stockOnHand, netContent, vm.showInDoses());
         }
 
         onInit();

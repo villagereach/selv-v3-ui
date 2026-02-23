@@ -23,7 +23,12 @@ describe('ShipmentViewLineItemFactory', function() {
         tradeItemFour,  lotOne, lotTwo, lotThree, lotFour, shipment, summaries;
 
     beforeEach(function() {
-        module('shipment-view');
+        module('shipment-view', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
 
         inject(function($injector) {
             ShipmentViewLineItemFactory = $injector.get('ShipmentViewLineItemFactory');

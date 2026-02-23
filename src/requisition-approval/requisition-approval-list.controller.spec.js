@@ -19,7 +19,12 @@ describe('RequisitionApprovalListController', function() {
     var requisitionsStorage, batchRequisitionsStorage, TBArray, LeprosyArray;
 
     beforeEach(function() {
-        module('requisition-approval');
+        module('requisition-approval', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
         module('referencedata-facility');
         module('referencedata-program');
         module('requisition-view-tab');

@@ -34,8 +34,8 @@
         'displayLineItemsGroup', 'confirmService', 'physicalInventoryService', 'MAX_INTEGER_VALUE',
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
-        'offlineService', 'physicalInventoryDraftCacheService',
-        'stockCardService', 'LotResource', 'editLotModalService'];
+        'offlineService', 'physicalInventoryDraftCacheService','stockCardService', 'LotResource',
+        'editLotModalService', 'dateUtils', 'QUANTITY_UNIT', 'quantityUnitCalculateService'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
                         physicalInventoryFactory, notificationService, alertService,
@@ -43,8 +43,8 @@
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
-                        offlineService, physicalInventoryDraftCacheService, stockCardService,
-                        LotResource, editLotModalService) {
+                        offlineService, physicalInventoryDraftCacheService, stockCardService, LotResource,
+                        editLotModalService, dateUtils, QUANTITY_UNIT, quantityUnitCalculateService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -52,6 +52,34 @@
         vm.quantityChanged = quantityChanged;
         vm.checkUnaccountedStockAdjustments = checkUnaccountedStockAdjustments;
         vm.toggleSelectAll = toggleSelectAll;
+        vm.formatDate = formatDate;
+        vm.showInDoses = showInDoses;
+        vm.recalculateQuantity = recalculateQuantity;
+
+        /**
+         * @ngdoc property
+         * @propertyOf stock-card.controller:StockCardController
+         * @name quantityUnit
+         * @type {Object}
+         *
+         * @description
+         * Holds quantity unit.
+         */
+        vm.quantityUnit = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card.controller:StockCardController
+         * @name showInDoses
+         *
+         * @description
+         * Returns whether the screen is showing quantities in doses.
+         *
+         * @return {boolean} true if the quantities are in doses, false otherwise
+         */
+        function showInDoses() {
+            return vm.quantityUnit === QUANTITY_UNIT.DOSES;
+        }
 
         /**
          * @ngdoc property
@@ -281,7 +309,7 @@
                 notYetAddedItems.push(item);
             });
 
-            addProductsModalService.show(notYetAddedItems, draft).then(function() {
+            addProductsModalService.show(notYetAddedItems, draft, vm.showInDoses()).then(function() {
 
                 $stateParams.program = vm.program;
                 $stateParams.facility = vm.facility;
@@ -333,7 +361,7 @@
                 return undefined;
             }
 
-            return _.chain(lineItems).map(function(lineItem) {
+            var quantityInDoses = _.chain(lineItems).map(function(lineItem) {
                 return lineItem[field];
             })
                 .compact()
@@ -341,6 +369,8 @@
                     return parseInt(num) + memo;
                 }, 0)
                 .value();
+
+                return recalculateQuantity(quantityInDoses, lineItems[0].orderable.netContent);
         };
 
         /**
@@ -772,7 +802,11 @@
             });
 
             draft.lineItems.forEach(function(item) {
-                checkUnaccountedStockAdjustments(item);
+              item = quantityUnitCalculateService.recalculateInputQuantity(
+                  item, item.orderable.netContent, true
+              );
+              item.unaccountedQuantity =
+                  stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);
             });
 
             vm.updateProgress();
@@ -869,6 +903,36 @@
                     vm.showHideButtonColumn = true;
                 }
             });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name formatDate
+         *
+         * @description
+         * Format date
+         */
+        function formatDate(date) {
+            return dateUtils.toStringDateWithDefaultFormat(date);
+        }
+
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-card.controller:StockCardController
+         * @name recalculateQuantity
+         *
+         * @description
+         * Recalculates the given quantity to packs or doses
+         *
+         * @param  {number}  quantity    the quantity in doses to be recalculated
+         * @param  {number}  netContent  the quantity of doses in one pack
+         *
+         * @return {String}            the given quantity in Doses or Packs
+         */
+        function recalculateQuantity(quantity, netContent) {
+            return quantityUnitCalculateService.recalculateSOHQuantity(quantity, netContent, vm.showInDoses());
         }
 
         /**

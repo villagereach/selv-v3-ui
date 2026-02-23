@@ -19,7 +19,12 @@ describe('PodViewController', function() {
         ReasonDataBuilder, VVM_STATUS, messageService, orderLineItems, accessTokenFactory, $window;
 
     beforeEach(function() {
-        module('proof-of-delivery-view');
+        module('proof-of-delivery-view', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
 
         inject(function($injector) {
             $q = $injector.get('$q');

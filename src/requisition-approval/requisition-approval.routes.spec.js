@@ -16,8 +16,13 @@
 describe('openlmis.requisitions.approvalList', function() {
 
     beforeEach(function() {
+       module('requisition-approval', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
         module('requisition-search');
-        module('requisition-approval');
         module('requisition-view-tab');
         module('referencedata-facility');
         module('referencedata-program');

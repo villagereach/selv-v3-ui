@@ -19,8 +19,13 @@ describe('PhysicalInventoryDraftController', function() {
 
     beforeEach(function() {
 
-        module('stock-physical-inventory-draft', function() {
+        module('stock-physical-inventory-draft', function($provide) {
             chooseDateModalService = jasmine.createSpyObj('chooseDateModalService', ['show']);
+
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
         });
         module('admin-lot-edit');
 
@@ -52,6 +57,8 @@ describe('PhysicalInventoryDraftController', function() {
             this.loadingModalService = $injector.get('loadingModalService');
             this.LotResource = $injector.get('LotResource');
             this.editLotModalService = $injector.get('editLotModalService');
+            this.quantityUnitCalculateService = $injector.get('quantityUnitCalculateService');
+            this.QUANTITY_UNIT = $injector.get('QUANTITY_UNIT');
         });
 
         spyOn(this.physicalInventoryService, 'submitPhysicalInventory');
@@ -150,6 +157,8 @@ describe('PhysicalInventoryDraftController', function() {
             id: this.draft.id
         };
 
+        this.quantityUnit = undefined;
+
         this.vm = this.$controller('PhysicalInventoryDraftController', {
             facility: this.facility,
             program: this.program,
@@ -174,6 +183,7 @@ describe('PhysicalInventoryDraftController', function() {
         });
 
         this.vm.$onInit();
+        this.vm.quantityUnit = this.QUANTITY_UNIT.DOSES;
     });
 
     describe('onInit', function() {
@@ -252,7 +262,7 @@ describe('PhysicalInventoryDraftController', function() {
             this.lineItem4,
             getLineItemByOrderable(this.lineItem1.orderable),
             getLineItemByOrderable(this.lineItem3.orderable)
-        ], this.draft);
+        ], this.draft, true);
     });
 
     function getLineItemByOrderable(orderable) {
@@ -501,9 +511,13 @@ describe('PhysicalInventoryDraftController', function() {
     });
 
     it('should aggregate given field values', function() {
+        var orderable = {
+            netContent: 88
+        };
         var lineItem1 = new this.PhysicalInventoryLineItemDataBuilder()
             .withQuantity(2)
             .withStockOnHand(233)
+            .withOrderable(orderable)
             .build();
 
         var lineItem2 = new this.PhysicalInventoryLineItemDataBuilder()
