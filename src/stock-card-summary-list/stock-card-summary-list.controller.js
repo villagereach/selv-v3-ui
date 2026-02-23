@@ -31,7 +31,7 @@
     controller.$inject = [
         'loadingModalService', '$state', '$stateParams', 'StockCardSummaryRepositoryImpl', 'stockCardSummaries',
         'accessTokenFactory', '$window', 'openlmisUrlFactory', 'offlineService', '$scope', 'STOCKCARD_STATUS',
-        'messageService', 'paginationService', , 'QUANTITY_UNIT', 'quantityUnitCalculateService'
+        'messageService', 'paginationService', 'QUANTITY_UNIT', 'quantityUnitCalculateService'
     ];
 
     function controller(loadingModalService, $state, $stateParams, StockCardSummaryRepositoryImpl,
@@ -274,7 +274,6 @@
                 }
             });
         }
-
 
         /**
          * @ngdoc method

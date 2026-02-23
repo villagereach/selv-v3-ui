@@ -34,7 +34,7 @@
         'displayLineItemsGroup', 'confirmService', 'physicalInventoryService', 'MAX_INTEGER_VALUE',
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
-        'offlineService', 'physicalInventoryDraftCacheService','stockCardService', 'LotResource',
+        'offlineService', 'physicalInventoryDraftCacheService', 'stockCardService', 'LotResource',
         'editLotModalService', 'dateUtils', 'QUANTITY_UNIT', 'quantityUnitCalculateService'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
@@ -370,7 +370,7 @@
                 }, 0)
                 .value();
 
-                return recalculateQuantity(quantityInDoses, lineItems[0].orderable.netContent);
+            return recalculateQuantity(quantityInDoses, lineItems[0].orderable.netContent);
         };
 
         /**
@@ -802,11 +802,10 @@
             });
 
             draft.lineItems.forEach(function(item) {
-              item = quantityUnitCalculateService.recalculateInputQuantity(
-                  item, item.orderable.netContent, true
-              );
-              item.unaccountedQuantity =
-                  stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);
+                item = quantityUnitCalculateService.recalculateInputQuantity(
+                    item, item.orderable.netContent, true
+                );
+                item.unaccountedQuantity = stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);
             });
 
             vm.updateProgress();
@@ -916,7 +915,6 @@
         function formatDate(date) {
             return dateUtils.toStringDateWithDefaultFormat(date);
         }
-
 
         /**
          * @ngdoc method

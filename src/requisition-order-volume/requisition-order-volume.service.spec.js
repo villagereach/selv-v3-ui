@@ -20,6 +20,8 @@ describe('requisitionOrderVolumeService', function() {
         module('requisition');
         module('requisition-view-tab');
 
+        module('openlmis-feature-flag');
+
         inject(function($injector) {
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');

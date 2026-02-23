@@ -16,7 +16,7 @@
 describe('openlmis.requisitions.approvalList', function() {
 
     beforeEach(function() {
-       module('requisition-approval', function($provide) {
+        module('requisition-approval', function($provide) {
             $provide.value('featureFlagService', {
                 set: function() {},
                 get: function() {}

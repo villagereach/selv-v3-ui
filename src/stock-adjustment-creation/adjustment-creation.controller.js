@@ -44,8 +44,7 @@
                         offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
                         STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment,
-                        defaultReason, QUANTITY_UNIT, quantityUnitCalculateService)
-    {
+                        defaultReason, QUANTITY_UNIT, quantityUnitCalculateService) {
         var vm = this,
             previousAdded = {};
 
@@ -58,7 +57,6 @@
         vm.formatDate = formatDate;
         vm.showInDoses = showInDoses;
         vm.recalculateSOHQuantity = recalculateSOHQuantity;
-
 
         /**
          * @ngdoc property
@@ -787,14 +785,14 @@
             vm.newLot.expirationDateInvalid = undefined;
         }
 
-         /**
-         * @ngdoc method
-         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
-         * @name formatDate
-         *
-         * @description
-         * Format date
-         */
+        /**
+        * @ngdoc method
+        * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+        * @name formatDate
+        *
+        * @description
+        * Format date
+        */
         function formatDate(date) {
             return dateUtils.toStringDateWithDefaultFormat(date);
         }
