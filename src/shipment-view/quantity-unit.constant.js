@@ -32,8 +32,10 @@
         var values = {
             PACKS: 'PACKS',
             DOSES: 'DOSES',
+            BOTH: 'BOTH',
             $getDisplayName: getDisplayName,
-            $getQuantityDisplayName: getQuantityDisplayName
+            $getQuantityDisplayName: getQuantityDisplayName,
+            $getDefaultQuantityUnit: getDefaultQuantityUnit
         };
         var displayNames = {
             PACKS: 'shipmentView.packs',
@@ -52,6 +54,10 @@
 
         function getQuantityDisplayName(name) {
             return quantityDisplayNames[name];
+        }
+
+        function getDefaultQuantityUnit() {
+            return '${DEFAULT_QUANTITY_UNIT}';
         }
     }
 
