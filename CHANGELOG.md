@@ -1,4 +1,4 @@
-1.1.15 / WIP
+1.1.15 / 2026-03-09
 ===================
 Bug Fixes:
 - [SELVSUP-51](https://openlmis.atlassian.net/browse/SELVSUP-51)
