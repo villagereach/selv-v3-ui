@@ -30,13 +30,17 @@
 
     controller.$inject = [
         'proofOfDeliveryManageService', '$state', 'loadingModalService', 'notificationService', 'pods',
-        '$stateParams', 'programs', 'requestingFacilities', 'supplyingFacilities',
-        'accessTokenFactory', 'openlmisUrlFactory', '$window', 'ORDER_STATUSES'
+        '$stateParams', '$filter', 'programs', 'requestingFacilities', 'supplyingFacilities',
+        'accessTokenFactory', 'openlmisUrlFactory', 'orderStatusFactory', '$window', 'ORDER_STATUSES',
+        'processingSchedules', 'selectedProcessingSchedule', 'processingPeriods', 'selectedProcessingPeriod',
+        '$scope', 'periodService'
     ];
 
     function controller(proofOfDeliveryManageService, $state, loadingModalService, notificationService,
-                        pods, $stateParams, programs, requestingFacilities, supplyingFacilities,
-                        accessTokenFactory, openlmisUrlFactory, $window, ORDER_STATUSES) {
+                        pods, $stateParams, $filter, programs, requestingFacilities, supplyingFacilities,
+                        accessTokenFactory, openlmisUrlFactory, orderStatusFactory, $window, ORDER_STATUSES,
+                        processingSchedules, selectedProcessingSchedule, processingPeriods, selectedProcessingPeriod,
+                        $scope, periodService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -147,6 +151,87 @@
         vm.programName = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name processingSchedules
+         * @type {Array}
+         *
+         * @description
+         * List of processing schedules to which user has access based on his role/permissions.
+         */
+        vm.processingSchedules = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name selectedProcessingSchedule
+         * @type {Object}
+         *
+         * @description
+         * The processing schedule selected by the user.
+         */
+        vm.selectedProcessingSchedule = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name processingPeriods
+         * @type {Array}
+         *
+         * @description
+         * List of processing periods to which user has access based on his role/permissions.
+         */
+        vm.processingPeriods = undefined;
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name selectedProcessingPeriod
+         * @type {Object}
+         *
+         * @description
+         * The processing period selected by the user.
+         */
+        vm.selectedProcessingPeriod = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name periodStartDate
+         * @type {Object}
+         *
+         * @description
+         * The beginning of the period to search for orders.
+         */
+        vm.periodStartDate = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name periodEndDate
+         * @type {Object}
+         *
+         * @description
+         * The end of the period to search for orders.
+         */
+        vm.periodEndDate = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
+         * @name sortOptions
+         * @type {Object}
+         *
+         * @description
+         * Contains a list of possible sort options to allow sorting.
+         */
+        vm.sortOptions = {
+            'proofOfDeliveryManage.newestFirst': ['createdDate,desc'],
+            'proofOfDeliveryManage.oldestFirst': ['createdDate,asc'],
+            'proofOfDeliveryManage.statusAsc': ['status,asc', 'createdDate,desc'],
+            'proofOfDeliveryManage.statusDesc': ['status,desc', 'createdDate,desc']
+        };
+
+        /**
          * @ngdoc method
          * @methodOf proof-of-delivery-manage.controller:ProofOfDeliveryManageController
          * @name $onInit
@@ -165,6 +250,30 @@
             vm.supplyingFacility = getSelectedObjectById(supplyingFacilities, $stateParams.supplyingFacilityId);
             vm.facilityName = getName(vm.requestingFacility);
             vm.programName = getName(vm.program);
+            vm.orderStatuses = orderStatusFactory.getProofOfDeliveryStatuses();
+
+            if ($stateParams.status) {
+                vm.status = vm.orderStatuses.filter(function(status) {
+                    return $stateParams.status === status.value;
+                })[0];
+            }
+
+            if ($stateParams.periodStartDate) {
+                vm.periodStartDate = $stateParams.periodStartDate;
+            }
+
+            if ($stateParams.periodEndDate) {
+                vm.periodEndDate = $stateParams.periodEndDate;
+            }
+
+            vm.processingSchedules = processingSchedules;
+            vm.selectedProcessingSchedule = selectedProcessingSchedule;
+            vm.processingPeriods = processingPeriods;
+            vm.selectedProcessingPeriod = selectedProcessingPeriod;
+
+            $scope.$watch('vm.selectedProcessingSchedule', function() {
+                fetchProcessingPeriods();
+            });
         }
 
         /**
@@ -179,10 +288,15 @@
          */
         function loadOrders() {
             var stateParams = angular.copy($stateParams);
-
             stateParams.programId = vm.program.id;
             stateParams.requestingFacilityId = vm.requestingFacility ? vm.requestingFacility.id : null;
             stateParams.supplyingFacilityId = vm.supplyingFacility ? vm.supplyingFacility.id : null;
+            stateParams.status = vm.status ? vm.status.value : null;
+            stateParams.periodStartDate = vm.periodStartDate ? $filter('isoDate')(vm.periodStartDate) : null;
+            stateParams.periodEndDate = vm.periodEndDate ? $filter('isoDate')(vm.periodEndDate) : null;
+            stateParams.processingSchedule = vm.selectedProcessingSchedule ? vm.selectedProcessingSchedule.id : null;
+            stateParams.processingPeriodId = vm.selectedProcessingPeriod ? vm.selectedProcessingPeriod.id : null;
+            stateParams.sort = 'createdDate,desc';
 
             $state.go('openlmis.orders.podManage', stateParams, {
                 reload: true
@@ -244,7 +358,16 @@
             return openlmisUrlFactory('/api/reports/templates/common/2db2b18e-ceff-4d24-b20b-5a232608f8a4/pdf?orderId='
             + orderId);
         }
-
+        function fetchProcessingPeriods() {
+            if (vm.selectedProcessingSchedule && processingPeriods === undefined) {
+                periodService.query({
+                    processingScheduleId: vm.selectedProcessingSchedule.id,
+                    size: 9999
+                }).then(function(fetchedData) {
+                    vm.processingPeriods = fetchedData;
+                });
+            }
+        }
     }
 
     function getName(object) {

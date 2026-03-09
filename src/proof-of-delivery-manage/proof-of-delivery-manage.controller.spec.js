@@ -139,6 +139,66 @@ describe('ProofOfDeliveryManageController', function() {
 
             expect(vm.programName).toEqual(vm.program.name);
         });
+
+        it('should set periodStartDate if period start date from was passed through the URL', function() {
+            this.$stateParams.periodStartDate = '2017-01-31';
+
+            this.vm.$onInit();
+
+            expect(this.vm.periodStartDate).toEqual('2017-01-31');
+        });
+
+        it('should not set periodStartDate if period start date from not passed through the URL', function() {
+            this.$stateParams.periodStartDate = undefined;
+
+            this.vm.$onInit();
+
+            expect(this.vm.periodStartDate).toBeUndefined();
+        });
+
+        it('should set periodEndDate if period end date to was passed through the URL', function() {
+            this.$stateParams.periodEndDate = '2017-01-31';
+
+            this.vm.$onInit();
+
+            expect(this.vm.periodEndDate).toEqual('2017-01-31');
+        });
+
+        it('should not set periodEndDate if period end date to not passed through the URL', function() {
+            this.$stateParams.periodEndDate = undefined;
+
+            this.vm.$onInit();
+
+            expect(this.vm.periodEndDate).toBeUndefined();
+        });
+
+        it('should set status if it was selected', function() {
+            this.$stateParams.status = this.orderStatuses[2].value;
+
+            this.vm.$onInit();
+
+            expect(this.vm.status).toBe(this.vm.orderStatuses[2]);
+        });
+
+        it('should call watch', function() {
+            this.vm.$onInit();
+
+            this.vm.supplyingFacility = this.supplyingFacilities[0];
+            this.$rootScope.$apply();
+
+            expect(this.scope.$watch).toHaveBeenCalled();
+            expect(this.vm.requestingFacilities).toEqual([this.requestingFacilities[0], this.requestingFacilities[1]]);
+            expect(this.requestingFacilityFactory.loadRequestingFacilities)
+                .toHaveBeenCalledWith(this.supplyingFacilities[0].id);
+
+            this.vm.supplyingFacility = this.supplyingFacilities[1];
+            this.$rootScope.$apply();
+
+            expect(this.scope.$watch).toHaveBeenCalled();
+            expect(this.vm.requestingFacilities).toEqual([this.requestingFacilities[2]]);
+            expect(this.requestingFacilityFactory.loadRequestingFacilities)
+                .toHaveBeenCalledWith(this.supplyingFacilities[1].id);
+        });
     });
 
     it('loadOrders should reload state with right params', function() {

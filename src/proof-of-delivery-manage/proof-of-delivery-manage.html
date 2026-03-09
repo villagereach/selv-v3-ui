@@ -26,6 +26,32 @@
     <input type="submit" value="{{'proofOfDeliveryManage.search' | message}}"/>
 </form>
 <section class="openlmis-table-container">
+    <openlmis-sort options="vm.sortOptions"/>
+    <form ng-submit="vm.loadOrders()" >
+        <label>{{'proofOfDeliveryManage.orderStatus' | message}}</label>
+        <select id="status"
+                ng-model="vm.status"
+                ng-options="status as status.name for status in vm.orderStatuses track by status.value"></select>
+        <label for=periodStartDate>{{'proofOfDeliveryManage.startDate' | message}}</label>
+        <input id="periodStartDate" type="date" ng-model="vm.periodStartDate" max-date="vm.periodEndDate"/>
+        <label for=periodEndDate>{{'proofOfDeliveryManage.endDate' | message}}</label>
+        <input id="periodEndDate" type="date" ng-model="vm.periodEndDate" min-date="vm.periodStartDate"/>
+        <input type="submit" class="btn btn-primary" value="{{'proofOfDeliveryManage.search' | message}}"/>
+        <label for=processingSchedule>{{'proofOfDeliveryManage.processingSchedule' | message}}</label>
+        <select id="processingSchedule"
+                placeholder="{{'proofOfDeliveryManage.selectSchedule' | message}}"
+                ng-model="vm.selectedProcessingSchedule"
+                ng-options="schedule as schedule.name for schedule in vm.processingSchedules.content">
+        </select>
+        <label for=processingPeriod>{{'proofOfDeliveryManage.processingPeriod' | message}}</label>
+        <select id="processingPeriod"
+                placeholder="{{'proofOfDeliveryManage.selectPeriod' | message}}"
+                ng-model="vm.selectedProcessingPeriod"
+                ng-options="period as period.name for period in vm.processingPeriods.content"
+                ng-disabled="vm.selectedProcessingSchedule === undefined"
+        >
+        </select>
+    </form>
     <table>
         <caption ng-if="vm.pods && !vm.pods.length">
             {{'proofOfDeliveryManage.noPodsFound' | message}}
@@ -38,6 +64,8 @@
                 <th>{{'proofOfDeliveryManage.supplyingDepot' | message}}</th>
                 <th>{{'proofOfDeliveryManage.program' | message}}</th>
                 <th>{{'proofOfDeliveryManage.period' | message}}</th>
+                <th>{{'proofOfDeliveryManage.startDate' | message}}</th>
+                <th>{{'proofOfDeliveryManage.endDate' | message}}</th>
                 <th>{{'proofOfDeliveryManage.orderDate' | message}}</th>
                 <th>{{'proofOfDeliveryManage.emergency' | message}}</th>
                 <th class="col-sticky sticky-right">{{'proofOfDeliveryManage.actions' | message}}</th>
@@ -53,6 +81,8 @@
                 <td>{{order.supplyingFacility.name}}</td>
                 <td>{{order.program.name}}</td>
                 <td>{{order.processingPeriod.name}}</td>
+                <td>{{order.processingPeriod.startDate | openlmisDate}}</td>
+                <td>{{order.processingPeriod.endDate | openlmisDate}}</td>
                 <td>{{order.createdDate | openlmisDate}}</td>
                 <td class="col-emergency">
                     <i ng-class="{'icon-ok': order.emergency}"></i>
