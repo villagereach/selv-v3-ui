@@ -18,7 +18,7 @@ describe('StockCardSummaryListController', function() {
     var implMock, accessTokenFactory, $window;
 
     beforeEach(function() {
-
+        module('openlmis-quantity-unit-toggle');
         module('stock-card-summary-list', function($provide) {
             implMock = jasmine.createSpyObj('impl', ['print']);
 
@@ -26,6 +26,10 @@ describe('StockCardSummaryListController', function() {
                 return function() {
                     return implMock;
                 };
+            });
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
             });
         });
 
@@ -36,6 +40,7 @@ describe('StockCardSummaryListController', function() {
             this.scope = this.$rootScope.$new();
             this.StockCardSummaryDataBuilder = $injector.get('StockCardSummaryDataBuilder');
             this.offlineService = $injector.get('offlineService');
+            this.quantityUnitCalculateService = $injector.get('quantityUnitCalculateService');
             accessTokenFactory = $injector.get('accessTokenFactory');
             $window = $injector.get('$window');
         });

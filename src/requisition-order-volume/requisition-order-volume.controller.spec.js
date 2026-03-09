@@ -20,6 +20,8 @@ describe('RequisitionOrderVolumeController', function() {
         module('requisition');
         module('requisition-view-tab');
 
+        module('openlmis-feature-flag');
+
         inject(function($injector) {
             this.$controller = $injector.get('$controller');
             this.$q = $injector.get('$q');

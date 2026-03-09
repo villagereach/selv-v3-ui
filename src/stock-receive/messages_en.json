@@ -8,5 +8,10 @@
   "stockReceive.offline1": "You are offline. There are Receive events pending. They will be synchronized automatically when the internet connection returns.",
   "stockReceive.offline2": "Please check ",
   "stockReceive.pendingOfflineEvents": "Pending offline events",
-  "stockReceive.offline3": " for details."
+  "stockReceive.offline3": " for details.",
+  "stockReceiveCreation.sohDoses": "Stock on Hand (in Doses)",
+  "stockReceiveCreation.sohPacks": "Stock on Hand (in Packs)",
+  "stockReceiveCreation.quantityDoses": "Quantity (in Doses)",
+  "stockReceiveCreation.quantityPacks": "Quantity (in Packs)",
+  "stockReceiveCreation.totalQuantityInDoses": "Total Quantity (in doses)"
 }

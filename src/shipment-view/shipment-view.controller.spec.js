@@ -20,7 +20,12 @@ describe('ShipmentViewController', function() {
         fulfillmentUrlFactory, QUANTITY_UNIT, order, messageService, $window, $rootScope, shipmentViewService;
 
     beforeEach(function() {
-        module('shipment-view');
+        module('shipment-view', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
 
         inject(function($injector) {
             $q = $injector.get('$q');

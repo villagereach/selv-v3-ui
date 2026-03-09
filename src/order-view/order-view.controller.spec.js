@@ -16,7 +16,12 @@
 describe('OrderViewController', function() {
 
     beforeEach(function() {
-        module('order-view');
+        module('order-view', function($provide) {
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
+            });
+        });
         module('referencedata-facility');
         module('referencedata-program');
         module('proof-of-delivery-manage');

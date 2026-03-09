@@ -73,11 +73,11 @@ services:
     volumes:
       - '/openlmis-ui-layout'
   equipment-ui:
-    image: openlmismz/equipment-ui:1.0.0-SNAPSHOT
+    image: openlmismz/equipment-ui:${OL_EQUIPMENT_VERSION}
     volumes:
      - '/openlmis-equipment-ui'
   requisition-batch-ui:
-    image: openlmismz/requisition-batch-ui:1.0.0-SNAPSHOT
+    image: openlmismz/requisition-batch-ui:${OL_REQUISITION_BATCH_VERSION}
     volumes:
      - '/openlmis-requisition-batch-ui'
   offline-ui:

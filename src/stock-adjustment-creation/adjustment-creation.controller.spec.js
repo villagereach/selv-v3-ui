@@ -23,12 +23,17 @@ describe('StockAdjustmentCreationController', function() {
     beforeEach(function() {
 
         module('referencedata-lot');
+        module('openlmis-quantity-unit-toggle');
         module('stock-adjustment-creation', function($provide) {
             var stockEventRepositoryMock = jasmine.createSpyObj('stockEventRepository', ['create']);
             $provide.factory('StockEventRepository', function() {
                 return function() {
                     return stockEventRepositoryMock;
                 };
+            });
+            $provide.value('featureFlagService', {
+                set: function() {},
+                get: function() {}
             });
         });
 
@@ -56,6 +61,7 @@ describe('StockAdjustmentCreationController', function() {
             this.OrderableChildrenDataBuilder = $injector.get('OrderableChildrenDataBuilder');
             this.offlineService = $injector.get('offlineService');
             this.editLotModalService = $injector.get('editLotModalService');
+            this.quantityUnitCalculateService = $injector.get('quantityUnitCalculateService');
             spyOn(this.editLotModalService, 'show');
 
             state = jasmine.createSpyObj('$state', ['go']);
@@ -131,8 +137,12 @@ describe('StockAdjustmentCreationController', function() {
             var lineItem = {
                 id: '1',
                 quantity: 1,
+                orderable: {
+                    netContent: 50
+                },
                 $errors: {}
             };
+            vm.quantityUnit = 'DOSES';
             vm.validateQuantity(lineItem);
 
             expect(lineItem.$errors.quantityInvalid).toBeFalsy();
@@ -142,11 +152,30 @@ describe('StockAdjustmentCreationController', function() {
             var lineItem = {
                 id: '1',
                 quantity: 0,
+                orderable: {
+                    netContent: 50
+                },
                 $errors: {}
             };
+            vm.quantityUnit = 'DOSES';
             vm.validateQuantity(lineItem);
 
             expect(lineItem.$errors.quantityInvalid).toEqual('stockAdjustmentCreation.positiveInteger');
+        });
+
+        it('line item quantity is invalid given undefined', function() {
+            var lineItem = {
+                id: '1',
+                quantity: undefined,
+                orderable: {
+                    netContent: 50
+                },
+                $errors: {}
+            };
+            vm.quantityUnit = 'DOSES';
+            vm.validateQuantity(lineItem);
+
+            expect(lineItem.$errors.quantityInvalid).toEqual('openlmisForm.required');
         });
 
         it('line item quantity is invalid when is greater than stock on hand and reason type is DEBIT', function() {
@@ -154,11 +183,15 @@ describe('StockAdjustmentCreationController', function() {
                 id: '1',
                 quantity: 6,
                 $previewSOH: 5,
+                orderable: {
+                    netContent: 50
+                },
                 reason: {
                     reasonType: 'DEBIT'
                 },
                 $errors: {}
             };
+            vm.quantityUnit = 'DOSES';
             vm.validateQuantity(lineItem);
 
             expect(lineItem.$errors.quantityInvalid).toEqual('stockAdjustmentCreation.quantityGreaterThanStockOnHand');
@@ -168,8 +201,12 @@ describe('StockAdjustmentCreationController', function() {
             var lineItem = {
                 id: '1',
                 quantity: -1,
+                orderable: {
+                    netContent: 50
+                },
                 $errors: {}
             };
+            vm.quantityUnit = 'DOSES';
             vm.validateQuantity(lineItem);
 
             expect(lineItem.$errors.quantityInvalid).toEqual('stockAdjustmentCreation.positiveInteger');
@@ -184,7 +221,8 @@ describe('StockAdjustmentCreationController', function() {
                 reasonType: 'DEBIT'
             },
             orderable: {
-                productCode: 'C100'
+                productCode: 'C100',
+                netContent: 5
             },
             occurredDate: date1,
             $errors: {}
@@ -196,7 +234,8 @@ describe('StockAdjustmentCreationController', function() {
                 reasonType: 'DEBIT'
             },
             orderable: {
-                productCode: 'C150'
+                productCode: 'C150',
+                netContent: 5
             },
             occurredDate: date1,
             $errors: {}
@@ -209,7 +248,8 @@ describe('StockAdjustmentCreationController', function() {
                 reasonType: 'DEBIT'
             },
             orderable: {
-                productCode: 'C100'
+                productCode: 'C100',
+                netContent: 5
             },
             occurredDate: date2,
             $errors: {
@@ -223,7 +263,8 @@ describe('StockAdjustmentCreationController', function() {
                 reasonType: 'DEBIT'
             },
             orderable: {
-                productCode: 'C120'
+                productCode: 'C120',
+                netContent: 20
             },
             occurredDate: date2,
             $errors: {
@@ -445,6 +486,7 @@ describe('StockAdjustmentCreationController', function() {
             stockAdjustmentCreationService.submitAdjustments.andReturn(q.resolve());
 
             vm = initController([this.orderableGroup], ADJUSTMENT_TYPE.KIT_UNPACK);
+            vm.quantityUnit = 'DOSES';
 
             vm.addedLineItems = [{
                 reason: {

@@ -25,8 +25,6 @@ describe('availableCceCapacityService', function() {
 
             this.availableCceCapacityService = $injector.get('availableCceCapacityService');
             this.programService = $injector.get('programService');
-            this.permissionService = $injector.get('permissionService');
-            this.authorizationService = $injector.get('authorizationService');
             this.OrderableResource = $injector.get('OrderableResource');
             this.CceVolumeResource = $injector.get('CceVolumeResource');
             this.StockCardSummaryResource = $injector.get('StockCardSummaryResource');
@@ -34,7 +32,6 @@ describe('availableCceCapacityService', function() {
             this.StockCardSummaryDataBuilder = $injector.get('StockCardSummaryDataBuilder');
             this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
-            this.STOCKMANAGEMENT_RIGHTS = $injector.get('STOCKMANAGEMENT_RIGHTS');
         });
 
         this.cceVolume = {
@@ -96,13 +93,6 @@ describe('availableCceCapacityService', function() {
             new this.ProgramDataBuilder().build()
         ];
 
-        this.filteredPrograms = this.programs;
-
-        this.user = {
-            //eslint-disable-next-line camelcase
-            user_id: 'id_1'
-        };
-
         spyOn(this.CceVolumeResource.prototype, 'query')
             .andReturn(this.$q.resolve(this.cceVolume));
         spyOn(this.OrderableResource.prototype, 'query')
@@ -111,11 +101,6 @@ describe('availableCceCapacityService', function() {
             .andReturn(this.$q.resolve(this.summariesPage));
         spyOn(this.programService, 'getAll')
             .andReturn(this.$q.resolve(this.programs));
-        spyOn(this.permissionService, 'hasPermission')
-            .andReturn(this.$q.resolve(true));
-        spyOn(this.authorizationService, 'getUser')
-            .andReturn(this.user);
-
     });
 
     describe('getFullCceVolume', function() {
@@ -158,30 +143,27 @@ describe('availableCceCapacityService', function() {
         });
 
         it('should call StockCardSummaryResource for each program', function() {
+            expect(this.StockCardSummaryResource.prototype.query).toHaveBeenCalledWith({
+                orderableId: [
+                    this.orderable1.id,
+                    this.orderable6.id,
+                    this.orderable7.id
+                ],
+                facilityId: facilityId,
+                programId: this.programs[0].id,
+                nonEmptyOnly: true
+            });
 
-            expect(this.StockCardSummaryResource.prototype.query)
-                .toHaveBeenCalledWith({
-                    orderableId: [
-                        this.orderable1.id,
-                        this.orderable6.id,
-                        this.orderable7.id
-                    ],
-                    facilityId: facilityId,
-                    programId: this.programs[0].id,
-                    nonEmptyOnly: true
-                }, this.programs[0].id + '/' + facilityId + '/' + this.user.user_id);
-
-            expect(this.StockCardSummaryResource.prototype.query)
-                .toHaveBeenCalledWith({
-                    orderableId: [
-                        this.orderable1.id,
-                        this.orderable6.id,
-                        this.orderable7.id
-                    ],
-                    facilityId: facilityId,
-                    programId: this.programs[1].id,
-                    nonEmptyOnly: true
-                }, this.programs[1].id + '/' + facilityId + '/' + this.user.user_id);
+            expect(this.StockCardSummaryResource.prototype.query).toHaveBeenCalledWith({
+                orderableId: [
+                    this.orderable1.id,
+                    this.orderable6.id,
+                    this.orderable7.id
+                ],
+                facilityId: facilityId,
+                programId: this.programs[1].id,
+                nonEmptyOnly: true
+            });
         });
 
         it('should calculate used CCE volume properly', function() {
