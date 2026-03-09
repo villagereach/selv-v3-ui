@@ -42,6 +42,8 @@
                 FULFILLING: 'FULFILLING',
                 TRANSFER_FAILED: 'TRANSFER_FAILED',
                 CREATING: 'CREATING',
+                READY_TO_PACK: 'READY_TO_PACK',
+                IN_ROUTE: 'IN_ROUTE',
                 getLabel: getLabel,
                 getStatusMessage: getStatusMessage,
                 getStatuses: getStatuses
@@ -52,7 +54,9 @@
                 SHIPPED: 'order.status.shipped',
                 FULFILLING: 'order.status.fulfilling',
                 TRANSFER_FAILED: 'order.status.transfer_failed',
-                CREATING: 'order.status.creating'
+                CREATING: 'order.status.creating',
+                READY_TO_PACK: 'order.status.ready_to_pack',
+                IN_ROUTE: 'order.status.in_route'
             };
 
         return ORDER_STATUSES;
@@ -116,7 +120,9 @@
                 ORDER_STATUSES.SHIPPED,
                 ORDER_STATUSES.FULFILLING,
                 ORDER_STATUSES.TRANSFER_FAILED,
-                ORDER_STATUSES.CREATING
+                ORDER_STATUSES.CREATING,
+                ORDER_STATUSES.READY_TO_PACK,
+                ORDER_STATUSES.IN_ROUTE
             ];
         }
     }

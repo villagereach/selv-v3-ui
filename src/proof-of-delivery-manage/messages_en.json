@@ -1,3 +1,11 @@
 {
-    "proofOfDeliveryManage.managePods": "Manage Proof of Delivery"
+    "proofOfDeliveryManage.managePods": "Manage Proof of Delivery",
+    "proofOfDeliveryManage.newestFirst": "Date Created (Newest First)",
+    "proofOfDeliveryManage.oldestFirst": "Date Created (Oldest First)",
+    "proofOfDeliveryManage.statusAsc": "Status (A-Z)",
+    "proofOfDeliveryManage.statusDesc": "Status (Z-A)",
+    "proofOfDeliveryManage.processingPeriod": "Processing Period",
+    "proofOfDeliveryManage.processingSchedule": "Processing Schedule",
+    "proofOfDeliveryManage.selectSchedule": "Select processing schedule",
+    "proofOfDeliveryManage.selectPeriod": "Select processing period"
 }
