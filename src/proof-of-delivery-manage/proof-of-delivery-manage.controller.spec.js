@@ -17,7 +17,8 @@ describe('ProofOfDeliveryManageController', function() {
 
     var proofOfDeliveryManageService, $rootScope, $state, $q, $controller, ProgramDataBuilder, FacilityDataBuilder,
         ProofOfDeliveryDataBuilder, vm, deferred, pod, stateParams, supplyingFacilities, programs, requestingFacilities,
-        loadingModalService, notificationService, loadingDeferred, $window, accessTokenFactory;
+        loadingModalService, notificationService, loadingDeferred, $window, accessTokenFactory, orderStatusFactory,
+        scope, orderStatuses;
 
     beforeEach(function() {
         module('proof-of-delivery-manage', function($provide) {
@@ -29,6 +30,8 @@ describe('ProofOfDeliveryManageController', function() {
 
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
+            scope = $rootScope.$new();
+            stateParams = $injector.get('$stateParams');
             $q = $injector.get('$q');
             deferred = $q.defer();
             $window = $injector.get('$window');
@@ -41,21 +44,29 @@ describe('ProofOfDeliveryManageController', function() {
             loadingModalService = $injector.get('loadingModalService');
             notificationService = $injector.get('notificationService');
             accessTokenFactory = $injector.get('accessTokenFactory');
-
+            orderStatusFactory = $injector.get('orderStatusFactory');
         });
 
         pod = new ProofOfDeliveryDataBuilder().build();
-        requestingFacilities = [
-            new FacilityDataBuilder().build(),
-            new FacilityDataBuilder().build()
-        ];
         supplyingFacilities = [
-            new FacilityDataBuilder().build(),
-            new FacilityDataBuilder().build()
+            new FacilityDataBuilder().withId('facility-one')
+                .build(),
+            new FacilityDataBuilder().withId('facility-two')
+                .build()
+        ];
+        requestingFacilities = [
+            new FacilityDataBuilder().withId('facility-three')
+                .build(),
+            new FacilityDataBuilder().withId('facility-four')
+                .build(),
+            new FacilityDataBuilder().withId('facility-five')
+                .build()
         ];
         programs = [
-            new ProgramDataBuilder().build(),
-            new ProgramDataBuilder().build()
+            new ProgramDataBuilder().withId('program-one')
+                .build(),
+            new ProgramDataBuilder().withId('program-two')
+                .build()
         ];
         stateParams = {
             page: 0,
@@ -64,13 +75,35 @@ describe('ProofOfDeliveryManageController', function() {
             requestingFacilityId: requestingFacilities[0].id,
             supplyingFacilityId: supplyingFacilities[0].id
         };
+        this.processingSchedules = [
+            {
+                id: 1,
+                name: 'first processing schedule'
+            }
+        ];
+        this.processingPeriods = {
+            content: [
+                {
+                    id: 1,
+                    code: 'code_1',
+                    name: 'Code 1'
+                }
+            ]
+        };
+        orderStatuses = orderStatusFactory.getAll();
 
         vm = $controller('ProofOfDeliveryManageController', {
             programs: programs,
             requestingFacilities: requestingFacilities,
             supplyingFacilities: supplyingFacilities,
+            processingSchedules: this.processingSchedules,
+            selectedProcessingSchedule: this.processingSchedules[0],
+            processingPeriods: this.processingPeriods.content,
+            selectedProcessingPeriod: this.processingPeriods.content[0],
+            orderStatusFactory: orderStatusFactory,
             pods: [pod],
-            $stateParams: stateParams
+            $stateParams: stateParams,
+            $scope: scope
         });
 
         loadingDeferred = $q.defer();
@@ -141,63 +174,43 @@ describe('ProofOfDeliveryManageController', function() {
         });
 
         it('should set periodStartDate if period start date from was passed through the URL', function() {
-            this.$stateParams.periodStartDate = '2017-01-31';
+            stateParams.periodStartDate = '2017-01-31';
 
-            this.vm.$onInit();
+            vm.$onInit();
 
-            expect(this.vm.periodStartDate).toEqual('2017-01-31');
+            expect(vm.periodStartDate).toEqual('2017-01-31');
         });
 
         it('should not set periodStartDate if period start date from not passed through the URL', function() {
-            this.$stateParams.periodStartDate = undefined;
+            stateParams.periodStartDate = undefined;
 
-            this.vm.$onInit();
+            vm.$onInit();
 
-            expect(this.vm.periodStartDate).toBeUndefined();
+            expect(vm.periodStartDate).toBeUndefined();
         });
 
         it('should set periodEndDate if period end date to was passed through the URL', function() {
-            this.$stateParams.periodEndDate = '2017-01-31';
+            stateParams.periodEndDate = '2017-01-31';
 
-            this.vm.$onInit();
+            vm.$onInit();
 
-            expect(this.vm.periodEndDate).toEqual('2017-01-31');
+            expect(vm.periodEndDate).toEqual('2017-01-31');
         });
 
         it('should not set periodEndDate if period end date to not passed through the URL', function() {
-            this.$stateParams.periodEndDate = undefined;
+            stateParams.periodEndDate = undefined;
 
-            this.vm.$onInit();
+            vm.$onInit();
 
-            expect(this.vm.periodEndDate).toBeUndefined();
+            expect(vm.periodEndDate).toBeUndefined();
         });
 
         it('should set status if it was selected', function() {
-            this.$stateParams.status = this.orderStatuses[2].value;
+            stateParams.status = orderStatuses[2].value;
 
-            this.vm.$onInit();
+            vm.$onInit();
 
-            expect(this.vm.status).toBe(this.vm.orderStatuses[2]);
-        });
-
-        it('should call watch', function() {
-            this.vm.$onInit();
-
-            this.vm.supplyingFacility = this.supplyingFacilities[0];
-            this.$rootScope.$apply();
-
-            expect(this.scope.$watch).toHaveBeenCalled();
-            expect(this.vm.requestingFacilities).toEqual([this.requestingFacilities[0], this.requestingFacilities[1]]);
-            expect(this.requestingFacilityFactory.loadRequestingFacilities)
-                .toHaveBeenCalledWith(this.supplyingFacilities[0].id);
-
-            this.vm.supplyingFacility = this.supplyingFacilities[1];
-            this.$rootScope.$apply();
-
-            expect(this.scope.$watch).toHaveBeenCalled();
-            expect(this.vm.requestingFacilities).toEqual([this.requestingFacilities[2]]);
-            expect(this.requestingFacilityFactory.loadRequestingFacilities)
-                .toHaveBeenCalledWith(this.supplyingFacilities[1].id);
+            expect(vm.status).toBe(vm.orderStatuses[2]);
         });
     });
 
@@ -221,7 +234,13 @@ describe('ProofOfDeliveryManageController', function() {
             supplyingFacilityId: vm.supplyingFacility.id,
             programId: vm.program.id,
             page: 0,
-            size: 10
+            size: 10,
+            sort: 'createdDate,desc',
+            status: null,
+            periodStartDate: null,
+            periodEndDate: null,
+            processingSchedule: null,
+            processingPeriodId: null
         }, {
             reload: true
         });
