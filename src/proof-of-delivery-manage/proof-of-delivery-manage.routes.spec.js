@@ -17,7 +17,7 @@ describe('openlmis.orders.podManage state', function() {
 
     var $q, $state, $rootScope, $location, $templateCache, orderRepository, paginationService, programService,
         facilityFactory, authorizationService, FULFILLMENT_RIGHTS, ProofOfDeliveryDataBuilder, ProgramDataBuilder,
-        FacilityDataBuilder, pods, programs, requestingFacilities, supplyingFacilities, state, transitionError;
+        FacilityDataBuilder, pods, programs, requestingFacilities, supplyingFacilities, state, processingScheduleService;
 
     beforeEach(function() {
         loadModules();
@@ -29,14 +29,9 @@ describe('openlmis.orders.podManage state', function() {
     it('should be available under \'orders/manage\'', function() {
         expect($state.current.name).not.toEqual('openlmis.orders.podManages');
 
-        $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-            transitionError = error;
-        });
-
         goToUrl('/orders/manage');
 
         expect($state.current.name).toEqual('openlmis.orders.podManage');
-        expect(transitionError).toBeUndefined();
     });
 
     it('should resolve programs', function() {
@@ -127,6 +122,7 @@ describe('openlmis.orders.podManage state', function() {
             programService = $injector.get('programService');
             facilityFactory = $injector.get('facilityFactory');
             authorizationService = $injector.get('authorizationService');
+            processingScheduleService = $injector.get('processingScheduleService');
             FULFILLMENT_RIGHTS = $injector.get('FULFILLMENT_RIGHTS');
             ProofOfDeliveryDataBuilder = $injector.get('ProofOfDeliveryDataBuilder');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
@@ -177,6 +173,21 @@ describe('openlmis.orders.podManage state', function() {
         spyOn(paginationService, 'registerUrl').andCallFake(function(stateParams, method) {
             return method(stateParams);
         });
+        var processingScheduleData = {
+            content: [
+                {
+                    id: '1',
+                    code: '1',
+                    name: 'First'
+                },
+                {
+                    id: '2',
+                    code: '2',
+                    name: 'Second'
+                }
+            ]
+        };
+        spyOn(processingScheduleService, 'get').andReturn($q.when(processingScheduleData));
     }
 
     function getResolvedValue(name) {

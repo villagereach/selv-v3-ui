@@ -74,7 +74,7 @@
                     });
                 },
                 processingSchedules: function(processingScheduleService) {
-                    return processingScheduleService.get().$promise;
+                    return processingScheduleService.get();
                 },
                 selectedProcessingSchedule: function($stateParams, $filter, processingSchedules) {
                     if ($stateParams.processingSchedule) {
