@@ -14,50 +14,23 @@
  */
 
 (function() {
+    'use-strict';
 
-    'use strict';
-
-    /**
-     * @ngdoc service
-     * @name order.orderStatusFactory
-     *
-     * @description
-     * Translates different order statuses for display in dropdowns.
-     */
     angular
-        .module('order')
-        .factory('orderStatusFactory', factory);
+        .module('proof-of-delivery-manage')
+        .config(config);
 
-    factory.$inject = ['messageService', 'ORDER_STATUSES'];
+    config.$inject = ['$provide'];
 
-    function factory(messageService, ORDER_STATUSES) {
-        var factory = {
-            getAll: getAll
-        };
-        return factory;
+    function config($provide) {
+        $provide.decorator('orderStatusFactory', decorator);
+    }
 
-        /**
-         * @ngdoc method
-         * @methodOf order.orderStatusFactory
-         * @name getAll
-         *
-         * @description
-         * Returns list of order statuses.
-         */
-        function getAll() {
+    decorator.$inject = ['$delegate', 'messageService', 'ORDER_STATUSES'];
+
+    function decorator($delegate, messageService, ORDER_STATUSES) {
+        function getProofOfDeliveryStatuses() {
             return [
-                {
-                    name: messageService.get('orderStatus.ORDERED'),
-                    value: ORDER_STATUSES.ORDERED
-                },
-                {
-                    name: messageService.get('orderStatus.FULFILLING'),
-                    value: ORDER_STATUSES.FULFILLING
-                },
-                {
-                    name: messageService.get('orderStatus.SHIPPED'),
-                    value: ORDER_STATUSES.SHIPPED
-                },
                 {
                     name: messageService.get('orderStatus.RECEIVED'),
                     value: ORDER_STATUSES.RECEIVED
@@ -67,8 +40,8 @@
                     value: ORDER_STATUSES.TRANSFER_FAILED
                 },
                 {
-                    name: messageService.get('orderStatus.CREATING'),
-                    value: ORDER_STATUSES.CREATING
+                    name: messageService.get('orderStatus.SHIPPED'),
+                    value: ORDER_STATUSES.SHIPPED
                 },
                 {
                     name: messageService.get('orderStatus.READY_TO_PACK'),
@@ -80,6 +53,10 @@
                 }
             ];
         }
+
+        $delegate.getProofOfDeliveryStatuses = getProofOfDeliveryStatuses;
+
+        return $delegate;
     }
 
 })();
