@@ -17,7 +17,8 @@ describe('openlmis.orders.podManage state', function() {
 
     var $q, $state, $rootScope, $location, $templateCache, orderRepository, paginationService, programService,
         facilityFactory, authorizationService, FULFILLMENT_RIGHTS, ProofOfDeliveryDataBuilder, ProgramDataBuilder,
-        FacilityDataBuilder, pods, programs, requestingFacilities, supplyingFacilities, state, processingScheduleService;
+        FacilityDataBuilder, pods, programs, requestingFacilities, supplyingFacilities, state,
+        processingScheduleService;
 
     beforeEach(function() {
         loadModules();
