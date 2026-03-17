@@ -1,18 +1,20 @@
-1.1.16 / WIP
+1.1.16 / 2026-03-17
 ===================
+Improvements:
+- [SELVSUP-57](https://openlmis.atlassian.net/browse/SELVSUP-57)
+  - Add sorting and filtering in the **Orders → Manage Proof of Delivery**.
 
 1.1.15 / 2026-03-09
 ===================
 Bug Fixes:
 - [SELVSUP-51](https://openlmis.atlassian.net/browse/SELVSUP-51)
   - Fixed bug with date selection at confirm shipment when no physical inventory was created in the facility.
+
 Improvements:
 - [SELV3-814](https://openlmis.atlassian.net/browse/SELV3-814)
   - Added the ability to deactivate a batch of stock cards.
 - [SELVSUP-17](https://openlmis.atlassian.net/browse/SELVSUP-17)
   - Get rid of hardcoded field names and use translations (reports).
-
-Improvements:
 - [SELVSUP-14](https://openlmis.atlassian.net/browse/SELVSUP-14)
   - Recalculate input quantity to doses
 
