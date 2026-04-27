@@ -1,5 +1,8 @@
 1.1.17 / (WIP)
 ===================
+Bug Fixes:
+- [SELVSUP-61](https://openlmis.atlassian.net/browse/SELVSUP-61)
+  - Fixed scrolling issue in Orders Summary modal.
 
 1.1.16 / 2026-03-17
 ===================
