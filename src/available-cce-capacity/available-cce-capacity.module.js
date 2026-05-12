@@ -25,8 +25,7 @@
      * screen.
      */
     angular.module('available-cce-capacity', [
-        'cce-volume',
-        'stock-card-summary'
+        'stockmanagement'
     ]);
 
 })();

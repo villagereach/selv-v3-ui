@@ -22,105 +22,47 @@
      * @name available-cce-capacity.availableCceCapacityService
      *
      * @description
-     * Service allows to display alert modal with custom message.
+     * Fetches the available CCE capacity for a facility from the stockmanagement
+     * extension endpoint.
      */
     angular
         .module('available-cce-capacity')
         .service('availableCceCapacityService', availableCceCapacityService);
 
-    availableCceCapacityService.$inject = [
-        '$q', 'CceVolumeResource', 'StockCardSummaryResource', 'programService', 'OrderableResource'
-    ];
+    availableCceCapacityService.$inject = ['$q', '$http', 'stockmanagementUrlFactory'];
 
-    function availableCceCapacityService(
-        $q, CceVolumeResource, StockCardSummaryResource, programService, OrderableResource
-    ) {
+    function availableCceCapacityService($q, $http, stockmanagementUrlFactory) {
 
-        this.getFullCceVolume = getFullCceVolume;
-        this.getCceVolumeInUse = getCceVolumeInUse;
+        this.getAvailableCceVolume = getAvailableCceVolume;
 
         /**
          * @ngdoc method
-         * @name getFullCceVolume
+         * @name getAvailableCceVolume
          * @methodOf available-cce-capacity.availableCceCapacityService
          *
          * @description
-         * Calls CCE service for volume capacity of given facility.
+         * Calls the stockmanagement extension for the facility's available CCE capacity
+         * (total - in use, in liters). The endpoint sums volume in use across all
+         * programs at the facility.
          *
-         * @param  {Object}  facilityId id of the facility requisition is created for
-         * @return {Promise}            promise containing full CCE volume
+         * @param  {String}  facilityId  id of the facility the requisition is created for
+         * @return {Promise}             promise resolving to available CCE capacity in liters
          */
-        function getFullCceVolume(facilityId) {
-            return new CceVolumeResource().query({
-                facilityId: facilityId
-            })
+        function getAvailableCceVolume(facilityId) {
+            var deferred = $q.defer();
+            var url = stockmanagementUrlFactory(
+                '/api/stockCardSummaries/cce/capacity?facilityId=' + facilityId
+            );
+
+            $http.get(url)
                 .then(function(response) {
-                    return response.volume;
+                    deferred.resolve(response.data.availableVolume);
+                })
+                .catch(function(error) {
+                    deferred.reject(error);
                 });
-        }
 
-        /**
-         * @ngdoc method
-         * @name getCceVolumeInUse
-         * @methodOf available-cce-capacity.availableCceCapacityService
-         *
-         * @description
-         * Gets used volume based on stock cards and orderables that require refrigeration.
-         * Stock cards are retrieved for all programs.
-         *
-         * @param  {Object}  facilityId id of the facility requisition is created for
-         * @return {Promise}            promise containing full CCE volume
-         */
-        function getCceVolumeInUse(facilityId) {
-            return programService.getAll().then(function(programs) {
-                return new OrderableResource().query()
-                    .then(function(orderablePage) {
-                        var cceOrderables = orderablePage.content.filter(function(orderable) {
-                                return isCceOrderable(orderable);
-                            }),
-                            cceOrderableIds = cceOrderables.map(function(orderable) {
-                                return orderable.id;
-                            }),
-                            stockCardsPromises = programs.map(function(program) {
-                                return new StockCardSummaryResource().query({
-                                    orderableId: cceOrderableIds,
-                                    facilityId: facilityId,
-                                    programId: program.id,
-                                    nonEmptyOnly: true
-                                });
-                            });
-
-                        return $q.all(stockCardsPromises).then(function(stockCardSummaryPages) {
-                            return calculateVolumeInUse(
-                                stockCardSummaryPages.flatMap(function(stockCardSummaryPage) {
-                                    return stockCardSummaryPage.content;
-                                }),
-                                cceOrderables.reduce(function(map, orderable) {
-                                    map[orderable.id] = orderable;
-                                    return map;
-                                }, {})
-                            );
-                        });
-                    });
-            });
-        }
-
-        function isCceOrderable(orderable) {
-            return orderable.inBoxCubeDimension &&
-                orderable.minimumTemperature &&
-                orderable.maximumTemperature &&
-                orderable.maximumTemperature.value <= 8;
-        }
-
-        function calculateVolumeInUse(stockCardSummaries, orderablesMap) {
-            var sum = 0;
-            stockCardSummaries.forEach(function(summary) {
-                var orderable = orderablesMap[summary.orderable.id];
-                sum += orderable ?
-                    orderable.inBoxCubeDimension.value * summary.stockOnHand / 1000 :
-                    0;
-            });
-            return sum;
+            return deferred.promise;
         }
     }
 })();

@@ -28,9 +28,9 @@
         .module('available-cce-capacity')
         .controller('AvailableCceCapacityController', AvailableCceCapacityController);
 
-    AvailableCceCapacityController.$inject = ['$q', 'availableCceCapacityService'];
+    AvailableCceCapacityController.$inject = ['availableCceCapacityService'];
 
-    function AvailableCceCapacityController($q, availableCceCapacityService) {
+    function AvailableCceCapacityController(availableCceCapacityService) {
         var indicator = this;
 
         indicator.$onInit = onInit;
@@ -39,7 +39,7 @@
          * @ngdoc property
          * @propertyOf available-cce-capacity.controller:AvailableCceCapacityController
          * @name requisition
-         * @type {String}
+         * @type {Object}
          *
          * @description
          * Holds requisition object.
@@ -90,22 +90,15 @@
             indicator.ready = false;
             indicator.failed = false;
 
-            $q.all([
-                availableCceCapacityService.getFullCceVolume(indicator.requisition.facility.id),
-                availableCceCapacityService.getCceVolumeInUse(indicator.requisition.facility.id)
-            ])
-                .then(calculateAndShowAvailableCceVolume)
+            availableCceCapacityService.getAvailableCceVolume(indicator.requisition.facility.id)
+                .then(function(availableVolume) {
+                    indicator.availableVolume = Math.round(availableVolume);
+                    indicator.requisition.$availableCceCapacity = indicator.availableVolume;
+                    indicator.ready = true;
+                })
                 .catch(function() {
                     indicator.failed = true;
                 });
-        }
-
-        function calculateAndShowAvailableCceVolume(results) {
-            var fullVolume = results[0],
-                volumeInUse = results[1];
-            indicator.availableVolume = Math.round(fullVolume - volumeInUse);
-            indicator.requisition.$availableCceCapacity = indicator.availableVolume;
-            indicator.ready = true;
         }
     }
 })();
