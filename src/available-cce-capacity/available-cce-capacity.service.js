@@ -29,9 +29,17 @@
         .module('available-cce-capacity')
         .service('availableCceCapacityService', availableCceCapacityService);
 
-    availableCceCapacityService.$inject = ['$q', '$http', 'stockmanagementUrlFactory'];
+    availableCceCapacityService.$inject = ['$q', '$resource', 'stockmanagementUrlFactory'];
 
-    function availableCceCapacityService($q, $http, stockmanagementUrlFactory) {
+    function availableCceCapacityService($q, $resource, stockmanagementUrlFactory) {
+
+        var resource = $resource(
+            stockmanagementUrlFactory('/api/stockCardSummaries/cce/capacity'), {}, {
+                get: {
+                    method: 'GET'
+                }
+            }
+        );
 
         this.getAvailableCceVolume = getAvailableCceVolume;
 
@@ -50,13 +58,12 @@
          */
         function getAvailableCceVolume(facilityId) {
             var deferred = $q.defer();
-            var url = stockmanagementUrlFactory(
-                '/api/stockCardSummaries/cce/capacity?facilityId=' + facilityId
-            );
 
-            $http.get(url)
+            resource.get({
+                facilityId: facilityId
+            }).$promise
                 .then(function(response) {
-                    deferred.resolve(response.data.availableVolume);
+                    deferred.resolve(response.availableVolume);
                 })
                 .catch(function(error) {
                     deferred.reject(error);

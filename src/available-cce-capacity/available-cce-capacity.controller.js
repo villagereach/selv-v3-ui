@@ -92,7 +92,7 @@
 
             availableCceCapacityService.getAvailableCceVolume(indicator.requisition.facility.id)
                 .then(function(availableVolume) {
-                    indicator.availableVolume = Math.round(availableVolume);
+                    indicator.availableVolume = availableVolume;
                     indicator.requisition.$availableCceCapacity = indicator.availableVolume;
                     indicator.ready = true;
                 })
