@@ -16,158 +16,58 @@
 describe('availableCceCapacityService', function() {
 
     beforeEach(function() {
-
         module('available-cce-capacity');
 
         inject(function($injector) {
-            this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
-
+            this.$httpBackend = $injector.get('$httpBackend');
+            this.stockmanagementUrlFactory = $injector.get('stockmanagementUrlFactory');
             this.availableCceCapacityService = $injector.get('availableCceCapacityService');
-            this.programService = $injector.get('programService');
-            this.OrderableResource = $injector.get('OrderableResource');
-            this.CceVolumeResource = $injector.get('CceVolumeResource');
-            this.StockCardSummaryResource = $injector.get('StockCardSummaryResource');
-
-            this.StockCardSummaryDataBuilder = $injector.get('StockCardSummaryDataBuilder');
-            this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
-            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
 
-        this.cceVolume = {
-            volume: 12
-        };
-
-        this.orderable1 = new this.OrderableDataBuilder().buildForCce(100, 2, 8);
-        this.orderable2 = new this.OrderableDataBuilder().buildForCce(undefined, 2, 8);
-        this.orderable3 = new this.OrderableDataBuilder().buildForCce(300, undefined, 8);
-        this.orderable4 = new this.OrderableDataBuilder().buildForCce(400, 2, undefined);
-        this.orderable5 = new this.OrderableDataBuilder().buildForCce(500, 2, 9);
-        this.orderable6 = new this.OrderableDataBuilder().buildForCce(600, 2, 7);
-        this.orderable7 = new this.OrderableDataBuilder().buildForCce(700, 2, 8);
-        this.orderablePage = {
-            content: [
-                this.orderable1,
-                this.orderable2,
-                this.orderable3,
-                this.orderable4,
-                this.orderable5,
-                this.orderable6,
-                this.orderable7
-            ]
-        };
-
-        this.summary1 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(1)
-            .withOrderable(this.orderable1)
-            .build();
-        this.summary2 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(2)
-            .withOrderable(this.orderable2)
-            .build();
-        this.summary3 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(3)
-            .withOrderable(this.orderable3)
-            .build();
-        this.summary4 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(4)
-            .withOrderable(this.orderable4)
-            .build();
-        this.summary5 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(5)
-            .withOrderable(this.orderable5)
-            .build();
-        this.summary6 = new this.StockCardSummaryDataBuilder()
-            .withStockOnHand(6)
-            .withOrderable(this.orderable6)
-            .build();
-        this.summariesPage = {
-            content: [
-                this.summary1,
-                this.summary6
-            ]
-        };
-
-        this.programs = [
-            new this.ProgramDataBuilder().build(),
-            new this.ProgramDataBuilder().build()
-        ];
-
-        spyOn(this.CceVolumeResource.prototype, 'query')
-            .andReturn(this.$q.resolve(this.cceVolume));
-        spyOn(this.OrderableResource.prototype, 'query')
-            .andReturn(this.$q.resolve(this.orderablePage));
-        spyOn(this.StockCardSummaryResource.prototype, 'query')
-            .andReturn(this.$q.resolve(this.summariesPage));
-        spyOn(this.programService, 'getAll')
-            .andReturn(this.$q.resolve(this.programs));
+        this.facilityId = 'facility-id-1';
+        this.url = this.stockmanagementUrlFactory(
+            '/api/stockCardSummaries/cce/capacity?facilityId=' + this.facilityId
+        );
     });
 
-    describe('getFullCceVolume', function() {
+    afterEach(function() {
+        this.$httpBackend.verifyNoOutstandingExpectation();
+        this.$httpBackend.verifyNoOutstandingRequest();
+    });
 
-        it('should call CCE service', function() {
+    describe('getAvailableCceVolume', function() {
+
+        it('should call the cce capacity endpoint and resolve to availableVolume', function() {
+            this.$httpBackend.expectGET(this.url).respond(200, {
+                totalVolume: 20,
+                volumeInUse: 5,
+                availableVolume: 15
+            });
+
             var result;
-
-            this.availableCceCapacityService.getFullCceVolume('facility-id')
-                .then(function(response) {
-                    result = response;
+            this.availableCceCapacityService.getAvailableCceVolume(this.facilityId)
+                .then(function(volume) {
+                    result = volume;
                 });
+            this.$httpBackend.flush();
             this.$rootScope.$apply();
 
-            expect(this.CceVolumeResource.prototype.query).toHaveBeenCalledWith({
-                facilityId: 'facility-id'
-            });
-
-            expect(result).toEqual(this.cceVolume.volume);
+            expect(result).toEqual(15);
         });
-    });
 
-    describe('getCceVolumeInUse', function() {
+        it('should reject when the endpoint fails', function() {
+            this.$httpBackend.expectGET(this.url).respond(500);
 
-        var facilityId = 'facility-id-1',
-            result;
-
-        beforeEach(function() {
-            this.availableCceCapacityService.getCceVolumeInUse(facilityId).then(function(response) {
-                result = response;
-            });
+            var rejected = false;
+            this.availableCceCapacityService.getAvailableCceVolume(this.facilityId)
+                .catch(function() {
+                    rejected = true;
+                });
+            this.$httpBackend.flush();
             this.$rootScope.$apply();
-        });
 
-        it('should call programService', function() {
-            expect(this.programService.getAll).toHaveBeenCalled();
-        });
-
-        it('should call OrderableResource', function() {
-            expect(this.OrderableResource.prototype.query).toHaveBeenCalled();
-        });
-
-        it('should call StockCardSummaryResource for each program', function() {
-            expect(this.StockCardSummaryResource.prototype.query).toHaveBeenCalledWith({
-                orderableId: [
-                    this.orderable1.id,
-                    this.orderable6.id,
-                    this.orderable7.id
-                ],
-                facilityId: facilityId,
-                programId: this.programs[0].id,
-                nonEmptyOnly: true
-            });
-
-            expect(this.StockCardSummaryResource.prototype.query).toHaveBeenCalledWith({
-                orderableId: [
-                    this.orderable1.id,
-                    this.orderable6.id,
-                    this.orderable7.id
-                ],
-                facilityId: facilityId,
-                programId: this.programs[1].id,
-                nonEmptyOnly: true
-            });
-        });
-
-        it('should calculate used CCE volume properly', function() {
-            expect(result).toEqual(7.4);
+            expect(rejected).toBe(true);
         });
     });
 });

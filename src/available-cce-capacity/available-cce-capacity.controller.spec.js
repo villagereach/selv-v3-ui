@@ -19,7 +19,6 @@ describe('AvailableCceCapacityController', function() {
         module('available-cce-capacity');
         module('requisition');
         module('requisition-view-tab');
-
         module('openlmis-feature-flag');
 
         inject(function($injector) {
@@ -30,13 +29,10 @@ describe('AvailableCceCapacityController', function() {
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
 
-        this.fullVolume = 12;
-        this.volumeInUse = 2;
+        this.availableVolume = 15;
 
-        spyOn(this.availableCceCapacityService, 'getFullCceVolume')
-            .andReturn(this.$q.when(this.fullVolume));
-        spyOn(this.availableCceCapacityService, 'getCceVolumeInUse')
-            .andReturn(this.$q.when(this.volumeInUse));
+        spyOn(this.availableCceCapacityService, 'getAvailableCceVolume')
+            .andReturn(this.$q.when(this.availableVolume));
 
         this.indicator = this.$controller('AvailableCceCapacityController', {
             availableCceCapacityService: this.availableCceCapacityService
@@ -65,47 +61,28 @@ describe('AvailableCceCapacityController', function() {
             expect(this.indicator.failed).toEqual(false);
         });
 
-        it('should call availableCceCapacityService for full volume', function() {
+        it('should call availableCceCapacityService with facility id', function() {
             this.indicator.$onInit();
 
-            expect(this.availableCceCapacityService.getFullCceVolume)
+            expect(this.availableCceCapacityService.getAvailableCceVolume)
                 .toHaveBeenCalledWith(this.indicator.requisition.facility.id);
         });
 
-        it('should call availableCceCapacityService for volume in use', function() {
+        it('should expose availableVolume after the call resolves', function() {
             this.indicator.$onInit();
 
-            expect(this.availableCceCapacityService.getCceVolumeInUse)
-                .toHaveBeenCalledWith(this.indicator.requisition.facility.id);
-        });
-
-        it('should calculate availableVolume', function() {
-            this.indicator.$onInit();
-
-            expect(this.availableVolume).toBeUndefined();
+            expect(this.indicator.availableVolume).toBeUndefined();
 
             this.$rootScope.$apply();
 
-            expect(this.indicator.availableVolume).toBe(10);
-            expect(this.indicator.requisition.$availableCceCapacity).toBe(10);
+            expect(this.indicator.availableVolume).toBe(15);
+            expect(this.indicator.requisition.$availableCceCapacity).toBe(15);
             expect(this.indicator.ready).toBe(true);
             expect(this.indicator.failed).toBe(false);
         });
 
-        it('should set failed flag to true when getting full volume failed', function() {
-            this.availableCceCapacityService.getFullCceVolume.andReturn(this.$q.reject());
-            this.indicator.$onInit();
-
-            this.$rootScope.$apply();
-
-            expect(this.indicator.availableVolume).toBeUndefined();
-            expect(this.indicator.requisition.$availableCceCapacity).toBeUndefined();
-            expect(this.indicator.ready).toBe(false);
-            expect(this.indicator.failed).toBe(true);
-        });
-
-        it('should set failed flag to true when getting volume in use failed', function() {
-            this.availableCceCapacityService.getCceVolumeInUse.andReturn(this.$q.reject());
+        it('should set failed flag to true when the call fails', function() {
+            this.availableCceCapacityService.getAvailableCceVolume.andReturn(this.$q.reject());
             this.indicator.$onInit();
 
             this.$rootScope.$apply();
