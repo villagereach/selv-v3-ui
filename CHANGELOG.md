@@ -1,5 +1,9 @@
-1.1.17 / (WIP)
+1.2.0 / 2026-06-09
 ===================
+Changes:
+- [SELV3-748](https://openlmis.atlassian.net/browse/SELV3-748)
+  - Changed CCE Capacity endpoint.
+
 Bug Fixes:
 - [SELVSUP-61](https://openlmis.atlassian.net/browse/SELVSUP-61)
   - Fixed scrolling issue in Orders Summary modal.
