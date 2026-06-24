@@ -1,5 +1,8 @@
 1.2.1 / WIP
 ===================
+New functionality:
+- [SELV3-845](https://openlmis.atlassian.net/browse/SELV3-845)
+  - Added the Exchange Rate administration screen showing the current USD-MZM rate, its history, and a modal for entering a new rate.
 
 1.2.0 / 2026-06-09
 ===================

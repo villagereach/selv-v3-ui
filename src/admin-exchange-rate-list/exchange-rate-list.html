@@ -1,0 +1,35 @@
+<h2>{{:: 'adminExchangeRateList.exchangeRate' | message}}</h2>
+<section class="openlmis-table-container exchange-rate-list">
+    <button class="add" ui-sref="openlmis.administration.exchangeRate.add">
+        {{:: 'adminExchangeRateList.newRate' | message}}
+    </button>
+    <dl class="exchange-rate-current">
+        <dt>{{:: 'adminExchangeRateList.currentRate' | message}}</dt>
+        <dd ng-if="vm.currentRate.rate">
+            <span class="exchange-rate-current-value">{{vm.currentRate.rate | number}} {{:: 'adminExchangeRateList.currencyPair' | message}}</span>
+            <span class="exchange-rate-current-meta">{{:: 'adminExchangeRateList.enteredOn' | message}} {{vm.currentRate.validFrom | openlmisDatetime}}</span>
+            <span class="exchange-rate-current-meta">{{:: 'adminExchangeRateList.enteredBy' | message}} {{vm.currentRate.createdByName}}</span>
+        </dd>
+        <dd ng-if="!vm.currentRate.rate">{{:: 'adminExchangeRateList.noRate' | message}}</dd>
+    </dl>
+    <table>
+        <caption ng-if="vm.rates.length === 0">
+            {{:: 'adminExchangeRateList.noRates' | message}}
+        </caption>
+        <thead>
+        <tr>
+            <th>{{:: 'adminExchangeRateList.rate' | message}}</th>
+            <th>{{:: 'adminExchangeRateList.validFrom' | message}}</th>
+            <th>{{:: 'adminExchangeRateList.enteredBy' | message}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="rate in vm.pagedRates">
+            <td>{{rate.rate | number}} {{:: 'adminExchangeRateList.currencyPair' | message}}</td>
+            <td>{{rate.validFrom | openlmisDatetime}}</td>
+            <td>{{rate.createdByName}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <openlmis-pagination list="vm.rates" paged-list="vm.pagedRates"/>
+</section>

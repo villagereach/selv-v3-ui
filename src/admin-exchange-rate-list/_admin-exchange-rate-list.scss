@@ -1,0 +1,36 @@
+.exchange-rate-list {
+
+    // Align the add button with the table's right edge.
+    button.add {
+        margin-right: 0;
+    }
+
+    // Keep a gap before the pagination controls.
+    .openlmis-pagination .pagination-info {
+        margin-right: $space-size;
+    }
+
+    .exchange-rate-current {
+
+        // Align the current-rate block with the table's left edge.
+        margin-left: 0;
+
+        dd {
+            margin-left: 0;
+        }
+
+        .exchange-rate-current-value {
+            display: block;
+            font-size: 1.6em;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+        .exchange-rate-current-meta {
+            display: block;
+            color: #666;
+        }
+
+    }
+
+}

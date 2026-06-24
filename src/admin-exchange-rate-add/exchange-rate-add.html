@@ -1,0 +1,28 @@
+<div class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>{{:: 'adminExchangeRateAdd.newRate' | message}}</h1>
+            </div>
+            <div class="modal-body">
+                <form id="exchange-rate-add-form" ng-submit="vm.addRate()">
+                    <label for="rate" class="is-required">{{:: 'adminExchangeRateAdd.rate' | message}}</label>
+                    <input id="rate"
+                           type="number"
+                           step="any"
+                           min="0"
+                           ng-model="vm.rate"
+                           required/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button ng-click="vm.goToPreviousState('openlmis.administration.exchangeRate')">
+                    {{:: 'adminExchangeRateAdd.cancel' | message}}
+                </button>
+                <button class="primary" form="exchange-rate-add-form">
+                    {{:: 'adminExchangeRateAdd.create' | message}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
