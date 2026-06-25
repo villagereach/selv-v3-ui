@@ -33,4 +33,20 @@
 
     }
 
+    // On phones the info and page links don't fit on one row (links get cut off),
+    // so stack them vertically and centre both.
+    @media screen and (max-width: $res-sm) {
+
+        .openlmis-pagination {
+            flex-direction: column;
+            align-items: center;
+
+            .pagination-info {
+                margin-right: 0;
+                margin-bottom: $space-size;
+            }
+        }
+
+    }
+
 }
