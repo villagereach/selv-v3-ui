@@ -131,6 +131,10 @@
                     .then(function(resolvedData) {
                         loadingModalService.open();
                         shipment.shipmentDate = resolvedData.shipmentDate;
+                        // SELV3-846: attach the additional shipment fields entered in the modal
+                        shipment.extraData = angular.extend({}, shipment.extraData,
+                            additionalShipmentInfo(resolvedData));
+                        // SELV3-846: ends here
                         return originalConfirm.apply(shipment)
                             .then(function() {
                                 notificationService.success('shipmentView.shipmentHasBeenConfirmed');
@@ -148,6 +152,26 @@
         function showPhysicalInventoryWarning() {
             return !(drafts[0] && drafts[0].occurredDate);
         }
+
+        // SELV3-846: collect the additional shipment fields from the modal, keeping only the ones
+        // the user actually filled in (each value stored as a String in Shipment.extraData)
+        function additionalShipmentInfo(resolvedData) {
+            var info = {};
+            addIfPresent(info, 'volumesCount', resolvedData.volumesCount);
+            addIfPresent(info, 'icePacksCount', resolvedData.icePacksCount);
+            addIfPresent(info, 'packingPerson', resolvedData.packingPerson);
+            addIfPresent(info, 'truckRegistration', resolvedData.truckRegistration);
+            addIfPresent(info, 'trailerRegistration', resolvedData.trailerRegistration);
+            addIfPresent(info, 'securitySeal', resolvedData.securitySeal);
+            return info;
+        }
+
+        function addIfPresent(target, key, value) {
+            if (value !== undefined && value !== null && String(value).trim() !== '') {
+                target[key] = String(value).trim();
+            }
+        }
+        // SELV3-846: ends here
 
         function decorateDelete(originalDelete) {
             return function() {

@@ -415,6 +415,31 @@ describe('shipmentViewService', function() {
             expect(loadingModalService.close).not.toHaveBeenCalled();
         });
 
+        // SELV3-846: the additional shipment fields entered in the modal are attached to extraData
+        it('should attach the entered additional shipment fields to extraData', function() {
+            confirmService.confirm.andReturn($q.resolve());
+            originalConfirm.andReturn($q.resolve());
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date(),
+                volumesCount: 6,
+                icePacksCount: 0,
+                packingPerson: 'J. Silva',
+                truckRegistration: 'AAA123XX',
+                trailerRegistration: '',
+                securitySeal: '98234'
+            }));
+
+            shipment.confirm();
+            $rootScope.$apply();
+
+            expect(shipment.extraData.volumesCount).toEqual('6');
+            expect(shipment.extraData.icePacksCount).toEqual('0');
+            expect(shipment.extraData.packingPerson).toEqual('J. Silva');
+            expect(shipment.extraData.truckRegistration).toEqual('AAA123XX');
+            expect(shipment.extraData.securitySeal).toEqual('98234');
+            expect(shipment.extraData.trailerRegistration).toBeUndefined();
+        });
+
     });
 
     describe('decorated delete', function() {

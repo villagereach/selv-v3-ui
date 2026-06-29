@@ -1,0 +1,15 @@
+// SELV3-846: Confirm Shipment modal tweaks.
+.shipment-confirm-modal {
+
+    // The incomplete-physical-inventory warning sits flush against the paragraph below it because
+    // the base .alert has no margin — give it standard spacing instead of a hardcoded value.
+    .alert {
+        margin-bottom: $space-size;
+    }
+
+    // The two count fields read more naturally left-aligned in this form than the numeric default.
+    #volumesCount,
+    #icePacksCount {
+        @include text-align(left);
+    }
+}

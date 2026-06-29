@@ -77,9 +77,79 @@ describe('ChooseDateModalController', function() {
             expect(modalDeferred.resolve).toHaveBeenCalledWith({
                 occurredDate: vm.occurredDate,
                 signature: vm.signature,
-                shipmentDate: vm.shipmentDate
+                shipmentDate: vm.shipmentDate,
+                // SELV3-846: additional shipment fields
+                volumesCount: vm.volumesCount,
+                icePacksCount: vm.icePacksCount,
+                packingPerson: vm.packingPerson,
+                truckRegistration: vm.truckRegistration,
+                trailerRegistration: vm.trailerRegistration,
+                securitySeal: vm.securitySeal
             });
         });
     });
     // SELV3-507: ends here
+
+    // SELV3-846: Additional shipment fields
+    describe('additional shipment fields', function() {
+
+        it('should initialize the additional shipment fields as empty', function() {
+            expect(vm.volumesCount).toEqual('');
+            expect(vm.icePacksCount).toEqual('');
+            expect(vm.packingPerson).toEqual('');
+            expect(vm.truckRegistration).toEqual('');
+            expect(vm.trailerRegistration).toEqual('');
+            expect(vm.securitySeal).toEqual('');
+        });
+
+        it('should expose the field length limits', function() {
+            expect(vm.maxCountLength).toEqual(9);
+            expect(vm.maxTextLength).toEqual(255);
+        });
+
+        it('should uppercase the truck registration', function() {
+            vm.truckRegistration = 'abc123xx';
+
+            vm.formatTruckRegistration();
+
+            expect(vm.truckRegistration).toEqual('ABC123XX');
+        });
+
+        it('should flag a truck registration that does not match the plate format', function() {
+            vm.truckRegistration = 'ABC12MP';
+
+            expect(vm.isTruckRegistrationInvalid()).toBe(true);
+        });
+
+        it('should not flag a valid or empty truck registration', function() {
+            vm.truckRegistration = 'ABC123MP';
+
+            expect(vm.isTruckRegistrationInvalid()).toBe(false);
+
+            vm.truckRegistration = '';
+
+            expect(vm.isTruckRegistrationInvalid()).toBe(false);
+        });
+
+        it('should resolve modal with the entered additional shipment fields', function() {
+            spyOn(modalDeferred, 'resolve');
+            vm.volumesCount = 6;
+            vm.packingPerson = 'J. Silva';
+
+            vm.submit();
+
+            expect(modalDeferred.resolve).toHaveBeenCalledWith({
+                occurredDate: vm.occurredDate,
+                signature: vm.signature,
+                shipmentDate: vm.shipmentDate,
+                volumesCount: 6,
+                icePacksCount: '',
+                packingPerson: 'J. Silva',
+                truckRegistration: '',
+                trailerRegistration: '',
+                securitySeal: ''
+            });
+        });
+    });
+    // SELV3-846: ends here
 });
