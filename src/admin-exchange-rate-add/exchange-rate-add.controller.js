@@ -94,9 +94,11 @@
                         reload: true
                     });
                 })
-                .catch(function() {
+                .catch(function(error) {
                     loadingModalService.close();
-                    notificationService.error('adminExchangeRateAdd.create.failure');
+                    notificationService.error(
+                        error.data.message || 'adminExchangeRateAdd.create.failure'
+                    );
                 });
         }
     }

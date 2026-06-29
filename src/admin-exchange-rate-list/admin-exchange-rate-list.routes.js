@@ -32,9 +32,10 @@
             controllerAs: 'vm',
             accessRights: [ADMINISTRATION_RIGHTS.EXCHANGE_RATE_MANAGE],
             resolve: {
-                currentRate: function(ExchangeRateResource) {
+                currentRate: function(ExchangeRateResource, notificationService) {
                     return new ExchangeRateResource().get('current')
-                        .catch(function() {
+                        .catch(function(error) {
+                            notificationService.error(error.data.message);
                             return undefined;
                         });
                 },
