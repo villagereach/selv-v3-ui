@@ -76,4 +76,18 @@ describe('ExchangeRateAddController', function() {
 
         expect(this.$state.go).not.toHaveBeenCalled();
     });
+
+    it('should surface the backend error message on create failure', function() {
+        this.createSpy.andReturn(this.$q.reject({
+            data: {
+                message: 'Exchange rate must be a positive number'
+            }
+        }));
+
+        this.vm.addRate();
+        this.$rootScope.$apply();
+
+        expect(this.notificationService.error)
+            .toHaveBeenCalledWith('Exchange rate must be a positive number');
+    });
 });
