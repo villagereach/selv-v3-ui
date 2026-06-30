@@ -1,0 +1,12 @@
+{
+    "adminExchangeRateList.exchangeRate": "Exchange Rate",
+    "adminExchangeRateList.currentRate": "Current rate",
+    "adminExchangeRateList.newRate": "New rate",
+    "adminExchangeRateList.rate": "Rate",
+    "adminExchangeRateList.currencyPair": "MZM / USD",
+    "adminExchangeRateList.validFrom": "Valid from",
+    "adminExchangeRateList.enteredBy": "Entered by",
+    "adminExchangeRateList.enteredOn": "Entered on",
+    "adminExchangeRateList.noRate": "No exchange rate has been set yet.",
+    "adminExchangeRateList.noRates": "No exchange rates have been entered yet."
+}

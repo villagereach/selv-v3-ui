@@ -53,8 +53,11 @@
             REPORT_CATEGORIES_MANAGE: 'REPORT_CATEGORIES_MANAGE',
             REPORTS_MANAGE: 'REPORTS_MANAGE',
             // SELV3-670: Secure DHIS2 page 
-            MANAGE_DHIS2: 'MANAGE_DHIS2'
+            MANAGE_DHIS2: 'MANAGE_DHIS2',
             // SELV3-670: Ends here
+            // SELV3-845: Exchange rate management
+            EXCHANGE_RATE_MANAGE: 'EXCHANGE_RATE_MANAGE'
+            // SELV3-845: Ends here
         };
     }
 

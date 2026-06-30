@@ -1,0 +1,8 @@
+{
+    "adminExchangeRateAdd.newRate": "Add new exchange rate",
+    "adminExchangeRateAdd.rate": "Rate",
+    "adminExchangeRateAdd.create": "Submit",
+    "adminExchangeRateAdd.cancel": "Cancel",
+    "adminExchangeRateAdd.create.success": "The exchange rate has been saved.",
+    "adminExchangeRateAdd.create.failure": "Failed to save the exchange rate."
+}
