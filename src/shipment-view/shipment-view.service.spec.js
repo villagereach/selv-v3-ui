@@ -393,6 +393,9 @@ describe('shipmentViewService', function() {
         it('should show error on failure', function() {
             confirmService.confirm.andReturn($q.resolve());
             originalConfirm.andReturn($q.reject());
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date()
+            }));
 
             shipment.confirm();
             $rootScope.$apply();
@@ -411,6 +414,9 @@ describe('shipmentViewService', function() {
                 data: {
                     message: 'Shipment could not be created'
                 }
+            }));
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date()
             }));
 
             shipment.confirm();
