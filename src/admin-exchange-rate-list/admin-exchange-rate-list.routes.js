@@ -35,7 +35,10 @@
                 currentRate: function(ExchangeRateResource, notificationService) {
                     return new ExchangeRateResource().get('current')
                         .catch(function(error) {
-                            notificationService.error(error.data.message);
+                            var message = error && error.data && error.data.message;
+                            if (message) {
+                                notificationService.error(message);
+                            }
                             return undefined;
                         });
                 },

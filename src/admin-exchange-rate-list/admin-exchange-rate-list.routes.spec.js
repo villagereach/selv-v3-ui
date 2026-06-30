@@ -37,6 +37,7 @@ describe('openlmis.administration.exchangeRate state', function() {
             this.$rootScope = $injector.get('$rootScope');
             this.$q = $injector.get('$q');
             this.$templateCache = $injector.get('$templateCache');
+            this.notificationService = $injector.get('notificationService');
         });
 
         this.currentRate = {
@@ -47,6 +48,8 @@ describe('openlmis.administration.exchangeRate state', function() {
 
         this.getSpy.andReturn(this.$q.when(this.currentRate));
         this.querySpy.andReturn(this.$q.when([this.currentRate]));
+
+        spyOn(this.notificationService, 'error').andReturn();
 
         this.$state.go('openlmis');
         this.$rootScope.$apply();
@@ -91,6 +94,20 @@ describe('openlmis.administration.exchangeRate state', function() {
         this.goToUrl('/administration/exchangeRate');
 
         expect(this.getResolvedValue('currentRate')).toBeUndefined();
+    });
+
+    it('should notify the backend message and resolve undefined on failure', function() {
+        this.getSpy.andReturn(this.$q.reject({
+            data: {
+                message: 'Failed to load the current rate'
+            }
+        }));
+
+        this.goToUrl('/administration/exchangeRate');
+
+        expect(this.getResolvedValue('currentRate')).toBeUndefined();
+        expect(this.notificationService.error)
+            .toHaveBeenCalledWith('Failed to load the current rate');
     });
 
     it('should resolve the rate history', function() {

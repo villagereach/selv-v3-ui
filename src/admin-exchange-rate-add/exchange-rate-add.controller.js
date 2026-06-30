@@ -96,9 +96,8 @@
                 })
                 .catch(function(error) {
                     loadingModalService.close();
-                    notificationService.error(
-                        error.data.message || 'adminExchangeRateAdd.create.failure'
-                    );
+                    var message = error && error.data && error.data.message;
+                    notificationService.error(message || 'adminExchangeRateAdd.create.failure');
                 });
         }
     }
