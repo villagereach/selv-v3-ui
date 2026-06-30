@@ -398,9 +398,26 @@ describe('shipmentViewService', function() {
             $rootScope.$apply();
 
             expect(loadingModalService.open).toHaveBeenCalled();
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('shipmentView.failedToConfirmShipment');
 
             expect(notificationService.success).not.toHaveBeenCalled();
             expect(stateTrackerService.goToPreviousState).not.toHaveBeenCalled();
+        });
+
+        it('should surface the backend error message when confirmation fails', function() {
+            confirmService.confirm.andReturn($q.resolve());
+            originalConfirm.andReturn($q.reject({
+                data: {
+                    message: 'Shipment could not be created'
+                }
+            }));
+
+            shipment.confirm();
+            $rootScope.$apply();
+
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('Shipment could not be created');
         });
 
         it('should go to previous state on success', function() {

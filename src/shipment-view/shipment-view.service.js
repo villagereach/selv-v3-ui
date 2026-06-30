@@ -140,8 +140,11 @@
                                 notificationService.success('shipmentView.shipmentHasBeenConfirmed');
                                 stateTrackerService.goToPreviousState('openlmis.orders.view');
                             })
-                            .catch(function() {
-                                notificationService.error('shipmentView.failedToConfirmShipment');
+                            .catch(function(error) {
+                                var message = error && error.data && error.data.message;
+                                notificationService.error(
+                                    message || 'shipmentView.failedToConfirmShipment'
+                                );
                                 loadingModalService.close();
                             });
                     });
