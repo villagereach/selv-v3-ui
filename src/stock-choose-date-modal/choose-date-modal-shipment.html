@@ -39,6 +39,7 @@
               <label for="truckRegistration">{{:: 'stockChooseDateModal.truckRegistration' | message}}</label>
               <input id="truckRegistration" type="text" ng-attr-maxlength="{{vm.maxTextLength}}"
                      ng-model="vm.truckRegistration" ng-change="vm.formatTruckRegistration()"
+                     placeholder="{{:: 'stockChooseDateModal.truckRegistrationPlaceholder' | message}}"
                      openlmis-invalid="{{ vm.isTruckRegistrationInvalid() ? ('stockChooseDateModal.truckRegistrationInvalid' | message) : '' }}"/>
             </fieldset>
             <fieldset>
