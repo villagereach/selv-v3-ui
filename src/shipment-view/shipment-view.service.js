@@ -157,19 +157,17 @@
         // the user actually filled in (each value stored as a String in Shipment.extraData)
         function additionalShipmentInfo(resolvedData) {
             var info = {};
-            addIfPresent(info, 'volumesCount', resolvedData.volumesCount);
-            addIfPresent(info, 'icePacksCount', resolvedData.icePacksCount);
-            addIfPresent(info, 'packingPerson', resolvedData.packingPerson);
-            addIfPresent(info, 'truckRegistration', resolvedData.truckRegistration);
-            addIfPresent(info, 'trailerRegistration', resolvedData.trailerRegistration);
-            addIfPresent(info, 'securitySeal', resolvedData.securitySeal);
+            var keys = [
+                'volumesCount', 'icePacksCount', 'packingPerson',
+                'truckRegistration', 'trailerRegistration', 'securitySeal'
+            ];
+            keys.forEach(function(key) {
+                var value = resolvedData[key];
+                if (value !== undefined && value !== null && value !== '') {
+                    info[key] = String(value);
+                }
+            });
             return info;
-        }
-
-        function addIfPresent(target, key, value) {
-            if (value !== undefined && value !== null && value !== '') {
-                target[key] = String(value);
-            }
         }
         // SELV3-846: ends here
 
