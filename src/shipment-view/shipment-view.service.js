@@ -167,8 +167,8 @@
         }
 
         function addIfPresent(target, key, value) {
-            if (value !== undefined && value !== null && String(value).trim() !== '') {
-                target[key] = String(value).trim();
+            if (value !== undefined && value !== null && value !== '') {
+                target[key] = String(value);
             }
         }
         // SELV3-846: ends here
