@@ -6,7 +6,7 @@
     <dl class="exchange-rate-current">
         <dt>{{:: 'adminExchangeRateList.currentRate' | message}}</dt>
         <dd ng-if="vm.currentRate.rate">
-            <span class="exchange-rate-current-value">{{vm.currentRate.rate | number}} {{:: 'adminExchangeRateList.currencyPair' | message}}</span>
+            <span class="exchange-rate-current-value">{{vm.currentRate.rate}} {{:: 'adminExchangeRateList.currencyPair' | message}}</span>
             <span class="exchange-rate-current-meta">{{:: 'adminExchangeRateList.enteredOn' | message}} {{vm.currentRate.validFrom | openlmisDatetime}}</span>
             <span class="exchange-rate-current-meta">{{:: 'adminExchangeRateList.enteredBy' | message}} {{vm.currentRate.createdByName}}</span>
         </dd>
@@ -25,7 +25,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="rate in vm.pagedRates">
-            <td>{{rate.rate | number}} {{:: 'adminExchangeRateList.currencyPair' | message}}</td>
+            <td>{{rate.rate}} {{:: 'adminExchangeRateList.currencyPair' | message}}</td>
             <td>{{rate.validFrom | openlmisDatetime}}</td>
             <td>{{rate.createdByName}}</td>
         </tr>
