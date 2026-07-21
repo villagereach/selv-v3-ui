@@ -12,7 +12,7 @@
           </h4>
         </div>
   
-        <div class="modal-body">
+        <div class="modal-body shipment-confirm-modal">
           <p ng-if="vm.showPhysicalInventoryWarning" class="alert is-danger">
             {{'stockChooseDateModal.confirmShipment.warningIncompletePhysicalInventory' | message}}
           </p>
@@ -22,6 +22,35 @@
               <label for="date" class="required">{{'stockChooseDateModal.shipmentDate' | message}}</label>
               <input id="date" type="date" ng-model="vm.shipmentDate" min-date="vm.minDate" max-date="vm.maxDate" required/>
             </fieldset>  
+            <!-- SELV3-846: Additional shipment fields (all optional) -->
+            <fieldset>
+              <label for="volumesCount">{{:: 'stockChooseDateModal.volumesCount' | message}}</label>
+              <input id="volumesCount" type="text" positive-integer ng-attr-maxlength="{{vm.maxCountLength}}" ng-model="vm.volumesCount"/>
+            </fieldset>
+            <fieldset>
+              <label for="icePacksCount">{{:: 'stockChooseDateModal.icePacksCount' | message}}</label>
+              <input id="icePacksCount" type="text" positive-integer ng-attr-maxlength="{{vm.maxCountLength}}" ng-model="vm.icePacksCount"/>
+            </fieldset>
+            <fieldset>
+              <label for="packingPerson">{{:: 'stockChooseDateModal.packingPerson' | message}}</label>
+              <input id="packingPerson" type="text" ng-attr-maxlength="{{vm.maxTextLength}}" ng-model="vm.packingPerson"/>
+            </fieldset>
+            <fieldset>
+              <label for="truckRegistration">{{:: 'stockChooseDateModal.truckRegistration' | message}}</label>
+              <input id="truckRegistration" type="text" ng-attr-maxlength="{{vm.maxTextLength}}"
+                     ng-model="vm.truckRegistration" ng-change="vm.formatTruckRegistration()"
+                     placeholder="{{:: 'stockChooseDateModal.truckRegistrationPlaceholder' | message}}"
+                     openlmis-invalid="{{ vm.isTruckRegistrationInvalid() ? ('stockChooseDateModal.truckRegistrationInvalid' | message) : '' }}"/>
+            </fieldset>
+            <fieldset>
+              <label for="trailerRegistration">{{:: 'stockChooseDateModal.trailerRegistration' | message}}</label>
+              <input id="trailerRegistration" type="text" ng-attr-maxlength="{{vm.maxTextLength}}" ng-model="vm.trailerRegistration"/>
+            </fieldset>
+            <fieldset>
+              <label for="securitySeal">{{:: 'stockChooseDateModal.securitySeal' | message}}</label>
+              <input id="securitySeal" type="text" ng-attr-maxlength="{{vm.maxTextLength}}" ng-model="vm.securitySeal"/>
+            </fieldset>
+            <!-- SELV3-846: ends here -->
           </form>
         </div>
   

@@ -131,13 +131,20 @@
                     .then(function(resolvedData) {
                         loadingModalService.open();
                         shipment.shipmentDate = resolvedData.shipmentDate;
+                        // SELV3-846: attach the additional shipment fields entered in the modal
+                        shipment.extraData = angular.extend({}, shipment.extraData,
+                            additionalShipmentInfo(resolvedData));
+                        // SELV3-846: ends here
                         return originalConfirm.apply(shipment)
                             .then(function() {
                                 notificationService.success('shipmentView.shipmentHasBeenConfirmed');
                                 stateTrackerService.goToPreviousState('openlmis.orders.view');
                             })
-                            .catch(function() {
-                                notificationService.error('shipmentView.failedToConfirmShipment');
+                            .catch(function(error) {
+                                var message = error && error.data && error.data.message;
+                                notificationService.error(
+                                    message || 'shipmentView.failedToConfirmShipment'
+                                );
                                 loadingModalService.close();
                             });
                     });
@@ -148,6 +155,24 @@
         function showPhysicalInventoryWarning() {
             return !(drafts[0] && drafts[0].occurredDate);
         }
+
+        // SELV3-846: collect the additional shipment fields from the modal, keeping only the ones
+        // the user actually filled in (each value stored as a String in Shipment.extraData)
+        function additionalShipmentInfo(resolvedData) {
+            var info = {};
+            var keys = [
+                'volumesCount', 'icePacksCount', 'packingPerson',
+                'truckRegistration', 'trailerRegistration', 'securitySeal'
+            ];
+            keys.forEach(function(key) {
+                var value = resolvedData[key];
+                if (value !== undefined && value !== null && value !== '') {
+                    info[key] = String(value);
+                }
+            });
+            return info;
+        }
+        // SELV3-846: ends here
 
         function decorateDelete(originalDelete) {
             return function() {

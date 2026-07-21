@@ -393,14 +393,37 @@ describe('shipmentViewService', function() {
         it('should show error on failure', function() {
             confirmService.confirm.andReturn($q.resolve());
             originalConfirm.andReturn($q.reject());
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date()
+            }));
 
             shipment.confirm();
             $rootScope.$apply();
 
             expect(loadingModalService.open).toHaveBeenCalled();
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('shipmentView.failedToConfirmShipment');
 
             expect(notificationService.success).not.toHaveBeenCalled();
             expect(stateTrackerService.goToPreviousState).not.toHaveBeenCalled();
+        });
+
+        it('should surface the backend error message when confirmation fails', function() {
+            confirmService.confirm.andReturn($q.resolve());
+            originalConfirm.andReturn($q.reject({
+                data: {
+                    message: 'Shipment could not be created'
+                }
+            }));
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date()
+            }));
+
+            shipment.confirm();
+            $rootScope.$apply();
+
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('Shipment could not be created');
         });
 
         it('should go to previous state on success', function() {
@@ -413,6 +436,31 @@ describe('shipmentViewService', function() {
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(notificationService.error).not.toHaveBeenCalled();
             expect(loadingModalService.close).not.toHaveBeenCalled();
+        });
+
+        // SELV3-846: the additional shipment fields entered in the modal are attached to extraData
+        it('should attach the entered additional shipment fields to extraData', function() {
+            confirmService.confirm.andReturn($q.resolve());
+            originalConfirm.andReturn($q.resolve());
+            chooseDateModalService.showWhenChoosingShipmentDate.andReturn($q.resolve({
+                shipmentDate: new Date(),
+                volumesCount: 6,
+                icePacksCount: 0,
+                packingPerson: 'J. Silva',
+                truckRegistration: 'AAA123XX',
+                trailerRegistration: '',
+                securitySeal: '98234'
+            }));
+
+            shipment.confirm();
+            $rootScope.$apply();
+
+            expect(shipment.extraData.volumesCount).toEqual('6');
+            expect(shipment.extraData.icePacksCount).toEqual('0');
+            expect(shipment.extraData.packingPerson).toEqual('J. Silva');
+            expect(shipment.extraData.truckRegistration).toEqual('AAA123XX');
+            expect(shipment.extraData.securitySeal).toEqual('98234');
+            expect(shipment.extraData.trailerRegistration).toBeUndefined();
         });
 
     });

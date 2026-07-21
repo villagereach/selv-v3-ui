@@ -3,6 +3,8 @@
 New functionality:
 - [SELV3-845](https://openlmis.atlassian.net/browse/SELV3-845)
   - Added the Exchange Rate administration screen showing the current USD-MZM rate, its history, and a modal for entering a new rate.
+- [SELV3-846](https://openlmis.atlassian.net/browse/SELV3-846)
+  - Extended the Confirm Shipment modal with additional shipment fields (number of volumes, number of ice packs, person responsible for packing, truck and trailer registration, security seal), submitted to the fulfillment extension endpoint.
 
 1.2.0 / 2026-06-09
 ===================

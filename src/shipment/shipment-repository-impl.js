@@ -30,11 +30,12 @@
         .factory('ShipmentRepositoryImpl', ShipmentRepositoryImpl);
 
     ShipmentRepositoryImpl.$inject = [
-        'ShipmentResource', 'ShipmentDraftResource', 'OrderResource', 'StockCardSummaryRepositoryImpl'
+        'ShipmentResource', 'ShipmentDraftResource', 'OrderResource', 'StockCardSummaryRepositoryImpl',
+        'ShipmentWithAdditionalInfoResource'
     ];
 
     function ShipmentRepositoryImpl(ShipmentResource, ShipmentDraftResource, OrderResource,
-                                    StockCardSummaryRepositoryImpl) {
+                                    StockCardSummaryRepositoryImpl, ShipmentWithAdditionalInfoResource) {
 
         ShipmentRepositoryImpl.prototype.create = create;
         ShipmentRepositoryImpl.prototype.createDraft = createDraft;
@@ -57,6 +58,8 @@
          */
         function ShipmentRepositoryImpl() {
             this.shipmentResource = new ShipmentResource();
+            // SELV3-846: posts the confirmed shipment together with the additional fields
+            this.shipmentWithAdditionalInfoResource = new ShipmentWithAdditionalInfoResource();
             this.shipmentDraftResource = new ShipmentDraftResource();
             this.stockCardSummaryRepositoryImpl = new StockCardSummaryRepositoryImpl();
             this.orderResource = new OrderResource();
@@ -78,7 +81,8 @@
             var orderResource = this.orderResource,
                 stockCardSummaryRepositoryImpl = this.stockCardSummaryRepositoryImpl;
 
-            return this.shipmentResource.create(json)
+            // SELV3-846: create via the extension endpoint so the additional fields are validated
+            return this.shipmentWithAdditionalInfoResource.create(json)
                 .then(function(shipmentJson) {
                     return extendResponse(shipmentJson, orderResource, stockCardSummaryRepositoryImpl);
                 });
