@@ -131,6 +131,12 @@ describe('ChooseDateModalController', function() {
             expect(vm.isTruckRegistrationInvalid()).toBe(false);
         });
 
+        it('should not flag the no-vehicle placeholder truck registration', function() {
+            vm.truckRegistration = 'XXXXXXXX';
+
+            expect(vm.isTruckRegistrationInvalid()).toBe(false);
+        });
+
         it('should resolve modal with the entered additional shipment fields', function() {
             spyOn(modalDeferred, 'resolve');
             vm.volumesCount = 6;

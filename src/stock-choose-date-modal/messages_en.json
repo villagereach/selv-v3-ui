@@ -10,6 +10,6 @@
     "stockChooseDateModal.truckRegistration": "Truck Registration",
     "stockChooseDateModal.trailerRegistration": "Trailer Registration",
     "stockChooseDateModal.securitySeal": "Security Seal",
-    "stockChooseDateModal.truckRegistrationInvalid": "Truck registration must match the format AAA123XX (three letters, three digits, two letters).",
+    "stockChooseDateModal.truckRegistrationInvalid": "Truck registration must match the format AAA123XX (three letters, three digits, two letters), or XXXXXXXX when the transport is not a vehicle.",
     "stockChooseDateModal.truckRegistrationPlaceholder": "AAA123XX"
 }

@@ -61,6 +61,11 @@
         // Keep byte-identical with the BE validator (AdditionalShipmentInfoValidator.TRUCK_REGISTRATION_PATTERN).
         var truckRegistrationPattern = /^[A-Z]{3}[0-9]{3}[A-Z]{2}$/;
 
+        // Placeholder for last-mile delivery where the transport is not a vehicle and no real
+        // plate exists; accepted in place of the plate format. Keep in sync with the BE validator
+        // (AdditionalShipmentInfoValidator.NO_VEHICLE_PLACEHOLDER).
+        var noVehiclePlaceholder = 'XXXXXXXX';
+
         // Uppercase the truck registration as the user types so it matches the required format.
         vm.formatTruckRegistration = function() {
             if (vm.truckRegistration) {
@@ -72,7 +77,8 @@
         // openlmis-invalid directly (instead of ng-pattern) so the field shows only this message,
         // not the raw "pattern" validation-key on top of it.
         vm.isTruckRegistrationInvalid = function() {
-            return !!vm.truckRegistration && !truckRegistrationPattern.test(vm.truckRegistration);
+            return !!vm.truckRegistration && vm.truckRegistration !== noVehiclePlaceholder &&
+                !truckRegistrationPattern.test(vm.truckRegistration);
         };
         // SELV3-846: ends here
 
