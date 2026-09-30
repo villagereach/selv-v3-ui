@@ -17,7 +17,8 @@ describe('ShipmentViewController', function() {
 
     // SELV3-507: Allow user to enter Shipment Date
     var vm, $q, $controller, ShipmentDataBuilder, shipment, drafts, tableLineItems, OrderDataBuilder,
-        fulfillmentUrlFactory, QUANTITY_UNIT, order, messageService, $window, $rootScope, shipmentViewService;
+        fulfillmentUrlFactory, QUANTITY_UNIT, order, messageService, $window, $rootScope, shipmentViewService,
+        alertService;
 
     beforeEach(function() {
         module('shipment-view', function($provide) {
@@ -38,6 +39,7 @@ describe('ShipmentViewController', function() {
             $rootScope = $injector.get('$rootScope');
             fulfillmentUrlFactory = $injector.get('fulfillmentUrlFactory');
             shipmentViewService = $injector.get('shipmentViewService');
+            alertService = $injector.get('alertService');
         });
 
         shipment = new ShipmentDataBuilder().build();
@@ -187,5 +189,38 @@ describe('ShipmentViewController', function() {
         });
 
     });
+
+    // SELVSUP-72: Block confirming a shipment with no quantities
+    describe('confirmShipment', function() {
+
+        beforeEach(function() {
+            spyOn(shipment, 'confirm').andReturn($q.resolve());
+            spyOn(alertService, 'error');
+        });
+
+        it('should not confirm shipment when all quantities are 0', function() {
+            shipment.lineItems.forEach(function(lineItem) {
+                lineItem.quantityShipped = 0;
+            });
+
+            vm.confirmShipment();
+
+            expect(alertService.error).toHaveBeenCalledWith('shipmentView.emptyShipmentNotAllowed');
+            expect(shipment.confirm).not.toHaveBeenCalled();
+        });
+
+        it('should confirm shipment when any quantity is greater than 0', function() {
+            shipment.lineItems.forEach(function(lineItem) {
+                lineItem.quantityShipped = 0;
+            });
+            shipment.lineItems[0].quantityShipped = 1;
+
+            vm.confirmShipment();
+
+            expect(shipment.confirm).toHaveBeenCalled();
+            expect(alertService.error).not.toHaveBeenCalled();
+        });
+    });
+    // SELVSUP-72: ends here
 
 });

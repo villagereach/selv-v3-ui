@@ -31,13 +31,13 @@
     ShipmentViewController.$inject = [
         'shipment', 'loadingModalService', '$state', '$window', 'fulfillmentUrlFactory',
         'messageService', 'accessTokenFactory', 'updatedOrder', 'QUANTITY_UNIT', 'tableLineItems',
-        'VVM_STATUS', 'confirmService', 'drafts', 'shipmentViewService', 'ORDER_STATUSES'
+        'VVM_STATUS', 'alertService', 'drafts', 'shipmentViewService', 'ORDER_STATUSES'
     ];
 
     function ShipmentViewController(shipment, loadingModalService, $state, $window,
                                     fulfillmentUrlFactory, messageService, accessTokenFactory,
                                     updatedOrder, QUANTITY_UNIT, tableLineItems, VVM_STATUS,
-                                    confirmService, drafts, shipmentViewService, ORDER_STATUSES) {
+                                    alertService, drafts, shipmentViewService, ORDER_STATUSES) {
 
         var vm = this;
 
@@ -222,21 +222,14 @@
          * @return {Promise} the promise resolved when confirmation is successful, rejected otherwise
          */
         function confirmShipment() {
-            var sum = checkIfQuantityShipedIsFilled();
-
-            if (sum === 0) {
-
-                confirmService.confirmDestroy(
-                    'shipmentView.saveShipmentConfirmation',
-                    'shipmentView.yes',
-                    'shipmentView.no'
-                )
-                    .then(function() {
-                        shipment.confirm();
-                    });
-            } else {
-                shipment.confirm();
+            // SELVSUP-72: Block confirming a shipment with no quantities
+            if (checkIfQuantityShipedIsFilled() === 0) {
+                alertService.error('shipmentView.emptyShipmentNotAllowed');
+                return;
             }
+            // SELVSUP-72: ends here
+
+            shipment.confirm();
         }
 
         function checkIfQuantityShipedIsFilled() {

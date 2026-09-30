@@ -6,6 +6,10 @@ New functionality:
 - [SELV3-846](https://openlmis.atlassian.net/browse/SELV3-846)
   - Extended the Confirm Shipment modal with additional shipment fields (number of volumes, number of ice packs, person responsible for packing, truck and trailer registration, security seal), submitted to the fulfillment extension endpoint.
 
+Improvements:
+- [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
+  - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
+
 1.2.0 / 2026-06-09
 ===================
 Changes:
