@@ -7,9 +7,5 @@
     "shipmentView.remainingSoh": "Remaining SOH",
     "shipmentView.packs": "Packs",
     "shipmentView.doses": "Doses",
-    "shipmentView.saveShipmentConfirmation": "All line items have 0 quantity. Are you sure you want to confirm empty shipment?",
-    "shipmentView.yes": "Yes",
-    "shipmentView.no": "No"
-
-
+    "shipmentView.emptyShipmentNotAllowed": "All line items have 0 quantity. Enter the shipped quantities before confirming the shipment."
 }
