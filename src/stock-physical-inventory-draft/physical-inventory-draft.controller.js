@@ -35,7 +35,9 @@
         'VVM_STATUS', 'reasons', 'stockReasonsCalculations', 'loadingModalService', '$window',
         'stockmanagementUrlFactory', 'accessTokenFactory', 'orderableGroupService', '$filter', '$q',
         'offlineService', 'physicalInventoryDraftCacheService', 'stockCardService', 'LotResource',
-        'editLotModalService', 'dateUtils', 'QUANTITY_UNIT', 'quantityUnitCalculateService'];
+        'editLotModalService', 'dateUtils', 'QUANTITY_UNIT', 'quantityUnitCalculateService',
+        'localStorageService', 'physicalInventoryScanService', 'hasPermissionToAddNewLot',
+        '$timeout'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
                         physicalInventoryFactory, notificationService, alertService,
@@ -43,8 +45,11 @@
                         confirmService, physicalInventoryService, MAX_INTEGER_VALUE, VVM_STATUS,
                         reasons, stockReasonsCalculations, loadingModalService, $window,
                         stockmanagementUrlFactory, accessTokenFactory, orderableGroupService, $filter, $q,
-                        offlineService, physicalInventoryDraftCacheService, stockCardService, LotResource,
-                        editLotModalService, dateUtils, QUANTITY_UNIT, quantityUnitCalculateService) {
+                        offlineService, physicalInventoryDraftCacheService, stockCardService,
+                        LotResource, editLotModalService, dateUtils, QUANTITY_UNIT,
+                        quantityUnitCalculateService, localStorageService,
+                        physicalInventoryScanService, hasPermissionToAddNewLot, $timeout) {
+
         var vm = this;
 
         vm.$onInit = onInit;
@@ -55,6 +60,7 @@
         vm.formatDate = formatDate;
         vm.showInDoses = showInDoses;
         vm.recalculateQuantity = recalculateQuantity;
+        vm.onScan = onScan;
 
         /**
          * @ngdoc property
@@ -412,6 +418,28 @@
         /**
          * @ngdoc method
          * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name deleteLineItem
+         *
+         * @description
+         * Removes a newly added line item from the physical inventory draft.
+         *
+         * @param {Object} lineItem line item to be deleted from the draft.
+         */
+        vm.deleteLineItem = function(lineItem) {
+            var index = draft.lineItems.indexOf(lineItem);
+            if (index >= 0) {
+                draft.lineItems.splice(index, 1);
+            }
+            draft.$modified = true;
+            vm.cacheDraft();
+            $state.go($state.current.name, $stateParams, {
+                reload: $state.current.name
+            });
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
          * @name search
          *
          * @description
@@ -660,6 +688,13 @@
             return containsCode;
         }
         // SELV3-142: ends here
+        function messageOf(errorResponse) {
+            if (errorResponse && errorResponse.data && errorResponse.data.message) {
+                return errorResponse.data.message;
+            }
+
+            return messageService.get('stockPhysicalInventoryDraft.submitFailed');
+        }
 
         function saveLots(draft, submitMethod) {
             var lotPromises = [],
@@ -674,18 +709,21 @@
                             return createResponse;
                         })
                         .catch(function(response) {
-                            if (response.data.messageKey ===
-                                'referenceData.error.lot.lotCode.mustBeUnique' ||
-                                response.data.messageKey ===
-                                'referenceData.error.lot.tradeItem.required') {
+                            var messageKey = response && response.data
+                                ? response.data.messageKey : undefined;
+
+                            if (messageKey === 'referenceData.error.lot.lotCode.mustBeUnique' ||
+                                messageKey === 'referenceData.error.lot.tradeItem.required') {
                                 errorLots.push({
                                     lotCode: lineItem.lot.lotCode,
-                                    error: response.data.messageKey ===
+                                    error: messageKey ===
                                     'referenceData.error.lot.lotCode.mustBeUnique' ?
                                         'stockPhysicalInventoryDraft.lotCodeMustBeUnique' :
                                         'stockPhysicalInventoryDraft.tradeItemRequuiredToAddLotCode'
                                 });
+                                return;
                             }
+                            return $q.reject(response);
                         }));
                 }
             });
@@ -708,7 +746,7 @@
                 })
                 .catch(function(errorResponse) {
                     loadingModalService.close();
-                    if (errorLots) {
+                    if (errorLots.length) {
                         var errorLotsReduced = errorLots.reduce(function(result, currentValue) {
                             if (currentValue.error in result) {
                                 result[currentValue.error].push(currentValue.lotCode);
@@ -720,9 +758,9 @@
                         for (var error in errorLotsReduced) {
                             alertService.error(error, errorLotsReduced[error].join(', '));
                         }
-                        return $q.reject(errorResponse.data.message);
+                        return $q.reject(messageOf(errorResponse));
                     }
-                    alertService.error(errorResponse.data.message);
+                    alertService.error(messageOf(errorResponse));
                 });
         }
 
@@ -808,6 +846,10 @@
                 item.unaccountedQuantity = stockReasonsCalculations.calculateUnaccounted(item, item.stockAdjustments);
             });
 
+            vm.scanMode = physicalInventoryScanService.mode();
+            vm.scanEnabled = physicalInventoryScanService.isEnabled();
+            vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
+
             vm.updateProgress();
 
             var orderableGroups = orderableGroupService.groupByOrderableId(draft.lineItems);
@@ -856,7 +898,122 @@
             vm.updateProgress();
             vm.validateQuantity(lineItem);
             vm.checkUnaccountedStockAdjustments(lineItem);
+            vm.validateUnaccountedQuantity(lineItem);
             vm.dataChanged = !vm.dataChanged;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-physical-inventory-draft.controller:PhysicalInventoryDraftController
+         * @name onScan
+         *
+         * @description
+         * Counts a scan on this draft. The products a scan can reach are all of the draft's line items,
+         * not only the rows on screen, because a count lists every product of the program while the
+         * screen shows the ones with stock or a quantity entered.
+         *
+         * @param  {Object}  scan      the parsed scan
+         * @param  {Object}  tradeItem the trade item the scanned GTIN resolved to
+         * @return {Promise}           resolves once the line was counted
+         */
+        function onScan(scan, tradeItem) {
+            return physicalInventoryScanService.resolve(scan, tradeItem, {
+                orderableGroups: orderableGroupService.groupByOrderableId(draft.lineItems),
+                lineItems: draft.lineItems,
+                addLine: addScannedLine,
+                onCounted: vm.quantityChanged,
+                allowsNewLot: Boolean(vm.hasPermissionToAddNewLot)
+            })
+                .then(showScannedLine);
+        }
+
+        /**
+         * A batch the facility has not recorded before. Every recorded lot is already a line item of
+         * the draft, so this is the only line a scan ever has to add. Only reached when the user may
+         * add batches at all, which is the same right the add product modal asks for.
+         *
+         * The lot is created when the count is submitted, exactly as one added through the add product
+         * modal is, which is why it carries the trade item and is marked as new.
+         */
+        function addScannedLine(group, lot) {
+            var lineItem;
+
+            if (!lot || lot.id) {
+                return undefined;
+            }
+
+            lineItem = orderableGroupService.addItemWithNewLot({
+                lotCode: lot.lotCode,
+                expirationDate: lot.expirationDate,
+                tradeItemId: tradeItemIdOf(group),
+                active: true
+            }, group[0]);
+
+            /*
+             * The line was copied from a sibling batch of the same product, so everything counted or
+             * recorded against that batch has to go before this one is counted.
+             */
+            lineItem.stockCardId = null;
+            lineItem.stockOnHand = 0;
+            lineItem.quantity = 0;
+            lineItem.stockAdjustments = [];
+            lineItem.unaccountedQuantity = undefined;
+            lineItem.vvmStatus = undefined;
+            lineItem.active = true;
+            lineItem.$justAdded = true;
+
+            draft.lineItems.push(lineItem);
+
+            return lineItem;
+        }
+
+        /**
+         * A line the screen was not listing - a new batch, a product with no stock card, or a batch that
+         * had been deactivated - only shows up once the display groups are rebuilt, so it takes the same
+         * reload the add product modal does. Lines already on screen are left alone: reloading on every
+         * scan would be slow and would reset the scan indicator.
+         *
+         * Counting a batch means it is on the shelf, so it is marked active the way the add product
+         * modal marks what it adds - a deactivated line left inactive would stay hidden and, once shown,
+         * would block the submit. Any search in force is cleared for the same reason: a row that cannot
+         * be seen reads as a scan that did nothing.
+         */
+        function showScannedLine(lineItem) {
+            if (!lineItem || isDisplayed(lineItem)) {
+                return lineItem;
+            }
+
+            lineItem.active = true;
+            lineItem.isAdded = true;
+            draft.$modified = true;
+            vm.cacheDraft();
+
+            vm.keyword = undefined;
+            $stateParams.keyword = undefined;
+            $stateParams.program = vm.program;
+            $stateParams.facility = vm.facility;
+            $stateParams.noReload = true;
+            $state.go($state.current.name, $stateParams, {
+                reload: $state.current.name
+            });
+
+            return lineItem;
+        }
+
+        function isDisplayed(lineItem) {
+            return _.flatten(vm.displayLineItemsGroup).indexOf(lineItem) !== -1;
+        }
+
+        /**
+         * Read from whichever line of the group carries it rather than the first, so a line whose
+         * orderable came back from the cache without identifiers cannot throw mid scan.
+         */
+        function tradeItemIdOf(group) {
+            var identified = _.find(group, function(groupItem) {
+                return groupItem.orderable && groupItem.orderable.identifiers;
+            });
+
+            return identified ? identified.orderable.identifiers.tradeItem : undefined;
         }
 
         /**
@@ -898,7 +1055,7 @@
          */
         function shouldDisplayHideButtonColumn(lineItems) {
             lineItems.forEach(function(item) {
-                if (item.active && item.stockOnHand === 0 && !item.$isNewItem) {
+                if ((item.active && item.stockOnHand === 0 && !item.$isNewItem) || item.$justAdded) {
                     vm.showHideButtonColumn = true;
                 }
             });
@@ -956,7 +1113,6 @@
                     });
                 });
             });
-
             if (selectAll === false) {
                 vm.selectedStockCards = [];
             }
@@ -971,6 +1127,8 @@
             }
         };
 
-        vm.validateOnPageChange();
+        // The directives gating row errors register their listeners while the view links, after
+        // this controller is built - defer, so a submitted draft marks its errors after a page change.
+        $timeout(vm.validateOnPageChange);
     }
 })();

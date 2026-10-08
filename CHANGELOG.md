@@ -7,6 +7,12 @@ New functionality:
   - Extended the Confirm Shipment modal with additional shipment fields (number of volumes, number of ice packs, person responsible for packing, truck and trailer registration, security seal), submitted to the fulfillment extension endpoint.
 
 Improvements:
+- [SELV3-886](https://openlmis.atlassian.net/browse/SELV3-886)
+  - Upgraded to the OpenLMIS 3.20.1 UI modules (reference-ui 5.2.15); SELV printouts are kept
+  - Removed overrides now covered by core and the unused Equipment UI module
+  - Orders can be cancelled from the shipment view, and the CANCELLED status is shown and filterable
+  - Physical inventory: added barcode scanning, the Pack Size column and a Delete button for products added by mistake
+  - Content Security Policy enabled again; external dashboards (Superset, PowerBI) are allowed via SUPERSET_URL and EXTERNAL_DOMAINS
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 

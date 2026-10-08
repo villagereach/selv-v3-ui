@@ -1,8 +1,11 @@
 #!/bin/sh
 if [ ! -f template.js ]; then
-    cat /usr/share/nginx/html/openlmis.js > template.js 
+    cat /usr/share/nginx/html/openlmis.js > template.js
 fi
-envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < template.js  > /usr/share/nginx/html/openlmis.js
+envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < template.js > /usr/share/nginx/html/openlmis.js
 
+echo "Registering with Consul..."
 node consul/registration.js -c register -f consul/config.json
-nginx -g 'daemon off;'
+
+nginx -g 'daemon off;' &
+wait $!

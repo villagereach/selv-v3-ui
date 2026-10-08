@@ -2,6 +2,7 @@
   {{'stockPhysicalInventoryDraft.title' | message: {'facilityCode': vm.facility.code, 'facilityName': vm.facility.name, 'program': vm.program.name} }}
 </h2>
 
+<div class="physical-inventory-draft">
 <section class="openlmis-table-container">
   <form ng-submit="vm.search()" openlmis-table-filter>
     <fieldset class="form-group">
@@ -21,11 +22,18 @@
     </fieldset>
   </form>
 
-  <openlmis-progressbar class="physical-inventory-draft-progress"
-                        value="vm.itemsWithQuantity.length" max="vm.displayLineItemsGroup.length"
-                        title="{{'stockPhysicalInventoryDraft.numberOfProductsComplete' | message: {'num': vm.itemsWithQuantity.length, 'total': vm.displayLineItemsGroup.length} }}">
-  </openlmis-progressbar>
-  <quantity-unit-toggle class="is-primary" quantity-unit="vm.quantityUnit"></quantity-unit-toggle>
+    <openlmis-progressbar class="physical-inventory-draft-progress"
+        value="vm.itemsWithQuantity.length" max="vm.displayLineItemsGroup.length"
+        title="{{'stockPhysicalInventoryDraft.numberOfProductsComplete' | message: {'num': vm.itemsWithQuantity.length, 'total': vm.displayLineItemsGroup.length} }}">
+    </openlmis-progressbar>
+    <div class="physical-inventory-draft-scan">
+        <openlmis-gtin-scan-input
+            ng-if="vm.scanEnabled"
+            mode="{{vm.scanMode}}"
+            on-scan="vm.onScan(scan, tradeItem)">
+        </openlmis-gtin-scan-input>
+    </div>
+    <quantity-unit-toggle class="is-primary" quantity-unit="vm.quantityUnit"></quantity-unit-toggle>
 
   <button class="pull-right add" ng-click="vm.addProducts()">
     {{'stockPhysicalInventoryDraft.addProduct' | message}}
@@ -48,6 +56,7 @@
       </th>
       <th>{{'stockPhysicalInventoryDraft.productCode' | message}}</th>
       <th>{{'stockPhysicalInventoryDraft.product' | message}}</th>
+      <th>{{'stockPhysicalInventoryDraft.packSize' | message}}</th>
       <th>{{'stockPhysicalInventoryDraft.lotCode' | message}}</th>
       <th>{{'stockPhysicalInventoryDraft.expiryDate' | message}}</th>
       <th class="col-sticky sticky-right">{{'stockPhysicalInventoryDraft.soh' | message}}</th>
@@ -62,6 +71,7 @@
       <td ng-if="vm.showHideButtonColumn"></td>
       <td>{{lineItems[0].orderable.productCode}}</td>
       <td>{{lineItems[0].orderable | productName}}</td>
+      <td align="right">{{lineItems[0].orderable.netContent}}</td>
       <td></td>
       <td></td>
       <td align="right">{{vm.calculate(lineItems, 'stockOnHand')}}</td>
@@ -76,9 +86,12 @@
                ng-model="lineItem.$selected"
                ng-if="lineItem.stockOnHand === 0 && lineItem.active && !lineItem.$isNewItem"
                ng-change="vm.onLineItemSelect(lineItem)">
+        <button type="button" class="danger" ng-if="lineItem.$justAdded"
+                ng-click="vm.deleteLineItem(lineItem)">{{'stockPhysicalInventoryDraft.deleteLineItem' | message}}</button>
       </td>
       <td>{{lineItems.length > 1 ? '' : lineItem.orderable.productCode}}</td>
       <td>{{lineItems.length > 1 ? '' : (lineItem.orderable | productName)}}</td>
+      <td align="right">{{lineItem.orderable.netContent}}</td>
       <td ng-if="vm.canEditLot(lineItem)">
         <button class="edit" ng-click="vm.editLot(lineItem)">
           {{lineItem.displayLotMessage}}
@@ -124,5 +137,6 @@
   </table>
   <openlmis-pagination list="vm.displayLineItemsGroup" paged-list="vm.pagedLineItems" on-page-change="vm.saveOnPageChange"></openlmis-pagination>
 </section>
+</div>
 
 <ng-include src="'stock-physical-inventory-draft/physical-inventory-draft-toolbar.html'"></ng-include>

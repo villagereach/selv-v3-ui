@@ -131,6 +131,84 @@ describe('ShipmentViewLineItemFactory', function() {
             expect(result[0].vvmStatus).toBeUndefined();
             expect(result[0].shipmentLineItem).toEqual(shipment.lineItems[0]);
             expect(result[0].isLot).toEqual(true);
+            expect(result[0].isChild).toEqual(false);
+        });
+
+        it('should only mark lot rows inside a trade item group as child rows', function() {
+            summaries = [
+                new StockCardSummaryDataBuilder()
+                    .withOrderable(commodityTypeOne)
+                    .withCanFulfillForMe([
+                        new CanFulfillForMeEntryDataBuilder()
+                            .withOrderable(tradeItemOne)
+                            .withStockOnHand(20)
+                            .withLot(lotOne)
+                            .buildJson(),
+                        new CanFulfillForMeEntryDataBuilder()
+                            .withOrderable(tradeItemOne)
+                            .withStockOnHand(30)
+                            .withLot(lotTwo)
+                            .buildJson(),
+                        new CanFulfillForMeEntryDataBuilder()
+                            .withOrderable(tradeItemTwo)
+                            .withStockOnHand(40)
+                            .withLot(lotThree)
+                            .buildJson()
+                    ])
+                    .build()
+            ];
+
+            shipment = new ShipmentDataBuilder()
+                .withOrder(
+                    new OrderDataBuilder()
+                        .withOrderLineItems([
+                            new OrderLineItemDataBuilder()
+                                .withOrderable(commodityTypeOne)
+                                .build()
+                        ])
+                        .build()
+                )
+                .withLineItems([
+                    new ShipmentLineItemDataBuilder()
+                        .withOrderable(tradeItemOne)
+                        .withCanFulfillForMe(summaries[0].canFulfillForMe[0])
+                        .withLot(summaries[0].canFulfillForMe[0].lot)
+                        .buildJson(),
+                    new ShipmentLineItemDataBuilder()
+                        .withOrderable(tradeItemOne)
+                        .withCanFulfillForMe(summaries[0].canFulfillForMe[1])
+                        .withLot(summaries[0].canFulfillForMe[1].lot)
+                        .buildJson(),
+                    new ShipmentLineItemDataBuilder()
+                        .withOrderable(tradeItemTwo)
+                        .withCanFulfillForMe(summaries[0].canFulfillForMe[2])
+                        .withLot(summaries[0].canFulfillForMe[2].lot)
+                        .buildJson()
+                ])
+                .build();
+
+            var result = shipmentViewLineItemFactory.createFrom(shipment, summaries);
+
+            var childRows = result.filter(function(lineItem) {
+                    return lineItem.isChild;
+                }),
+                groupRows = result.filter(function(lineItem) {
+                    return lineItem instanceof ShipmentViewLineItemGroup;
+                }),
+                collapsedTradeItemRows = result.filter(function(lineItem) {
+                    return !(lineItem instanceof ShipmentViewLineItemGroup) && lineItem.productCode;
+                });
+
+            expect(childRows.length).toBe(2);
+            expect(childRows[0].lot).not.toBeUndefined();
+            expect(childRows[1].lot).not.toBeUndefined();
+
+            groupRows.forEach(function(lineItem) {
+                expect(lineItem.isChild).toBeFalsy();
+            });
+
+            expect(collapsedTradeItemRows.length).toBe(1);
+            expect(collapsedTradeItemRows[0].isChild).toEqual(false);
         });
 
         it('should ignore entries without shipment line items', function() {
@@ -751,25 +829,93 @@ describe('ShipmentViewLineItemFactory', function() {
             expect(result[4].lot.expirationDate).toBeUndefined();
             expect(result[4].shipmentLineItem.stockOnHand).toEqual(13);
 
-            expect(result[5].vvmStatus).toEqual('STAGE_1');
-            expect(result[5].lot.expirationDate).toEqual('2018-06-21T05:59:51.993Z');
-            expect(result[5].shipmentLineItem.stockOnHand).toEqual(30);
+            // no VVM ranks alongside Stage 1, so expiration date places this one
+            expect(result[5].vvmStatus).toBeUndefined();
+            expect(result[5].lot.expirationDate).toEqual('2016-05-02T05:59:51.993Z');
+            expect(result[5].shipmentLineItem.stockOnHand).toEqual(150);
 
             expect(result[6].vvmStatus).toEqual('STAGE_1');
-            expect(result[6].lot.expirationDate).toEqual('2019-06-21T05:59:51.993Z');
-            expect(result[6].shipmentLineItem.stockOnHand).toEqual(10);
+            expect(result[6].lot.expirationDate).toEqual('2018-06-21T05:59:51.993Z');
+            expect(result[6].shipmentLineItem.stockOnHand).toEqual(30);
 
             expect(result[7].vvmStatus).toEqual('STAGE_1');
             expect(result[7].lot.expirationDate).toEqual('2019-06-21T05:59:51.993Z');
-            expect(result[7].shipmentLineItem.stockOnHand).toEqual(20);
+            expect(result[7].shipmentLineItem.stockOnHand).toEqual(10);
 
             expect(result[8].vvmStatus).toEqual('STAGE_1');
             expect(result[8].lot.expirationDate).toEqual('2019-06-21T05:59:51.993Z');
-            expect(result[8].shipmentLineItem.stockOnHand).toEqual(75);
+            expect(result[8].shipmentLineItem.stockOnHand).toEqual(20);
 
-            expect(result[9].vvmStatus).toBeUndefined();
-            expect(result[9].lot.expirationDate).toEqual('2016-05-02T05:59:51.993Z');
-            expect(result[9].shipmentLineItem.stockOnHand).toEqual(150);
+            expect(result[9].vvmStatus).toEqual('STAGE_1');
+            expect(result[9].lot.expirationDate).toEqual('2019-06-21T05:59:51.993Z');
+            expect(result[9].shipmentLineItem.stockOnHand).toEqual(75);
+        });
+
+        it('should rank line items with no VVM status alongside Stage 1 ones', function() {
+            summaries = [
+                new StockCardSummaryDataBuilder()
+                    .withOrderable(commodityTypeOne)
+                    .withCanFulfillForMe([
+                        new CanFulfillForMeEntryDataBuilder()
+                            .withOrderable(tradeItemOne)
+                            .withStockOnHand(2090)
+                            .withLot(
+                                new LotDataBuilder()
+                                    .withExpirationDate('2019-06-01T05:59:51.993Z')
+                                    .build()
+                            )
+                            .withStockCard(
+                                new StockCardDataBuilder()
+                                    .withExtraData({
+                                        vvmStatus: 'STAGE_1'
+                                    })
+                                    .build()
+                            )
+                            .buildJson(),
+                        new CanFulfillForMeEntryDataBuilder()
+                            .withOrderable(tradeItemOne)
+                            .withStockOnHand(1991)
+                            .withLot(
+                                new LotDataBuilder()
+                                    .withExpirationDate('2019-06-01T05:59:51.993Z')
+                                    .build()
+                            )
+                            .buildJson()
+                    ])
+                    .build()
+            ];
+
+            shipment = new ShipmentDataBuilder()
+                .withOrder(
+                    new OrderDataBuilder()
+                        .withOrderLineItems([
+                            new OrderLineItemDataBuilder()
+                                .withOrderable(commodityTypeOne)
+                                .build()
+                        ])
+                        .build()
+                )
+                .withLineItems([
+                    new ShipmentLineItemDataBuilder()
+                        .withOrderable(tradeItemOne)
+                        .withCanFulfillForMe(summaries[0].canFulfillForMe[0])
+                        .withLot(summaries[0].canFulfillForMe[0].lot)
+                        .buildJson(),
+                    new ShipmentLineItemDataBuilder()
+                        .withOrderable(tradeItemOne)
+                        .withCanFulfillForMe(summaries[0].canFulfillForMe[1])
+                        .withLot(summaries[0].canFulfillForMe[1].lot)
+                        .buildJson()
+                ])
+                .build();
+
+            var result = shipmentViewLineItemFactory.createFrom(shipment, summaries);
+
+            expect(result[2].vvmStatus).toBeUndefined();
+            expect(result[2].shipmentLineItem.stockOnHand).toEqual(1991);
+
+            expect(result[3].vvmStatus).toEqual('STAGE_1');
+            expect(result[3].shipmentLineItem.stockOnHand).toEqual(2090);
         });
 
     });

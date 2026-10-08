@@ -26,7 +26,7 @@
         $stateProvider.state('openlmis.stockmanagement.kitunpack', {
             url: '/unpack',
             label: 'stockUnpackKit.unpack',
-            priority: 7,
+            priority: 70,
             //SELV3-82: Hid 'unpack' option from Stock Management menu
             showInNavigation: false,
             //SELV3-82: ends here
@@ -50,6 +50,9 @@
                 },
                 adjustmentType: function() {
                     return ADJUSTMENT_TYPE.KIT_UNPACK;
+                },
+                hasPermissionToAddNewLot: function() {
+                    return false;
                 }
             }
         });

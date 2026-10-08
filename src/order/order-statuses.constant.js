@@ -44,6 +44,7 @@
                 CREATING: 'CREATING',
                 READY_TO_PACK: 'READY_TO_PACK',
                 IN_ROUTE: 'IN_ROUTE',
+                CANCELLED: 'CANCELLED',
                 getLabel: getLabel,
                 getStatusMessage: getStatusMessage,
                 getStatuses: getStatuses
@@ -56,7 +57,8 @@
                 TRANSFER_FAILED: 'order.status.transfer_failed',
                 CREATING: 'order.status.creating',
                 READY_TO_PACK: 'order.status.ready_to_pack',
-                IN_ROUTE: 'order.status.in_route'
+                IN_ROUTE: 'order.status.in_route',
+                CANCELLED: 'order.status.cancelled'
             };
 
         return ORDER_STATUSES;
@@ -122,7 +124,8 @@
                 ORDER_STATUSES.TRANSFER_FAILED,
                 ORDER_STATUSES.CREATING,
                 ORDER_STATUSES.READY_TO_PACK,
-                ORDER_STATUSES.IN_ROUTE
+                ORDER_STATUSES.IN_ROUTE,
+                ORDER_STATUSES.CANCELLED
             ];
         }
     }

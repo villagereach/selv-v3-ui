@@ -45,7 +45,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="tableLineItem in vm.tableLineItems" ng-class="{'is-secondary': tableLineItem.isMainGroup}" empty-row="tableLineItem.noStockAvailable" empty-row-message="{{'shipmentView.noStockAvailable' | message}}" empty-row-col-span="9">
+            <tr ng-repeat="tableLineItem in vm.tableLineItems" ng-class="{'is-secondary': tableLineItem.isMainGroup, 'is-child': tableLineItem.isChild}" empty-row="tableLineItem.noStockAvailable" empty-row-message="{{'shipmentView.noStockAvailable' | message}}" empty-row-col-span="9">
                 <td>{{tableLineItem.productCode}}</td>
                 <td>{{tableLineItem.productName}}</td>
                 <td ng-if="!tableLineItem.isLot"></td>
@@ -58,12 +58,14 @@
                 <td ng-if="tableLineItem.shipmentLineItem">
                     <div ng-if="vm.shipment.isEditable() && !vm.showInDoses()">
                         <input positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShipped"
+                            aria-label="{{'shipmentView.fillQuantityInPack' | message}}"
                             ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
                             openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
                             ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
                     </div>
                     <div ng-if="vm.shipment.isEditable() && vm.showInDoses()">
                         <input positive-integer ng-model="tableLineItem.shipmentLineItem.quantityShippedInDoses"
+                            aria-label="{{'shipmentView.fillQuantityInDoses' | message}}"
                             ng-class="{'is-invalid': tableLineItem.shipmentLineItem.isInvalid().quantityShipped}"
                             openlmis-invalid="{{tableLineItem.shipmentLineItem.isInvalid().quantityShipped | message}}"
                             ng-change="vm.recalculateInputQuantity(tableLineItem)"/>
@@ -81,6 +83,7 @@
     <div class="button-group primary">
         <button ng-show="vm.shipment.canBeConfirmed()" form="shipmentForm" class="primary">{{'shipmentView.confirmShipment' | message}}</button>
         <button ng-show="vm.shipment.id" class="danger" ng-click="vm.shipment.delete()">{{'shipmentView.deleteDraft' | message}}</button>
+        <button ng-show="vm.canCancelOrder()" class="danger" type="button" ng-click="vm.cancelOrder()">{{'shipmentView.cancelOrder' | message}}</button>
     </div>
     <button ng-click="vm.shipment.save()">{{'shipmentView.saveDelete' | message}}</button>
     <button ng-show="vm.shipment.isEditable()" ng-click="vm.printShipment()">{{'shipmentView.generatePickPackList' | message}}</button>
