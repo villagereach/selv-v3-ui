@@ -3,6 +3,8 @@ $font-size-openlmis-header-title: $font-size-extra-large !default;
 body > header {
   border: 0px;
   padding: 0px;
+  position: relative;
+  z-index: $z-index-header-sticky;
   > * {
     width: 100%;
     margin: 0px;
@@ -29,7 +31,6 @@ body > header {
     align-items: flex-end;
   }
 
-
   > .title {
     display: block;
     // SELV3-5: Changed property for header text
@@ -55,131 +56,135 @@ body > header {
 }
 
 .openlmis-header.is-offline {
-    background: transparent;
-    color: $light-gray;
-    > .title {
-      background-image: url('../assets/common/openlmis-logo-white.svg');
-    }
+  background: transparent;
+  color: $light-gray;
+  > .title {
+    background-image: url('../assets/common/openlmis-logo-white.svg');
   }
-  
-  .openlmis-header-actions {
+}
+
+.openlmis-header-actions {
+  > * {
+    display: flex;
+    justify-content: flex-end;
     > * {
-      display: flex;
-      justify-content: flex-end;
-      > * {
-        flex: 0 0 auto;
-        margin: 0px;
-        @include margin-right(1em);
-        &:last-child {
-          @include margin-right(0em);
-        }
-      }
-    }
-  
-    a {
-      @media screen and (max-width: $res-sm) {
+      flex: 0 0 auto;
+      margin: 0px;
+      @include margin-right(1em);
+      &:last-child {
         @include margin-right(0em);
       }
     }
   }
-  
-  .status-offline {
-    @extend a.is-offline;
-    @include margin-right(0em);
-    span {
-      @media screen and (max-width: $res-sm) {
-        display: none;
-      }
+
+  a {
+    @media screen and (max-width: $res-sm) {
+      @include margin-right(0em);
     }
   }
-  
-  .openlmis-header-info {
-    display: flex;
-    flex-direction: row;
-    > * {
-      flex: 0 0 auto;
-    }
-    .openlmis-app-cache {
-      @media screen and (max-width: $res-sm) {
-        display: none;
-      }
-    }
-  }
-  
-  .navbar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  
-    @media screen and (max-width: $res-xs) {
-      @include padding-x(1%);
-    }
-  
-    @media screen and (max-width: $res-md) {
-      flex-direction: column;
-    }
-  
-    .nav.navbar-nav {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      margin: 0;
-  
-      @media screen and (max-width: $res-md) {
-        flex-direction: column;
-      }
-    }
-  
-    .navbar-right-group {
-      display: flex;
-      flex-direction: row-reverse;
-      align-items: center;
-      @include margin-left(auto);
-    }
-  }
-  
-  header > .navbar {
-    @media screen and (max-width: $res-md) {
+}
+
+.status-offline {
+  @extend a.is-offline;
+  @include margin-right(0em);
+  span {
+    @media screen and (max-width: $res-sm) {
       display: none;
     }
   }
-  
-  header > .navbar.display-in-mobile {
-    display: none;
-  
-    @media screen and (max-width: $res-md) {
-      display: flex;
+}
+
+.openlmis-header-info {
+  display: flex;
+  flex-direction: row;
+  > * {
+    flex: 0 0 auto;
+  }
+  .openlmis-app-cache {
+    @media screen and (max-width: $res-sm) {
+      display: none;
     }
   }
-  
-  .navbar-header {
+}
+
+.navbar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  @media screen and (max-width: $res-xs) {
+    @include padding-x(1%);
+  }
+
+  @media screen and (max-width: $res-md) {
+    flex-direction: column;
+  }
+
+  .nav.navbar-nav {
     display: flex;
-    width: 100%;
-    padding: 10px 0px;
-  
-    .locale-container {
-      @media screen and (max-width: $res-md) {
-        margin: 10px;
-        margin-bottom: 7.5px;
-      }
-    }
-  
-    .openlmis-button-group {
-      display: flex;
-      @include margin-left(auto);
-    }
-  
-    .navbar-toggler {
-      padding: 0px 20px;
-    }
-  }
-  
-  header > .navbar .navbar-nav > li > a {
-    color: $white;
-    font-weight: bold;
-  
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+
     @media screen and (max-width: $res-md) {
-      color: $black;
+      flex-direction: column;
     }
   }
+
+  .navbar-right-group {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    @include margin-left(auto);
+
+    > .navbar-right{
+        margin-top: 0;
+    }
+  }
+}
+
+header > .navbar {
+  @media screen and (max-width: $res-md) {
+    display: none;
+  }
+}
+
+header > .navbar.display-in-mobile {
+  display: none;
+
+  @media screen and (max-width: $res-md) {
+    display: flex;
+  }
+}
+
+.navbar-header {
+  display: flex;
+  width: 100%;
+  padding: 10px 0px;
+
+  .locale-container {
+    @media screen and (max-width: $res-md) {
+      margin: 10px;
+      margin-bottom: 7.5px;
+    }
+  }
+
+  .openlmis-button-group {
+    display: flex;
+    @include margin-left(auto);
+  }
+
+  .navbar-toggler {
+    padding: 0px 20px;
+  }
+}
+
+header > .navbar .navbar-nav > li > a {
+  color: $white;
+  font-weight: bold;
+
+  @media screen and (max-width: $res-md) {
+    color: $black;
+  }
+}
