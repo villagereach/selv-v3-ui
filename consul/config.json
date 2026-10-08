@@ -1,7 +1,7 @@
 {
   "service": {
-    "Name": "angola-reference-ui",
-    "Id": "angola-reference-ui-service",
+    "Name": "selv-reference-ui",
+    "Id": "selv-reference-ui-service",
     "Port": 80,
     "Tags": ["openlmis-service"],
     "check": {
