@@ -1,4 +1,4 @@
-1.2.1 / WIP
+1.3.0 / WIP
 ===================
 New functionality:
 - [SELV3-845](https://openlmis.atlassian.net/browse/SELV3-845)
