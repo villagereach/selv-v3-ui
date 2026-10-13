@@ -4,5 +4,22 @@
     "adminRoleForm.manageDhis2SupervisoryNodes": "Manage DHIS2 supervisory nodes",
     "adminRoleForm.reportCategoriesManage": "Manage report categoies",
     "adminRoleForm.reportsManage": "Manage reports",
-    "adminRoleForm.editProductPriceStockManagement": "Edit product price stock management"
+    "adminRoleForm.editProductPriceStockManagement": "Edit product price stock management",
+    "adminRoleForm.priceChangesView": "View price changes",
+    "adminRoleForm.stockEventsCancel": "Cancel stock events",
+    "adminRoleForm.generalAdminDescription": "General administration role responsible for managing zones, stock sources, adjustments, facilities etc.",
+    "adminRoleForm.idealStockAmountEdit": "Edit Ideal Stock Amount",
+    "adminRoleForm.idealStockAmountView": "View Ideal Stock Amount",
+    "adminRoleForm.stockAdjust": "Adjust stock",
+    "adminRoleForm.stockAdjustmentReasonsManage": "Manage stock adjustment reasons",
+    "adminRoleForm.stockCardLineItemReasonsManage": "Manage stock card line item reasons",
+    "adminRoleForm.stockCardTemplatesManage": "Manage stock card templates",
+    "adminRoleForm.stockCardsView": "View stock cards",
+    "adminRoleForm.stockDestinationsManage": "Manage stock destinations",
+    "adminRoleForm.stockInventoriesEdit": "Edit stock inventories",
+    "adminRoleForm.stockOrganizationsManage": "Manage stock organizations",
+    "adminRoleForm.stockSourcesManage": "Manage stock sources",
+    "adminRoleForm.stockStatusReportView": "View Stock Status Report",
+    "adminRoleForm.stockoutsReportView": "View Stockout Report",
+    "adminRoleForm.systemIdealStockAmountsManage": "Manage System Ideal Stock Amounts"
 }

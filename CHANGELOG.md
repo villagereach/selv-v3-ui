@@ -13,6 +13,9 @@ Improvements:
   - Orders can be cancelled from the shipment view, and the CANCELLED status is shown and filterable
   - Physical inventory: added barcode scanning, the Pack Size column and a Delete button for products added by mistake
   - Content Security Policy enabled again; external dashboards (Superset, PowerBI) are allowed via SUPERSET_URL and EXTERNAL_DOMAINS
+  - Role page labels for the Cancel stock events and View price changes rights (until they come with core referencedata-ui)
+  - The language selector offers only English and Portuguese
+  - Portuguese uses "stock" instead of the Brazilian "estoque" on the role page, the proof of delivery and the requisition supplying facility column
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 
