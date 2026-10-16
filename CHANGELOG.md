@@ -8,7 +8,7 @@ New functionality:
 
 Improvements:
 - [SELV3-886](https://openlmis.atlassian.net/browse/SELV3-886)
-  - Upgraded to the OpenLMIS 3.20.1 UI modules (reference-ui 5.2.15); SELV printouts are kept
+  - Upgraded to the OpenLMIS 3.20.2 UI modules (reference-ui 5.2.16); SELV printouts are kept
   - Removed overrides now covered by core and the unused Equipment UI module
   - Orders can be cancelled from the shipment view, and the CANCELLED status is shown and filterable
   - Physical inventory: added barcode scanning, the Pack Size column and a Delete button for products added by mistake
