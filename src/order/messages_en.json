@@ -6,6 +6,7 @@
     "order.status.fulfilling": "FULFILLING",
     "order.status.transfer_failed": "TRANSFER FAILED",
     "order.status.creating": "CREATING",
+    "order.status.cancelled": "CANCELLED",
 
     "orderStatus.CREATING": "Creating",
     "orderStatus.ORDERED": "Ordered",
