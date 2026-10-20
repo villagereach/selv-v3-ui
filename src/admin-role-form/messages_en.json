@@ -5,6 +5,7 @@
     "adminRoleForm.reportCategoriesManage": "Manage report categoies",
     "adminRoleForm.reportsManage": "Manage reports",
     "adminRoleForm.editProductPriceStockManagement": "Edit product price stock management",
+    "adminRoleForm.exchangeRateManage": "Manage exchange rates",
     "adminRoleForm.priceChangesView": "View stock price changes",
     "adminRoleForm.stockEventsCancel": "Cancel stock events",
     "adminRoleForm.generalAdminDescription": "General administration role responsible for managing zones, stock sources, adjustments, facilities etc.",
