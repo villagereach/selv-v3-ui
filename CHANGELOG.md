@@ -20,6 +20,10 @@ Improvements:
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 
+Bug Fixes:
+- [SELV3-898](https://openlmis.atlassian.net/browse/SELV3-898)
+  - Stock on Hand opened after submitting an adjustment or physical inventory hides inactive stock cards.
+
 1.2.0 / 2026-06-09
 ===================
 Changes:

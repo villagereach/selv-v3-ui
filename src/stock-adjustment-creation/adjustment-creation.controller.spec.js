@@ -641,7 +641,9 @@ describe('StockAdjustmentCreationController', function() {
             expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                 facility: facility.id,
                 program: program.id,
-                active: 'ACTIVE'
+                includeInactive: false,
+                page: 0,
+                size: 10
             });
 
             expect(notificationService.success).toHaveBeenCalledWith('stockAdjustmentCreation.submitted');
@@ -773,7 +775,9 @@ describe('StockAdjustmentCreationController', function() {
             expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                 facility: facility.id,
                 program: program.id,
-                active: 'ACTIVE'
+                includeInactive: false,
+                page: 0,
+                size: 10
             });
 
             expect(notificationService.offline).toHaveBeenCalledWith('stockAdjustmentCreation.submittedOffline');
@@ -943,7 +947,9 @@ describe('StockAdjustmentCreationController', function() {
                 expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                     facility: facility.id,
                     program: program.id,
-                    active: 'ACTIVE'
+                    includeInactive: false,
+                    page: 0,
+                    size: 10
                 });
             });
 
@@ -965,7 +971,9 @@ describe('StockAdjustmentCreationController', function() {
                 expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                     facility: facility.id,
                     program: program.id,
-                    active: 'ACTIVE'
+                    includeInactive: false,
+                    page: 0,
+                    size: 10
                 });
             });
 
@@ -981,7 +989,9 @@ describe('StockAdjustmentCreationController', function() {
                 expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                     facility: facility.id,
                     program: program.id,
-                    active: 'ACTIVE'
+                    includeInactive: false,
+                    page: 0,
+                    size: 10
                 });
             });
 
@@ -997,7 +1007,9 @@ describe('StockAdjustmentCreationController', function() {
                 expect(state.go).toHaveBeenCalledWith('openlmis.stockmanagement.stockCardSummaries', {
                     facility: facility.id,
                     program: program.id,
-                    active: 'ACTIVE'
+                    includeInactive: false,
+                    page: 0,
+                    size: 10
                 });
             });
         });
