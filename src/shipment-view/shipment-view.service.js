@@ -31,12 +31,13 @@
     // SELV3-507: Allow user to enter Shipment Date    
     shipmentViewService.inject = [
         'ShipmentRepository', 'notificationService', '$state', 'stateTrackerService',
-        'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService'
+        'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService',
+        'ORDER_STATUS'
     ];
 
     function shipmentViewService(ShipmentRepository, notificationService, stateTrackerService,
                                  $state, loadingModalService, ShipmentFactory,
-                                 confirmService, $q, chooseDateModalService) {
+                                 confirmService, $q, chooseDateModalService, ORDER_STATUS) {
 
         var shipmentRepository = new ShipmentRepository();
 
@@ -90,10 +91,28 @@
                 return shipmentRepository.getDraftByOrderId(order.id);
             }
 
-            if (order.isShipped()) {
+            // SELV3-896: open the shipment of every order that has one, leave for the others
+            if (hasShipment(order)) {
                 return shipmentRepository.getByOrderId(order.id);
             }
+
+            notificationService.info('shipmentView.orderHasNoShipment');
+            $state.go('openlmis.orders.view', {}, {
+                reload: 'openlmis.orders.view'
+            });
+            return $q.reject();
         }
+
+        function hasShipment(order) {
+            return [
+                ORDER_STATUS.SHIPPED,
+                ORDER_STATUS.RECEIVED,
+                ORDER_STATUS.TRANSFER_FAILED,
+                ORDER_STATUS.IN_ROUTE,
+                ORDER_STATUS.READY_TO_PACK
+            ].indexOf(order.status) > -1;
+        }
+        // SELV3-896: ends here
 
         function decorateSave(originalSave) {
             return function() {
