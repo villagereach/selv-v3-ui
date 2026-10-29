@@ -20,6 +20,10 @@ Improvements:
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 
+Bug Fixes:
+- [SELV3-896](https://openlmis.atlassian.net/browse/SELV3-896)
+  - The shipment view no longer shows "Internal application error" for Cancelled or Received orders.
+
 1.2.0 / 2026-06-09
 ===================
 Changes:
