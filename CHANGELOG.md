@@ -20,6 +20,10 @@ Improvements:
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 
+Bug Fixes:
+- [SELV3-897](https://openlmis.atlassian.net/browse/SELV3-897)
+  - Receive, Adjustment and Physical Inventory refuse lot codes that break the GS1 rules on entry and name the lot the server refuses.
+
 1.2.0 / 2026-06-09
 ===================
 Changes:
