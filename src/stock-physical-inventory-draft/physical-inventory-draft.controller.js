@@ -37,7 +37,7 @@
         'offlineService', 'physicalInventoryDraftCacheService', 'stockCardService', 'LotResource',
         'editLotModalService', 'dateUtils', 'QUANTITY_UNIT', 'quantityUnitCalculateService',
         'localStorageService', 'physicalInventoryScanService', 'hasPermissionToAddNewLot',
-        '$timeout'];
+        '$timeout', 'lotCodeValidator'];
 
     function controller($scope, $state, $stateParams, addProductsModalService, messageService,
                         physicalInventoryFactory, notificationService, alertService,
@@ -48,7 +48,8 @@
                         offlineService, physicalInventoryDraftCacheService, stockCardService,
                         LotResource, editLotModalService, dateUtils, QUANTITY_UNIT,
                         quantityUnitCalculateService, localStorageService,
-                        physicalInventoryScanService, hasPermissionToAddNewLot, $timeout) {
+                        physicalInventoryScanService, hasPermissionToAddNewLot, $timeout,
+                        lotCodeValidator) {
 
         var vm = this;
 
@@ -723,6 +724,14 @@
                                 });
                                 return;
                             }
+                            if (response && response.data && response.data.message) {
+                                errorLots.push({
+                                    lotCode: lineItem.lot.lotCode,
+                                    error: response.data.message,
+                                    messageKey: messageKey
+                                });
+                                return;
+                            }
                             return $q.reject(response);
                         }));
                 }
@@ -756,7 +765,12 @@
                             return result;
                         }, {});
                         for (var error in errorLotsReduced) {
-                            alertService.error(error, errorLotsReduced[error].join(', '));
+                            alertService.error(error, lotCodeValidator.refusedLotCodesMessage(
+                                _.findWhere(errorLots, {
+                                    error: error
+                                }).messageKey,
+                                errorLotsReduced[error]
+                            ));
                         }
                         return $q.reject(messageOf(errorResponse));
                     }
