@@ -452,6 +452,28 @@ describe('ShipmentRepositoryImpl', function() {
 
         });
 
+        it('should leave canFulfillForMe undefined if there is no stock card', function() {
+            shipmentResourceMock.query.andReturn($q.resolve(angular.copy({
+                content: [shipment]
+            })));
+            orderResourceMock.get.andReturn($q.resolve(order));
+            stockCardSummaryRepositoryImplMock.query.andReturn($q.resolve({
+                content: [stockCardSummaries[0]]
+            }));
+
+            var result;
+            shipmentRepositoryImpl.getByOrderId(shipment.order.id)
+                .then(function(response) {
+                    result = response;
+                });
+            $rootScope.$apply();
+
+            expect(result.lineItems[0].canFulfillForMe)
+                .toEqual(stockCardSummaries[0].canFulfillForMe[1]);
+
+            expect(result.lineItems[1].canFulfillForMe).toBeUndefined();
+        });
+
     });
 
     describe('getDraftByOrderId', function() {
