@@ -670,7 +670,9 @@
             $state.go('openlmis.stockmanagement.stockCardSummaries', {
                 facility: facility.id,
                 program: program.id,
-                active: STOCKCARD_STATUS.ACTIVE
+                includeInactive: false,
+                page: 0,
+                size: 10
             });
         }
 
