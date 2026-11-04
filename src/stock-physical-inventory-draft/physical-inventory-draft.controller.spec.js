@@ -608,6 +608,23 @@ describe('PhysicalInventoryDraftController', function() {
             expect(this.physicalInventoryService.submitPhysicalInventory).not.toHaveBeenCalled();
         });
 
+        it('should explain the length rule for a batch code that is too long', function() {
+            spyOn(this.messageService, 'get').andCallFake(function(key) {
+                return key;
+            });
+            this.submitWithLotFailure({
+                data: {
+                    messageKey: 'referenceData.error.lot.lotCode.tooLong',
+                    message: 'Lot code must be at most 20 characters long'
+                }
+            });
+
+            expect(this.alertService.error).toHaveBeenCalledWith(
+                'Lot code must be at most 20 characters long',
+                'stockEditLotModal.lotCodeTooLong stockEditLotModal.changeLotCodes'
+            );
+        });
+
         it('should name a product that cannot carry a batch', function() {
             this.submitWithLotFailure({
                 data: {
@@ -632,7 +649,7 @@ describe('PhysicalInventoryDraftController', function() {
             });
 
             expect(this.alertService.error)
-                .toHaveBeenCalledWith('You do not have permission to create lots');
+                .toHaveBeenCalledWith('You do not have permission to create lots', 'NEWLOT1');
 
             expect(this.physicalInventoryService.submitPhysicalInventory).not.toHaveBeenCalled();
         });
