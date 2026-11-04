@@ -22,7 +22,7 @@
      * @name admin-exchange-rate.ExchangeRateResource
      *
      * @description
-     * Communicates with the USD-MZM exchange rate REST endpoints exposed by the fulfillment
+     * Communicates with the USD-MZN exchange rate REST endpoints exposed by the fulfillment
      * extension. Reads are open to any authenticated user; creating a rate requires the
      * EXCHANGE_RATE_MANAGE right (enforced server-side).
      */

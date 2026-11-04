@@ -21,7 +21,7 @@
      * @module admin-exchange-rate-list
      *
      * @description
-     * Provides the administration screen listing the current USD-MZM exchange rate and its history.
+     * Provides the administration screen listing the current USD-MZN exchange rate and its history.
      */
     angular.module('admin-exchange-rate-list', [
         'openlmis-admin',
