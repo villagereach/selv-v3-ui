@@ -32,12 +32,13 @@
     shipmentViewService.inject = [
         'ShipmentRepository', 'notificationService', '$state', 'stateTrackerService',
         'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService',
-        'ORDER_STATUS'
+        'ORDER_STATUS', 'authorizationService', 'FULFILLMENT_RIGHTS'
     ];
 
     function shipmentViewService(ShipmentRepository, notificationService, stateTrackerService,
                                  $state, loadingModalService, ShipmentFactory,
-                                 confirmService, $q, chooseDateModalService, ORDER_STATUS) {
+                                 confirmService, $q, chooseDateModalService, ORDER_STATUS,
+                                 authorizationService, FULFILLMENT_RIGHTS) {
 
         var shipmentRepository = new ShipmentRepository();
 
@@ -96,11 +97,19 @@
                 return shipmentRepository.getByOrderId(order.id);
             }
 
+            var ordersState = getOrdersState();
             notificationService.info('shipmentView.orderHasNoShipment');
-            $state.go('openlmis.orders.view', {}, {
-                reload: 'openlmis.orders.view'
+            $state.go(ordersState, {}, {
+                reload: ordersState
             });
             return $q.reject();
+        }
+
+        function getOrdersState() {
+            if (authorizationService.hasRights([FULFILLMENT_RIGHTS.ORDERS_VIEW, FULFILLMENT_RIGHTS.PODS_MANAGE])) {
+                return 'openlmis.orders.view';
+            }
+            return 'openlmis.orders.fulfillment';
         }
 
         function hasShipment(order) {
