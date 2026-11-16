@@ -14,7 +14,6 @@ Multiple UI modules are compiled together with the OpenLMIS dev-ui to create the
 - [OpenLMIS Offline UI](https://github.com/OpenLMIS/openlmis-offline-ui)
 
 In addition to the modules above, the SELV-V3 UI also includes:
-- [Equipment UI](https://github.com/villagereach/openlmis-equipment-ui)
 - [Requisition Batch UI](https://github.com/villagereach/selv-v3-requisition-batch-ui)
 
 Before pushing a new version of the docker image, you need to provide user-based credentials. They must be defined in the .env file and should have the following form:

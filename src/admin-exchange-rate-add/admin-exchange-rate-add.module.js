@@ -21,7 +21,7 @@
      * @module admin-exchange-rate-add
      *
      * @description
-     * Provides the modal for entering a new USD-MZM exchange rate.
+     * Provides the modal for entering a new USD-MZN exchange rate.
      */
     angular.module('admin-exchange-rate-add', [
         'openlmis-modal',

@@ -20,7 +20,6 @@ services:
       - ui-components
       - ui-layout
       - cce-ui
-      - equipment-ui
       - requisition-batch-ui
       - offline-ui
     depends_on:
@@ -33,7 +32,6 @@ services:
       - ui-components
       - ui-layout
       - cce-ui
-      - equipment-ui
       - requisition-batch-ui
       - offline-ui
   auth-ui:
@@ -72,10 +70,6 @@ services:
     image: openlmis/ui-layout:${OL_UI_LAYOUT_VERSION}
     volumes:
       - '/openlmis-ui-layout'
-  equipment-ui:
-    image: openlmismz/equipment-ui:${OL_EQUIPMENT_VERSION}
-    volumes:
-     - '/openlmis-equipment-ui'
   requisition-batch-ui:
     image: openlmismz/requisition-batch-ui:${OL_REQUISITION_BATCH_VERSION}
     volumes:

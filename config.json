@@ -9,7 +9,6 @@
     "/openlmis-fulfillment-ui",
     "/openlmis-stockmanagement-ui",
     "/openlmis-cce-ui",
-    "/openlmis-equipment-ui",
     "/openlmis-requisition-batch-ui",
     "/openlmis-offline-ui"
   ],

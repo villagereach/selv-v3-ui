@@ -1,0 +1,28 @@
+<ng-include src="'openlmis-header/header.html'"></ng-include>
+<div class="navbar display-in-browser">
+    <openlmis-navigation root-state="openlmis" class="nav navbar-nav"></openlmis-navigation>
+    <div class="navbar-right-group">
+        <openlmis-logout class="navbar-right"></openlmis-logout>
+        <openlmis-locale class="navbar-right locale-container"></openlmis-locale>
+        <a class="btn navbar-right" href="${NEW_UI_URL}" ng-if="'${NEW_UI_URL}' && '${NEW_UI_URL}'.charAt(0) !== '$'">{{'openlmisMainState.newUi' | message}}</a>
+    </div>
+</div>
+
+<div class="navbar display-in-mobile">
+    <nav class="navbar" role="navigation" close-on-click="isNavCollapsed">
+        <div class="navbar-header" aria-controls="navbarToggler">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="openlmis-button-group">
+                <a class="btn navbar-nav" href="${NEW_UI_URL}" ng-if="'${NEW_UI_URL}' && '${NEW_UI_URL}'.charAt(0) !== '$'">{{'openlmisMainState.newUi' | message}}</a>
+                <openlmis-locale class="locale-container"></openlmis-locale>
+                <openlmis-logout class="navbar-nav"></openlmis-logout>
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <openlmis-navigation root-state="openlmis" class="nav navbar-nav"></openlmis-navigation>
+        </div>
+    </nav>
+</div>

@@ -1,11 +1,17 @@
 {
   "service": {
-    "Name": "angola-reference-ui",
+    "Name": "selv-reference-ui",
+    "Id": "selv-reference-ui-service",
     "Port": 80,
-    "Tags": ["openlmis-service"]
+    "Tags": ["openlmis-service"],
+    "check": {
+      "interval": "30s",
+      "http": "http://HOST:PORT/",
+      "timeout": "5s"
+    }
   },
   "path": [
-    "",
+    "/",
     "<all>"
   ]
 }

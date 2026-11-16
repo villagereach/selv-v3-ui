@@ -34,8 +34,10 @@
         'srcDstAssignments', 'stockAdjustmentCreationService', 'notificationService', 'offlineService',
         'orderableGroupService', 'MAX_INTEGER_VALUE', 'VVM_STATUS', 'loadingModalService', 'alertService',
         'dateUtils', 'displayItems', 'ADJUSTMENT_TYPE', 'UNPACK_REASONS', 'REASON_TYPES', 'STOCKCARD_STATUS',
-        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment', 'defaultReason',
-        'QUANTITY_UNIT', 'quantityUnitCalculateService'
+        'hasPermissionToAddNewLot', 'LotResource', '$q', 'editLotModalService', 'moment', 'QUANTITY_UNIT',
+        'quantityUnitCalculateService', 'signatureModalService', '$window', 'stockmanagementUrlFactory',
+        'accessTokenFactory', 'localStorageService', 'STOCK_ADJUSTMENT_FREE_TEXT_MAX_LENGTH',
+        'adjustmentScanService', 'DEFAULT_REASONS'
     ];
 
     function controller($scope, $state, $stateParams, $filter, confirmDiscardService, program,
@@ -44,15 +46,22 @@
                         offlineService, orderableGroupService, MAX_INTEGER_VALUE, VVM_STATUS, loadingModalService,
                         alertService, dateUtils, displayItems, ADJUSTMENT_TYPE, UNPACK_REASONS, REASON_TYPES,
                         STOCKCARD_STATUS, hasPermissionToAddNewLot, LotResource, $q, editLotModalService, moment,
-                        defaultReason, QUANTITY_UNIT, quantityUnitCalculateService) {
+                        QUANTITY_UNIT, quantityUnitCalculateService, signatureModalService, $window,
+                        stockmanagementUrlFactory, accessTokenFactory, localStorageService,
+                        STOCK_ADJUSTMENT_FREE_TEXT_MAX_LENGTH, adjustmentScanService, DEFAULT_REASONS) {
         var vm = this,
-            previousAdded = {};
+            previousAdded = {},
+            defaultReason,
+            scanRefusal;
+
+        vm.freeTextMaxLength = STOCK_ADJUSTMENT_FREE_TEXT_MAX_LENGTH;
 
         vm.expirationDateChanged = expirationDateChanged;
         vm.newLotCodeChanged = newLotCodeChanged;
         vm.validateExpirationDate = validateExpirationDate;
         vm.lotChanged = lotChanged;
         vm.addProduct = addProduct;
+        vm.onScan = onScan;
         vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
         vm.formatDate = formatDate;
         vm.showInDoses = showInDoses;
@@ -92,7 +101,7 @@
          * @description
          * Holds default reason
          */
-        vm.defaultReason = defaultReason;
+        vm.defaultReason = undefined;
 
         /**
          * @ngdoc property
@@ -231,10 +240,22 @@
                 reason: (adjustmentType.state === ADJUSTMENT_TYPE.KIT_UNPACK.state)
                     ? {
                         id: UNPACK_REASONS.KIT_UNPACK_REASON_ID
-                    } : previousAdded.reason,
+                    } : previousAdded.reason || defaultReason,
                 reasonFreeText: previousAdded.reasonFreeText,
                 occurredDate: defaultDate
             };
+        }
+
+        function getDefaultReason() {
+            var reasonId = DEFAULT_REASONS[adjustmentType.state];
+
+            if (!reasonId || reasonId.substr(0, 2) === '@@') {
+                return undefined;
+            }
+
+            return _.findWhere(reasons, {
+                id: reasonId
+            });
         }
 
         /**
@@ -281,11 +302,17 @@
          * @param {Object} lineItem line item to be validated.
          */
         vm.validateQuantity = function(lineItem) {
+            // Recalculating an empty packs input would turn it into 0 and report a zero quantity instead.
+            if (!vm.showInDoses() && isPacksQuantityEmpty(lineItem)) {
+                lineItem.$errors.quantityInvalid = messageService.get('openlmisForm.required');
+                return lineItem;
+            }
+
             lineItem = quantityUnitCalculateService.recalculateInputQuantity(
                 lineItem, lineItem.orderable.netContent, vm.showInDoses()
             );
 
-            if (lineItem.quantity  === undefined) {
+            if (lineItem.quantity === undefined) {
                 lineItem.$errors.quantityInvalid = messageService.get('openlmisForm.required');
             } else if (lineItem.quantity > lineItem.$previewSOH && lineItem.reason
                     && lineItem.reason.reasonType === REASON_TYPES.DEBIT) {
@@ -367,6 +394,24 @@
         /**
          * @ngdoc method
          * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name validateLineItem
+         *
+         * @description
+         * Validates every field of the line item, the same way submit does, and returns self.
+         *
+         * @param {Object} lineItem line item to be validated.
+         */
+        vm.validateLineItem = function(lineItem) {
+            vm.validateQuantity(lineItem);
+            vm.validateDate(lineItem);
+            vm.validateAssignment(lineItem);
+            vm.validateReason(lineItem);
+            return lineItem;
+        };
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
          * @name clearFreeText
          *
          * @description
@@ -389,18 +434,32 @@
          */
         vm.submit = function() {
             $scope.$broadcast('openlmis-form-submit');
-            if (validateAllAddedItems()) {
+            if (!validateAllAddedItems()) {
+                vm.keyword = null;
+                reorderItems();
+                alertService.error('stockAdjustmentCreation.submitInvalid');
+                return;
+            }
+            if (shouldCollectSignature()) {
+                signatureModalService.show().then(function(resolvedData) {
+                    confirmSubmit(resolvedData ? resolvedData.signature : null);
+                });
+            } else {
                 var confirmMessage = messageService.get(vm.key('confirmInfo'), {
                     username: user.username,
                     number: vm.addedLineItems.length
                 });
-                confirmService.confirm(confirmMessage, vm.key('confirm')).then(confirmSubmit);
-            } else {
-                vm.keyword = null;
-                reorderItems();
-                alertService.error('stockAdjustmentCreation.submitInvalid');
+                confirmService.confirm(confirmMessage, vm.key('confirm')).then(function() {
+                    confirmSubmit(null);
+                });
             }
         };
+
+        function shouldCollectSignature() {
+            return adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state ||
+                adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state ||
+                adjustmentType.state === ADJUSTMENT_TYPE.ADJUSTMENT.state;
+        }
 
         /**
          * @ngdoc method
@@ -443,15 +502,22 @@
         };
 
         function isEmpty(value) {
-            return _.isUndefined(value) || _.isNull(value);
+            return value === '' || _.isUndefined(value) || _.isNull(value);
+        }
+
+        function isPacksQuantityEmpty(lineItem) {
+            // The quantity input presets the doses remainder to 0 for a pack size of 1, where it cannot be edited.
+            return isBlank(lineItem.quantityInPacks) &&
+                (isBlank(lineItem.quantityRemainderInDoses) || Number(lineItem.quantityRemainderInDoses) === 0);
+        }
+
+        function isBlank(value) {
+            return isEmpty(value) || _.isNaN(value);
         }
 
         function validateAllAddedItems() {
             _.each(vm.addedLineItems, function(item) {
-                vm.validateQuantity(item);
-                vm.validateDate(item);
-                vm.validateAssignment(item);
-                vm.validateReason(item);
+                vm.validateLineItem(item);
             });
             return _.chain(vm.addedLineItems)
                 .groupBy(function(item) {
@@ -486,7 +552,7 @@
                 .value();
         }
 
-        function confirmSubmit() {
+        function confirmSubmit(signature) {
             loadingModalService.open();
 
             var addedLineItems = angular.copy(vm.addedLineItems);
@@ -498,7 +564,8 @@
             var distinctLots = [];
             var lotResource = new LotResource();
             addedLineItems.forEach(function(lineItem) {
-                if (lineItem.lot && lineItem.$isNewItem && _.isUndefined(lineItem.lot.id) &&
+                if (lineItem.lot && lineItem.$isNewItem && !lineItem.$deferLotCreation &&
+                _.isUndefined(lineItem.lot.id) &&
                 !listContainsTheSameLot(distinctLots, lineItem.lot)) {
                     distinctLots.push(lineItem.lot);
                 }
@@ -546,19 +613,31 @@
                     });
 
                     stockAdjustmentCreationService.submitAdjustments(
-                        program.id, facility.id, addedLineItems, adjustmentType
+                        program.id, facility.id, addedLineItems, adjustmentType, signature
                     )
-                        .then(function() {
+                        .then(function(stockEventId) {
                             if (offlineService.isOffline()) {
                                 notificationService.offline(vm.key('submittedOffline'));
-                            } else {
-                                notificationService.success(vm.key('submitted'));
+                                goToStockCardSummaries();
+                                return;
                             }
-                            $state.go('openlmis.stockmanagement.stockCardSummaries', {
-                                facility: facility.id,
-                                program: program.id,
-                                active: STOCKCARD_STATUS.ACTIVE
-                            });
+                            notificationService.success(vm.key('submitted'));
+                            if (shouldOfferPrint() && stockEventId) {
+                                confirmService.confirm(
+                                    vm.key('printModal.label'),
+                                    vm.key('printModal.yes'),
+                                    vm.key('printModal.no')
+                                )
+                                    .then(function() {
+                                        $window.open(
+                                            accessTokenFactory.addAccessToken(getPrintUrl(stockEventId)),
+                                            '_blank'
+                                        );
+                                    })
+                                    .finally(goToStockCardSummaries);
+                            } else {
+                                goToStockCardSummaries();
+                            }
                         }, function(errorResponse) {
                             loadingModalService.close();
                             alertService.error(errorResponse.data.message);
@@ -585,6 +664,38 @@
                     }
                     alertService.error(errorResponse.data.message);
                 });
+        }
+
+        function goToStockCardSummaries() {
+            $state.go('openlmis.stockmanagement.stockCardSummaries', {
+                facility: facility.id,
+                program: program.id,
+                active: STOCKCARD_STATUS.ACTIVE
+            });
+        }
+
+        function shouldOfferPrint() {
+            return adjustmentType.state === ADJUSTMENT_TYPE.ISSUE.state ||
+                adjustmentType.state === ADJUSTMENT_TYPE.RECEIVE.state;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name getPrintUrl
+         *
+         * @description
+         * Prepares a print URL for the stock event report with the given id.
+         *
+         * @param  {String} stockEventId the id of the created stock event
+         * @return {String}              the prepared URL
+         */
+        function getPrintUrl(stockEventId) {
+            var locale = localStorageService.get('current_locale');
+            var localeParam = locale ? '?lang=' + locale : '';
+            return stockmanagementUrlFactory(
+                '/api/stockEvents/' + stockEventId + '/print' + localeParam
+            );
         }
 
         function addItemToOrderableGroups(item) {
@@ -665,6 +776,83 @@
             });
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name onScan
+         *
+         * @description
+         * Applies a scan to this screen. The strategy is built per scan rather than held on the view
+         * model because addedLineItems is reassigned as lines are added and filtered, so a captured
+         * reference would go stale.
+         *
+         * @param  {Object}  scan      the parsed scan
+         * @param  {Object}  tradeItem the trade item the scanned GTIN resolved to
+         * @param  {String}  mode      the scan mode of this screen
+         * @return {Promise}           resolves once the line was added or tallied
+         */
+        function onScan(scan, tradeItem, mode) {
+            scanRefusal = undefined;
+
+            return adjustmentScanService.resolve(scan, tradeItem, mode, {
+                orderableGroups: vm.orderableGroups,
+                lineItems: vm.addedLineItems,
+                addLine: addScannedLine,
+                onCounted: vm.validateQuantity
+            })
+                .then(function(lineItem) {
+                    return scanRefusal ? $q.reject(scanRefusal) : lineItem;
+                });
+        }
+
+        /**
+         * Reuses the manual add, so a scanned line inherits destination, reason and date from the line
+         * above exactly as a typed one does. Whatever was half typed into the new-lot form is set aside
+         * for the call, so it cannot leak into a scanned line.
+         */
+        function addScannedLine(group, lot) {
+            var pendingNewLot = vm.newLot,
+                countBefore = vm.addedLineItems.length,
+                added;
+
+            initiateNewLotObject();
+            if (lot && !lot.id) {
+                vm.newLot.lotCode = lot.lotCode;
+                vm.newLot.expirationDate = lot.expirationDate;
+            }
+            vm.selectedOrderableGroup = group;
+            vm.selectedLot = lot && lot.id ? lot : undefined;
+            vm.addProduct();
+            scanRefusal = refusalOf(vm.newLot);
+            vm.newLot = pendingNewLot;
+
+            // addProduct unshifts, and adds nothing at all if it found a validation error
+            added = vm.addedLineItems.length > countBefore ? vm.addedLineItems[0] : undefined;
+
+            if (added && added.lot && !added.lot.id) {
+                added.$deferLotCreation = true;
+            }
+
+            return added;
+        }
+
+        /**
+         * A batch the add form would not accept typed in is refused when it is scanned too, with the
+         * same wording, rather than the scan reporting success and adding nothing. The message is read
+         * before the half typed new-lot form is put back, which is what clears it.
+         */
+        function refusalOf(newLot) {
+            if (newLot.expirationDateInvalid) {
+                return 'stockEditLotModal.expirationDateInvalid';
+            }
+
+            if (newLot.lotCodeInvalid) {
+                return 'stockEditLotModal.lotCodeInvalid';
+            }
+
+            return undefined;
+        }
+
         function initViewModel() {
             //Set the max-date of date picker to the end of the current day.
             vm.maxDate = new Date();
@@ -674,7 +862,8 @@
             vm.facility = facility;
             vm.reasons = reasons;
             vm.showReasonDropdown = (adjustmentType.state !== ADJUSTMENT_TYPE.KIT_UNPACK.state);
-
+            defaultReason = getDefaultReason();
+            vm.defaultReason = defaultReason;
             vm.srcDstAssignments = srcDstAssignments;
             vm.addedLineItems = $stateParams.addedLineItems || [];
             $stateParams.displayItems = displayItems;
@@ -689,6 +878,8 @@
             vm.showVVMStatusColumn = orderableGroupService.areOrderablesUseVvm(vm.orderableGroups);
             vm.hasPermissionToAddNewLot = hasPermissionToAddNewLot;
             vm.canAddNewLot = false;
+            vm.scanMode = adjustmentScanService.modeFor(adjustmentType);
+            vm.scanEnabled = adjustmentScanService.isEnabled(adjustmentType);
             initiateNewLotObject();
         }
 
@@ -754,7 +945,9 @@
          * @param {Object} lineItem line item to edit
          */
         vm.canEditLot = function(lineItem) {
-            return vm.hasPermissionToAddNewLot && lineItem.lot && lineItem.$isNewItem;
+            return Boolean(lineItem.lot)
+                && Boolean(lineItem.$isNewItem)
+                && Boolean(vm.hasPermissionToAddNewLot || lineItem.$deferLotCreation);
         };
 
         /**
@@ -786,13 +979,13 @@
         }
 
         /**
-        * @ngdoc method
-        * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
-        * @name formatDate
-        *
-        * @description
-        * Format date
-        */
+         * @ngdoc method
+         * @methodOf stock-adjustment-creation.controller:StockAdjustmentCreationController
+         * @name formatDate
+         *
+         * @description
+         * Format date
+         */
         function formatDate(date) {
             return dateUtils.toStringDateWithDefaultFormat(date);
         }
@@ -841,7 +1034,7 @@
          *
          * @param  {number}  stockOnHand  the quantity in doses to be recalculated
          * @param  {number}  netContent   quantity of doses in one pack
-         *
+         * 
          * @return {String}                the stockOnHand in Doses or Packs
          */
         function recalculateSOHQuantity(stockOnHand, netContent) {

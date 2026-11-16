@@ -77,6 +77,10 @@
                 {
                     name: messageService.get('orderStatus.IN_ROUTE'),
                     value: ORDER_STATUSES.IN_ROUTE
+                },
+                {
+                    name: messageService.get('orderStatus.CANCELLED'),
+                    value: ORDER_STATUSES.CANCELLED
                 }
             ];
         }

@@ -188,10 +188,11 @@
                         hasStockOnHand ? item.stockOnHand.toString() : '',
                         hasQuantity ? item.quantity.toString() : '',
                         getLot(item, hasLot),
-                        item.lot ? openlmisDateFilter(item.lot.expirationDate) : ''
+                        item.lot && item.lot.expirationDate ?
+                            openlmisDateFilter(item.lot.expirationDate) : ''
                     ];
                     return _.any(searchableFields, function(field) {
-                        return field.toLowerCase().contains(keyword.toLowerCase());
+                        return field ? field.toLowerCase().contains(keyword.toLowerCase()) : false;
                     });
                 });
             }
@@ -254,7 +255,11 @@
          * @return {Promise}                  Submitted Physical Inventory
          */
         function submit(physicalInventory) {
-            var event = stockEventFactory.createFromPhysicalInventory(physicalInventory);
+            try {
+                var event = stockEventFactory.createFromPhysicalInventory(physicalInventory);
+            } catch (error) {
+                return getDraft(physicalInventory.programId, physicalInventory.facilityId);
+            }
             return resource.submitPhysicalInventory(event).$promise
                 .then(function() {
                     removeDraftFromCache(physicalInventory.id);

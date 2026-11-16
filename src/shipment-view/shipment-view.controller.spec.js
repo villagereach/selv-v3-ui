@@ -190,6 +190,78 @@ describe('ShipmentViewController', function() {
 
     });
 
+    describe('cancelOrder', function() {
+
+        var orderService, confirmService, notificationService, loadingModalService,
+            stateTrackerService, authorizationService, FULFILLMENT_RIGHTS;
+
+        beforeEach(function() {
+            orderService = jasmine.createSpyObj('orderService', ['cancel']);
+            confirmService = jasmine.createSpyObj('confirmService', ['confirm']);
+            notificationService = jasmine.createSpyObj('notificationService', ['success', 'error']);
+            loadingModalService = jasmine.createSpyObj('loadingModalService', ['open', 'close']);
+            stateTrackerService = jasmine.createSpyObj('stateTrackerService', ['goToPreviousState']);
+            authorizationService = jasmine.createSpyObj('authorizationService', ['hasRight']);
+            FULFILLMENT_RIGHTS = {
+                ORDERS_EDIT: 'ORDERS_EDIT'
+            };
+
+            confirmService.confirm.andReturn($q.resolve());
+            orderService.cancel.andReturn($q.resolve());
+
+            vm = $controller('ShipmentViewController', {
+                shipment: shipment,
+                tableLineItems: tableLineItems,
+                updatedOrder: order,
+                orderService: orderService,
+                confirmService: confirmService,
+                notificationService: notificationService,
+                loadingModalService: loadingModalService,
+                stateTrackerService: stateTrackerService,
+                authorizationService: authorizationService,
+                FULFILLMENT_RIGHTS: FULFILLMENT_RIGHTS,
+                drafts: drafts
+            });
+            vm.$onInit();
+        });
+
+        it('should confirm and cancel the order', function() {
+            vm.cancelOrder();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm).toHaveBeenCalledWith(
+                'shipmentView.cancelOrder.confirm', 'shipmentView.cancelOrder'
+            );
+
+            expect(orderService.cancel).toHaveBeenCalledWith(order.id);
+            expect(notificationService.success).toHaveBeenCalledWith('shipmentView.orderCancelled');
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.orders.view');
+            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(loadingModalService.close).toHaveBeenCalled();
+        });
+
+        it('should notify error when cancel fails', function() {
+            orderService.cancel.andReturn($q.reject());
+
+            vm.cancelOrder();
+            $rootScope.$apply();
+
+            expect(notificationService.error).toHaveBeenCalledWith('shipmentView.orderCancelFailed');
+            expect(loadingModalService.close).toHaveBeenCalled();
+        });
+
+        it('should check ORDERS_EDIT right for cancel', function() {
+            spyOn(shipment, 'isEditable').andReturn(true);
+            authorizationService.hasRight.andReturn(true);
+
+            expect(vm.canCancelOrder()).toBe(true);
+            expect(authorizationService.hasRight).toHaveBeenCalledWith('ORDERS_EDIT', {
+                facilityId: order.supplyingFacility.id
+            });
+        });
+
+    });
+
     // SELVSUP-72: Block confirming a shipment with no quantities
     describe('confirmShipment', function() {
 

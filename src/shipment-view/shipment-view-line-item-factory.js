@@ -155,7 +155,8 @@
                         shipmentLineItem: shipmentLineItem,
                         netContent: orderable.netContent,
                         packRoundingThreshold: orderable.packRoundingThreshold,
-                        roundToZero: orderable.roundToZero
+                        roundToZero: orderable.roundToZero,
+                        isChild: true
                     }));
                 }
                 // SELVSUP-14: ends here
@@ -252,15 +253,16 @@
         }
 
         function compareVvmStatuses(left, right) {
-            if (left === right) {
+            // No VVM means the same as Stage 1: fully usable. Ranking them equal lets the
+            // expiration date and stock on hand decide.
+            var leftStatus = left || VVM_STATUS.STAGE_1,
+                rightStatus = right || VVM_STATUS.STAGE_1;
+
+            if (leftStatus === rightStatus) {
                 return 0;
             }
 
-            if (!left || !right) {
-                return left ? -1 : 1;
-            }
-
-            return left > right ? -1 : 1;
+            return leftStatus > rightStatus ? -1 : 1;
         }
 
         function compareExpirationDate(left, right) {

@@ -1,12 +1,24 @@
-1.2.1 / WIP
+1.3.0 / 2026-11-16
 ===================
 New functionality:
 - [SELV3-845](https://openlmis.atlassian.net/browse/SELV3-845)
-  - Added the Exchange Rate administration screen showing the current USD-MZM rate, its history, and a modal for entering a new rate.
+  - Added the Exchange Rate administration screen showing the current USD-MZN rate, its history, and a modal for entering a new rate.
+  - Added the label of the EXCHANGE_RATE_MANAGE right on the role edit form, which showed the raw message key.
 - [SELV3-846](https://openlmis.atlassian.net/browse/SELV3-846)
   - Extended the Confirm Shipment modal with additional shipment fields (number of volumes, number of ice packs, person responsible for packing, truck and trailer registration, security seal), submitted to the fulfillment extension endpoint.
 
 Improvements:
+- [SELV3-886](https://openlmis.atlassian.net/browse/SELV3-886)
+  - Upgraded to the OpenLMIS 3.20.2 UI modules (reference-ui 5.2.16); SELV printouts are kept
+  - Removed overrides now covered by core and the unused Equipment UI module
+  - Orders can be cancelled from the shipment view, and the CANCELLED status is shown and filterable
+  - Physical inventory: added barcode scanning, the Pack Size column and a Delete button for products added by mistake
+  - Content Security Policy enabled again; external dashboards (Superset, PowerBI) are allowed via SUPERSET_URL and EXTERNAL_DOMAINS
+  - Role page labels for the Cancel stock events and View price changes rights (until they come with core referencedata-ui)
+  - The language selector offers only English and Portuguese
+  - Portuguese uses "stock" instead of the Brazilian "estoque" on the role page, the proof of delivery and the requisition supplying facility column
+  - Added a "New UI" button next to the language picker; it opens the new OpenLMIS UI served under the path given by the `NEW_UI_URL` environment variable (for example `/v2/`); the button is hidden where the variable is not set
+  - A failing health check no longer removes the UI from Consul ([SELV3-891](https://openlmis.atlassian.net/browse/SELV3-891))
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 

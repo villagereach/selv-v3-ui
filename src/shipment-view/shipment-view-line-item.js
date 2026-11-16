@@ -58,6 +58,7 @@
             this.shipmentLineItem = config.shipmentLineItem;
             this.netContent = config.netContent;
             this.isLot = true;
+            this.isChild = config.isChild === true;
             this.orderQuantity = config.orderQuantity;
             this.packRoundingThreshold = config.packRoundingThreshold;
             this.roundToZero = config.roundToZero;

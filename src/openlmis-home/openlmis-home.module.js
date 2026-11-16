@@ -30,7 +30,8 @@
         'referencedata-system-notification',
         'openlmis-message',
         'openlmis-home-alerts-panel',
-        'ui.router'
+        'ui.router',
+        'openlmis-home-page-report'
     ]);
 
 })();
