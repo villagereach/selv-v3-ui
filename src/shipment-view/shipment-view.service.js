@@ -31,12 +31,14 @@
     // SELV3-507: Allow user to enter Shipment Date    
     shipmentViewService.inject = [
         'ShipmentRepository', 'notificationService', '$state', 'stateTrackerService',
-        'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService'
+        'loadingModalService', 'ShipmentFactory', 'confirmService', '$q', 'chooseDateModalService',
+        'ORDER_STATUS', 'authorizationService', 'FULFILLMENT_RIGHTS'
     ];
 
     function shipmentViewService(ShipmentRepository, notificationService, stateTrackerService,
                                  $state, loadingModalService, ShipmentFactory,
-                                 confirmService, $q, chooseDateModalService) {
+                                 confirmService, $q, chooseDateModalService, ORDER_STATUS,
+                                 authorizationService, FULFILLMENT_RIGHTS) {
 
         var shipmentRepository = new ShipmentRepository();
 
@@ -90,10 +92,36 @@
                 return shipmentRepository.getDraftByOrderId(order.id);
             }
 
-            if (order.isShipped()) {
+            // SELV3-896: open the shipment of every order that has one, leave for the others
+            if (hasShipment(order)) {
                 return shipmentRepository.getByOrderId(order.id);
             }
+
+            var ordersState = getOrdersState();
+            notificationService.info('shipmentView.orderHasNoShipment');
+            $state.go(ordersState, {}, {
+                reload: ordersState
+            });
+            return $q.reject();
         }
+
+        function getOrdersState() {
+            if (authorizationService.hasRights([FULFILLMENT_RIGHTS.ORDERS_VIEW, FULFILLMENT_RIGHTS.PODS_MANAGE])) {
+                return 'openlmis.orders.view';
+            }
+            return 'openlmis.orders.fulfillment';
+        }
+
+        function hasShipment(order) {
+            return [
+                ORDER_STATUS.SHIPPED,
+                ORDER_STATUS.RECEIVED,
+                ORDER_STATUS.TRANSFER_FAILED,
+                ORDER_STATUS.IN_ROUTE,
+                ORDER_STATUS.READY_TO_PACK
+            ].indexOf(order.status) > -1;
+        }
+        // SELV3-896: ends here
 
         function decorateSave(originalSave) {
             return function() {

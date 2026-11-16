@@ -209,7 +209,9 @@
             // SELV3-666: Ends here
 
             shipment.lineItems.forEach(function(lineItem) {
-                lineItem.canFulfillForMe = canFulfillForMeMap[lineItem.orderable.id][getId(lineItem.lot)];
+                // SELV3-896: the supplying facility may have no stock card for a shipped product
+                var lotMap = canFulfillForMeMap[lineItem.orderable.id];
+                lineItem.canFulfillForMe = lotMap ? lotMap[getId(lineItem.lot)] : undefined;
             });
 
             return shipment;

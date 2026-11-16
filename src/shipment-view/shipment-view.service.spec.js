@@ -21,7 +21,7 @@ describe('shipmentViewService', function() {
         notificationService, stateTrackerService, confirmService, drafts,
         PhysicalInventoryLineItemDataBuilder, PhysicalInventoryLineItemAdjustmentDataBuilder,
         OrderableDataBuilder, FacilityDataBuilder, ProgramDataBuilder, PhysicalInventoryDataBuilder,
-        chooseDateModalService;
+        chooseDateModalService, ORDER_STATUS, authorizationService, FULFILLMENT_RIGHTS;
 
     beforeEach(function() {
         module('shipment-view', function($provide) {
@@ -68,6 +68,9 @@ describe('shipmentViewService', function() {
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             PhysicalInventoryDataBuilder = $injector.get('PhysicalInventoryDataBuilder');
             chooseDateModalService = $injector.get('chooseDateModalService');
+            ORDER_STATUS = $injector.get('ORDER_STATUS');
+            authorizationService = $injector.get('authorizationService');
+            FULFILLMENT_RIGHTS = $injector.get('FULFILLMENT_RIGHTS');
 
         });
 
@@ -172,6 +175,77 @@ describe('shipmentViewService', function() {
 
             expect(result).toEqual(shipment);
             expect(shipmentRepositoryMock.getByOrderId).toHaveBeenCalledWith(order.id);
+        });
+
+        it('should fetch shipment for orders in the statuses after shipping', function() {
+            shipmentRepositoryMock.getByOrderId.andReturn($q.resolve(shipment));
+
+            [
+                ORDER_STATUS.RECEIVED,
+                ORDER_STATUS.TRANSFER_FAILED,
+                ORDER_STATUS.IN_ROUTE,
+                ORDER_STATUS.READY_TO_PACK
+            ].forEach(function(status) {
+                order = new Order(new OrderDataBuilder().withStatus(status)
+                    .build());
+
+                var result;
+                shipmentViewService.getShipmentForOrder(order)
+                    .then(function(response) {
+                        result = response;
+                    });
+                $rootScope.$apply();
+
+                expect(result).toEqual(shipment);
+                expect(shipmentRepositoryMock.getByOrderId).toHaveBeenCalledWith(order.id);
+            });
+        });
+
+        it('should notify and go to the orders view for order in the cancelled status', function() {
+            spyOn(notificationService, 'info');
+            spyOn($state, 'go');
+            spyOn(authorizationService, 'hasRights').andReturn(true);
+
+            order = new Order(new OrderDataBuilder().withStatus(ORDER_STATUS.CANCELLED)
+                .build());
+
+            var rejected;
+            shipmentViewService.getShipmentForOrder(order)
+                .catch(function() {
+                    rejected = true;
+                });
+            $rootScope.$apply();
+
+            expect(rejected).toEqual(true);
+            expect(notificationService.info).toHaveBeenCalledWith('shipmentView.orderHasNoShipment');
+            expect($state.go).toHaveBeenCalledWith('openlmis.orders.view', {}, {
+                reload: 'openlmis.orders.view'
+            });
+
+            expect(shipmentRepositoryMock.getByOrderId).not.toHaveBeenCalled();
+            expect(shipmentRepositoryMock.getDraftByOrderId).not.toHaveBeenCalled();
+            expect(shipmentRepositoryMock.createDraft).not.toHaveBeenCalled();
+        });
+
+        it('should go to the fulfill orders view if user cannot view orders', function() {
+            spyOn(notificationService, 'info');
+            spyOn($state, 'go');
+            spyOn(authorizationService, 'hasRights').andReturn(false);
+
+            order = new Order(new OrderDataBuilder().withStatus(ORDER_STATUS.CANCELLED)
+                .build());
+
+            shipmentViewService.getShipmentForOrder(order);
+            $rootScope.$apply();
+
+            expect(authorizationService.hasRights).toHaveBeenCalledWith([
+                FULFILLMENT_RIGHTS.ORDERS_VIEW, FULFILLMENT_RIGHTS.PODS_MANAGE
+            ]);
+
+            expect(notificationService.info).toHaveBeenCalledWith('shipmentView.orderHasNoShipment');
+            expect($state.go).toHaveBeenCalledWith('openlmis.orders.fulfillment', {}, {
+                reload: 'openlmis.orders.fulfillment'
+            });
         });
 
         it('should reject if order is undefined', function() {
