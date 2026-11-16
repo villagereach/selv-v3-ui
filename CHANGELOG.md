@@ -1,4 +1,4 @@
-1.3.0 / WIP
+1.3.0 / 2026-11-16
 ===================
 New functionality:
 - [SELV3-845](https://openlmis.atlassian.net/browse/SELV3-845)
@@ -18,6 +18,7 @@ Improvements:
   - The language selector offers only English and Portuguese
   - Portuguese uses "stock" instead of the Brazilian "estoque" on the role page, the proof of delivery and the requisition supplying facility column
   - Added a "New UI" button next to the language picker; it opens the new OpenLMIS UI served under the path given by the `NEW_UI_URL` environment variable (for example `/v2/`); the button is hidden where the variable is not set
+  - A failing health check no longer removes the UI from Consul ([SELV3-891](https://openlmis.atlassian.net/browse/SELV3-891))
 - [SELVSUP-72](https://openlmis.atlassian.net/browse/SELVSUP-72)
   - Confirming a shipment with all quantities equal to 0 is blocked with an error instead of a Yes/No prompt.
 
